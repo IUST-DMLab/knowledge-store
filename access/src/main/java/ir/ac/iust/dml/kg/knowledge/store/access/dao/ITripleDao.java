@@ -1,0 +1,18 @@
+package ir.ac.iust.dml.kg.knowledge.store.access.dao;
+
+import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
+import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
+import org.bson.types.ObjectId;
+
+/**
+ * Interface for read and write triples
+ */
+public interface ITripleDao {
+    void write(Triple... triples);
+
+    void delete(Triple... triples);
+
+    Triple read(ObjectId id);
+
+    PagingList<Triple> search(String subject, String predicate, String object, int page, int pageSize);
+}
