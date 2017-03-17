@@ -1,4 +1,4 @@
-package ir.ac.iust.dml.kg.knowledge.store.services;
+package ir.ac.iust.dml.kg.knowledge.store.services.hello;
 
 import javax.jws.WebService;
 import javax.ws.rs.GET;
@@ -8,10 +8,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 @WebService
-@Path("/sayHello")
-public interface HelloWorld {
+@Path("/hello")
+public interface IHelloService {
     @GET
     @Path("/{a}")
     @Produces(MediaType.TEXT_PLAIN)
-    String sayHi(@PathParam("a") String text);
+    String hello(@PathParam("a") String text);
 }
