@@ -12,6 +12,7 @@
 
     <modules>
         <module>access</module>
+        <module>services</module>
     </modules>
 
     <properties>
