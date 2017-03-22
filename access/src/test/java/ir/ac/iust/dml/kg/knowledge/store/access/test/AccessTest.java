@@ -1,6 +1,7 @@
 package ir.ac.iust.dml.kg.knowledge.store.access.test;
 
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao;
+import ir.ac.iust.dml.kg.knowledge.store.access.entities.Source;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +29,7 @@ public class AccessTest {
         } catch (Throwable th) {
             assert true;
         }
-        t1.getSources().add("test");
+        t1.getSources().add(new Source("Test", "dasd"));
         triples.write(t1);
         assert triples.search(null, "birth_year", null, 0, 0).getTotalSize() == 2;
         assert triples.search("Hossein", "birth_year", "64", 0, 0).getTotalSize() == 1;

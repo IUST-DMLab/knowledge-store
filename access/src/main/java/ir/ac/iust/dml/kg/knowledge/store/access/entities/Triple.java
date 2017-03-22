@@ -6,8 +6,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * data class for triples
@@ -23,7 +23,7 @@ public class Triple {
     private String subject;
     private String object;
     private String predicate;
-    private List<String> sources;
+    private Set<Source> sources;
     private long creationEpoch;
     private long modificationEpoch;
     private String module;
@@ -72,12 +72,12 @@ public class Triple {
         this.predicate = predicate;
     }
 
-    public List<String> getSources() {
-        if (sources == null) sources = new ArrayList<>();
+    public Set<Source> getSources() {
+        if (sources == null) sources = new HashSet<>();
         return sources;
     }
 
-    public void setSources(List<String> sources) {
+    public void setSources(Set<Source> sources) {
         this.sources = sources;
     }
 

@@ -41,6 +41,16 @@ public class TripleDaoImpl implements ITripleDao {
     }
 
     @Override
+    public Triple read(String subject, String predicate, String object) {
+        return op.findOne(
+                new Query().addCriteria(Criteria.where("subject").is(subject))
+                        .addCriteria(Criteria.where("predicate").is(predicate))
+                        .addCriteria(Criteria.where("object").is(object)),
+                Triple.class
+        );
+    }
+
+    @Override
     public PagingList<Triple> search(String subject, String predicate, String object, int page, int pageSize) {
         final Query query = new Query();
         if (subject != null)
