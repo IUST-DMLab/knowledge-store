@@ -25,6 +25,9 @@
         <jaxrs:features>
             <bean class="org.apache.cxf.jaxrs.swagger.Swagger2Feature"/>
         </jaxrs:features>
+        <jaxrs:providers>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
+        </jaxrs:providers>
     </jaxrs:server>
 
 </beans>
