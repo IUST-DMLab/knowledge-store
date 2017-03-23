@@ -6,18 +6,32 @@ import io.swagger.annotations.ApiModelProperty;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.ExpertState;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Source;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.URL;
 
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
 public class TripleData {
+    @NotNull
+    @NotEmpty
     @ApiModelProperty(required = true, example = "http://knowledgegraph.ir/Esteghlal_F.C.")
     private String subject;
+    @NotNull
+    @NotEmpty
     @ApiModelProperty(required = true, example = "http://knowledgegraph.ir/mananger")
     private String object;
+    @NotNull
+    @NotEmpty
     @ApiModelProperty(required = true, example = "http://knowledgegraph.ir/Alireza_Mansourian")
     private String predicate;
+    @NotNull
+    @NotEmpty
     @ApiModelProperty(value = "Module that triples was extracted from it", required = true, example = "wikipedia/infobox")
     private String module;
+    @NotNull
+    @NotEmpty
+    @URL
     @ApiModelProperty(value = "Page url that triples was extracted from it", required = true, example = "https://en.wikipedia.org/wiki/Esteghlal_F.C.")
     private String url;
     private double precession;
@@ -42,6 +56,7 @@ public class TripleData {
         if (!found) triple.getSources().add(new Source(module, url));
         triple.setPrecession(precession);
         triple.setState(state);
+        triple.setModificationEpoch(System.currentTimeMillis());
         return triple;
     }
 
