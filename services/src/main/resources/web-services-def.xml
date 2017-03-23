@@ -42,9 +42,7 @@
         </jaxrs:features>
         <jaxrs:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="org.apache.cxf.jaxrs.validation.ValidationExceptionMapper">
-                <property name="addMessageToResponse" value="true"/>
-            </bean>
+            <bean class="ir.ac.iust.dml.kg.knowledge.store.services.JAXRSExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:inInterceptors>
             <ref bean="beanValidationInInterceptor"/>
