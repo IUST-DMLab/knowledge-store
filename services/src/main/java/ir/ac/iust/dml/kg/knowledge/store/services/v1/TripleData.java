@@ -34,7 +34,7 @@ public class TripleData {
     @URL
     @ApiModelProperty(value = "Page url that triples was extracted from it", required = true, example = "https://en.wikipedia.org/wiki/Esteghlal_F.C.")
     private String url;
-    private double precession;
+    private Double precession;
     private ExpertState state;
 
     public static TripleData fromString(String json) throws IOException {
@@ -100,11 +100,11 @@ public class TripleData {
         this.url = url;
     }
 
-    public double getPrecession() {
+    public Double getPrecession() {
         return precession;
     }
 
-    public void setPrecession(double precession) {
+    public void setPrecession(Double precession) {
         this.precession = precession;
     }
 

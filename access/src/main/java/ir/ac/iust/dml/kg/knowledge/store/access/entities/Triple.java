@@ -27,7 +27,7 @@ public class Triple {
     private long creationEpoch;
     private long modificationEpoch;
     private String module;
-    private double precession;
+    private Double precession;
     private ExpertState state;
 
     public Triple() {
@@ -105,11 +105,11 @@ public class Triple {
         this.module = module;
     }
 
-    public double getPrecession() {
+    public Double getPrecession() {
         return precession;
     }
 
-    public void setPrecession(double precession) {
+    public void setPrecession(Double precession) {
         this.precession = precession;
     }
 
