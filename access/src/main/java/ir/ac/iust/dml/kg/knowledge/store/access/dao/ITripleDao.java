@@ -16,5 +16,5 @@ public interface ITripleDao {
 
     Triple read(String subject, String predicate, String object);
 
-    PagingList<Triple> search(String subject, String predicate, String object, int page, int pageSize);
+    PagingList<Triple> search(String context, String subject, String predicate, String object, int page, int pageSize);
 }

@@ -1,5 +1,6 @@
 package ir.ac.iust.dml.kg.knowledge.store.services.v1;
 
+import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,5 +22,10 @@ public class TriplesServices implements ITriplesServices {
         final Triple newTriple = data.fill(oldTriple);
         dao.write(newTriple);
         return true;
+    }
+
+    @Override
+    public PagingList<Triple> search(String context, String subject, String predicate, String object, int page, int pageSize) {
+        return dao.search(context, subject, predicate, object, page, pageSize);
     }
 }

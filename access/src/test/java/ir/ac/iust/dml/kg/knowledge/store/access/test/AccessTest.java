@@ -31,8 +31,8 @@ public class AccessTest {
         }
         t1.getSources().add(new Source("Test", "dasd", null));
         triples.write(t1);
-        assert triples.search(null, "birth_year", null, 0, 0).getTotalSize() == 2;
-        assert triples.search("Hossein", "birth_year", "64", 0, 0).getTotalSize() == 1;
+        assert triples.search(null, null, "birth_year", null, 0, 0).getTotalSize() == 2;
+        assert triples.search(null, "Hossein", "birth_year", "64", 0, 0).getTotalSize() == 1;
         triples.delete(t1, t2);
     }
 }
