@@ -6,13 +6,15 @@ package ir.ac.iust.dml.kg.knowledge.store.access.entities;
 public class Source {
     private String module;
     private String url;
+    private Double precession;
 
     public Source() {
     }
 
-    public Source(String module, String url) {
+    public Source(String module, String url, Double precession) {
         this.module = module;
         this.url = url;
+        this.precession = precession;
     }
 
     public String getModule() {
@@ -29,6 +31,14 @@ public class Source {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public Double getPrecession() {
+        return precession;
+    }
+
+    public void setPrecession(Double precession) {
+        this.precession = precession;
     }
 
     @Override

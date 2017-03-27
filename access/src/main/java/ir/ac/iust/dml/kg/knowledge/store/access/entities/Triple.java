@@ -14,12 +14,12 @@ import java.util.Set;
  * http://194.225.227.161:8081/browse/KG-180
  */
 @Document(collection = "triples")
-@CompoundIndex(name = "triple_index", def = "{'subject' : 1, 'predicate' : 1, 'object': 1}", unique = true)
+@CompoundIndex(name = "triple_index", def = "{'context': 1, 'subject' : 2, 'predicate' : 3, 'object': 4}", unique = true)
 public class Triple {
     @Id
     @JsonIgnore
     private ObjectId id;
-
+    private String context;
     private String subject;
     private String object;
     private String predicate;
@@ -27,13 +27,13 @@ public class Triple {
     private long creationEpoch;
     private long modificationEpoch;
     private String module;
-    private Double precession;
     private ExpertState state;
 
     public Triple() {
     }
 
-    public Triple(String subject, String predicate, String object) {
+    public Triple(String context, String subject, String predicate, String object) {
+        this.context = context;
         this.subject = subject;
         this.object = object;
         this.predicate = predicate;
@@ -105,20 +105,20 @@ public class Triple {
         this.module = module;
     }
 
-    public Double getPrecession() {
-        return precession;
-    }
-
-    public void setPrecession(Double precession) {
-        this.precession = precession;
-    }
-
     public ExpertState getState() {
         return state;
     }
 
     public void setState(ExpertState state) {
         this.state = state;
+    }
+
+    public String getContext() {
+        return context;
+    }
+
+    public void setContext(String context) {
+        this.context = context;
     }
 }
 
