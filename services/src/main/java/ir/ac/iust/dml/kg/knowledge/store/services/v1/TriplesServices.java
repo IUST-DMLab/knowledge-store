@@ -18,10 +18,17 @@ public class TriplesServices implements ITriplesServices {
 
     @Override
     public Boolean insert(@Valid TripleData data) {
-        final Triple oldTriple = dao.read(data.getSubject(), data.getPredicate(), data.getObject());
+        if (data.getContext() == null) data.setContext("http://kg.dml.iust.ac.ir");
+        final Triple oldTriple = dao.read(data.getContext(), data.getSubject(), data.getPredicate(), data.getObject());
         final Triple newTriple = data.fill(oldTriple);
         dao.write(newTriple);
         return true;
+    }
+
+    @Override
+    public Triple triple(String context, String subject, String predicate, String object) {
+        if (context == null) context = "http://kg.dml.iust.ac.ir";
+        return dao.read(context, subject, predicate, object);
     }
 
     @Override

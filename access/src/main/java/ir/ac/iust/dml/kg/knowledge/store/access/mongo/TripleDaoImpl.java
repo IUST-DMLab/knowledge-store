@@ -41,9 +41,10 @@ public class TripleDaoImpl implements ITripleDao {
     }
 
     @Override
-    public Triple read(String subject, String predicate, String object) {
+    public Triple read(String context, String subject, String predicate, String object) {
         return op.findOne(
-                new Query().addCriteria(Criteria.where("subject").is(subject))
+                new Query().addCriteria(Criteria.where("context").is(context))
+                        .addCriteria(Criteria.where("subject").is(subject))
                         .addCriteria(Criteria.where("predicate").is(predicate))
                         .addCriteria(Criteria.where("object").is(object)),
                 Triple.class

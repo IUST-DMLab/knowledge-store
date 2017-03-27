@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.xml.bind.annotation.XmlType;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,6 +14,7 @@ import java.util.Set;
  * data class for triples
  * http://194.225.227.161:8081/browse/KG-180
  */
+@XmlType(name = "Triple", namespace = "http://kg.dml.iust.ac.ir")
 @Document(collection = "triples")
 @CompoundIndex(name = "triple_index", def = "{'context': 1, 'subject' : 2, 'predicate' : 3, 'object': 4}", unique = true)
 public class Triple {

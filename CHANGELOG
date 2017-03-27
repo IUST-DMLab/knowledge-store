@@ -6,4 +6,5 @@
 
 * 1.1.0
     - Add context
-    - Add search service
+    - Add v1 Service: search
+    - Add v1 Service: get triple

@@ -10,8 +10,10 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlType;
 import java.io.IOException;
 
+@XmlType(name = "TripleData")
 public class TripleData {
     @URL
     @ApiModelProperty(required = false, example = "http://kg.dml.iust.ac.ir")
@@ -48,8 +50,6 @@ public class TripleData {
     }
 
     public Triple fill(Triple triple) {
-        if (context == null)
-            context = "http://kg.dml.iust.ac.ir";
         if (triple != null)
             assert subject.equals(triple.getSubject()) && object.equals(triple.getObject())
                     && predicate.equals(triple.getPredicate());

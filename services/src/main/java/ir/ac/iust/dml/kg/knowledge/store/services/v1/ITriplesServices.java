@@ -2,6 +2,7 @@ package ir.ac.iust.dml.kg.knowledge.store.services.v1;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
 
@@ -27,6 +28,20 @@ public interface ITriplesServices {
     @WebMethod
     @ApiOperation(value = "Insert or update triple")
     Boolean insert(@Valid TripleData data);
+
+    @GET
+    @Path("/triple")
+    @Produces(MediaType.APPLICATION_JSON)
+    @WebMethod
+    @ApiOperation(value = "Return triples by (context, subject, predicate, object)")
+    Triple triple(@ApiParam(required = false, example = "http://kg.dml.iust.ac.ir")
+                  @WebParam(name = "context") @QueryParam("context") String context,
+                  @ApiParam(required = true, example = "http://url.com/subject")
+                  @WebParam(name = "subject") @QueryParam("subject") String subject,
+                  @ApiParam(required = true, example = "http://url.com/predicate")
+                  @WebParam(name = "predicate") @QueryParam("predicate") String predicate,
+                  @ApiParam(required = true, example = "http://url.com/object")
+                  @WebParam(name = "object") @QueryParam("object") String object);
 
     @GET
     @Path("/search")
