@@ -10,11 +10,17 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlType;
 import java.io.IOException;
 
+@XmlType(name = "TripleData")
 public class TripleData {
+    @URL
+    @ApiModelProperty(required = false, example = "http://kg.dml.iust.ac.ir")
+    private String context;
     @NotNull
     @NotEmpty
+    @URL
     @ApiModelProperty(required = true, example = "http://knowledgegraph.ir/Esteghlal_F.C.")
     private String subject;
     @NotNull
@@ -23,6 +29,7 @@ public class TripleData {
     private String object;
     @NotNull
     @NotEmpty
+    @URL
     @ApiModelProperty(required = true, example = "http://knowledgegraph.ir/Alireza_Mansourian")
     private String predicate;
     @NotNull
@@ -47,17 +54,28 @@ public class TripleData {
             assert subject.equals(triple.getSubject()) && object.equals(triple.getObject())
                     && predicate.equals(triple.getPredicate());
         else
-            triple = new Triple(subject, predicate, object);
+            triple = new Triple(context, subject, predicate, object);
 
         boolean found = false;
-        for (Source s : triple.getSources()) {
-            found = found || s.getModule().equals(module) && s.getUrl().equals(url);
-        }
-        if (!found) triple.getSources().add(new Source(module, url));
-        triple.setPrecession(precession);
+        for (Source s : triple.getSources())
+            if (s.getModule().equals(module) && s.getUrl().equals(url)) {
+                s.setPrecession(precession);
+                found = true;
+            }
+
+        if (!found) triple.getSources().add(new Source(module, url, precession));
         triple.setState(state);
         triple.setModificationEpoch(System.currentTimeMillis());
+
         return triple;
+    }
+
+    public String getContext() {
+        return context;
+    }
+
+    public void setContext(String context) {
+        this.context = context;
     }
 
     public String getSubject() {
