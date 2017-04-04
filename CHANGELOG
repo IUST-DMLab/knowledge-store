@@ -8,3 +8,4 @@
     - Add context
     - Add v1 Service: search
     - Add v1 Service: get triple
+    - Add v1 Service: export triple

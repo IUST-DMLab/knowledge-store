@@ -2,11 +2,17 @@ package ir.ac.iust.dml.kg.knowledge.store.services.v1;
 
 import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao;
+import ir.ac.iust.dml.kg.knowledge.store.access.entities.ExpertState;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
+import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.model.util.ModelBuilder;
+import org.eclipse.rdf4j.rio.RDFWriter;
+import org.eclipse.rdf4j.rio.Rio;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.jws.WebService;
 import javax.validation.Valid;
+import java.io.ByteArrayOutputStream;
 
 /**
  * impl {@link ITriplesServices}
@@ -34,5 +40,21 @@ public class TriplesServices implements ITriplesServices {
     @Override
     public PagingList<Triple> search(String context, String subject, String predicate, String object, int page, int pageSize) {
         return dao.search(context, subject, predicate, object, page, pageSize);
+    }
+
+    @Override
+    public String export(ExpertState state, ExportFormat format, Long epoch, int page, int pageSize) {
+        final PagingList<Triple> triples = dao.read(state, epoch, page, pageSize);
+        final ModelBuilder builder = new ModelBuilder();
+        triples.getData().forEach(t ->
+                builder.add(t.getSubject(), t.getPredicate(), t.getObject())
+        );
+        final Model model = builder.build();
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final RDFWriter writer = Rio.createWriter(format.getRDFFormat(), out);
+        writer.startRDF();
+        model.forEach(writer::handleStatement);
+        writer.endRDF();
+        return out.toString();
     }
 }

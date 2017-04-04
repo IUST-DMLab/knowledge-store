@@ -2,6 +2,7 @@ package ir.ac.iust.dml.kg.knowledge.store.access.mongo;
 
 import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao;
+import ir.ac.iust.dml.kg.knowledge.store.access.entities.ExpertState;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,16 @@ public class TripleDaoImpl implements ITripleDao {
             query.addCriteria(Criteria.where("predicate").is(predicate));
         if (object != null)
             query.addCriteria(Criteria.where("object").is(object));
+        return DaoUtils.paging(op, Triple.class, query, page, pageSize);
+    }
+
+    @Override
+    public PagingList<Triple> read(ExpertState state, Long after, int page, int pageSize) {
+        final Query query = new Query();
+        if (state != null)
+            query.addCriteria(Criteria.where("state").is(state));
+        if (after != null)
+            query.addCriteria(Criteria.where("modificationEpoch").gte(after));
         return DaoUtils.paging(op, Triple.class, query, page, pageSize);
     }
 }
