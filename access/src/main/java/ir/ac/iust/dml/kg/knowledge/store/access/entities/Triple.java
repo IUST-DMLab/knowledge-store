@@ -16,30 +16,30 @@ import java.util.Set;
  */
 @XmlType(name = "Triple", namespace = "http://kg.dml.iust.ac.ir")
 @Document(collection = "triples")
-@CompoundIndex(name = "triple_index", def = "{'context': 1, 'subject' : 2, 'predicate' : 3, 'object': 4}", unique = true)
+@CompoundIndex(name = "triple_index", def = "{'context': 1, 'subject' : 2, 'predicate' : 3, 'object.value': 4}", unique = true)
 public class Triple {
     @Id
     @JsonIgnore
     private ObjectId id;
     private String context;
     private String subject;
-    private String object;
     private String predicate;
+    private TypedValue object;
     private Set<Source> sources;
     private long creationEpoch;
     private long modificationEpoch;
-    private String module;
     private ExpertState state;
 
     public Triple() {
     }
 
-    public Triple(String context, String subject, String predicate, String object) {
+    public Triple(String context, String subject, String predicate, TypedValue object) {
         this.context = context;
         this.subject = subject;
         this.object = object;
         this.predicate = predicate;
         this.creationEpoch = this.modificationEpoch = System.currentTimeMillis();
+        this.state = ExpertState.None;
     }
 
     public ObjectId getId() {
@@ -58,11 +58,11 @@ public class Triple {
         this.subject = subject;
     }
 
-    public String getObject() {
+    public TypedValue getObject() {
         return object;
     }
 
-    public void setObject(String object) {
+    public void setObject(TypedValue object) {
         this.object = object;
     }
 
@@ -97,14 +97,6 @@ public class Triple {
 
     public void setModificationEpoch(long modificationEpoch) {
         this.modificationEpoch = modificationEpoch;
-    }
-
-    public String getModule() {
-        return module;
-    }
-
-    public void setModule(String module) {
-        this.module = module;
     }
 
     public ExpertState getState() {

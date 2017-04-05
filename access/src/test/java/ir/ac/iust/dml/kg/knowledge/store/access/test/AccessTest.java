@@ -3,6 +3,8 @@ package ir.ac.iust.dml.kg.knowledge.store.access.test;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Source;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
+import ir.ac.iust.dml.kg.knowledge.store.access.entities.TypedValue;
+import ir.ac.iust.dml.kg.knowledge.store.access.entities.ValueType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,16 +22,16 @@ public class AccessTest {
 
     @Test
     public void testTripleDao() {
-        Triple t1 = new Triple("context", "Hossein", "birth_year", "64");
-        Triple t2 = new Triple("context", "Majid", "birth_year", "63");
+        Triple t1 = new Triple("context", "Hossein", "birth_year", new TypedValue(ValueType.Short, "64"));
+        Triple t2 = new Triple("context", "Majid", "birth_year", new TypedValue(ValueType.Short, "63"));
         triples.write(t1, t2);
         try {
-            triples.write(new Triple("context", "Hossein", "birth_year", "64"));
+            triples.write(new Triple("context", "Hossein", "birth_year", new TypedValue(ValueType.Short, "64")));
             assert false;
         } catch (Throwable th) {
             assert true;
         }
-        t1.getSources().add(new Source("Test", "dasd", null));
+        t1.getSources().add(new Source("Test", null, null, null));
         triples.write(t1);
         assert triples.search(null, null, "birth_year", null, 0, 0).getTotalSize() == 2;
         assert triples.search(null, "Hossein", "birth_year", "64", 0, 0).getTotalSize() == 1;

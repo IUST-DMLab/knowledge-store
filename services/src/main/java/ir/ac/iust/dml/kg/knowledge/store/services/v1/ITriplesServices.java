@@ -4,7 +4,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
+import ir.ac.iust.dml.kg.knowledge.store.access.entities.ExpertState;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
+import ir.ac.iust.dml.kg.knowledge.store.services.v1.data.TripleData;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -54,4 +56,18 @@ public interface ITriplesServices {
                               @WebParam(name = "object") @QueryParam("object") String object,
                               @WebParam(name = "page") @QueryParam("page") int page,
                               @WebParam(name = "pageSize") @QueryParam("pageSize") int pageSize);
+
+    @GET
+    @Path("/export/{state}/{format}")
+    @Produces(MediaType.TEXT_PLAIN)
+    @WebMethod
+    @ApiOperation(value = "Return a list of rdf that must inserted in specified format")
+    String export(
+            @WebParam(name = "state") @PathParam("state") ExpertState state,
+            @WebParam(name = "format") @PathParam("format") ExportFormat format,
+            @WebParam(name = "epoch") @QueryParam("epoch") Long epoch,
+            @WebParam(name = "page") @QueryParam("page") int page,
+            @WebParam(name = "pageSize") @QueryParam("pageSize") int pageSize);
+
+
 }

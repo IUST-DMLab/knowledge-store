@@ -18,6 +18,7 @@ public class JAXRSExceptionMapper implements ExceptionMapper<Throwable> {
 
     @Override
     public Response toResponse(Throwable throwable) {
+        throwable.printStackTrace();
         final Response.Status errorStatus;
         final StringBuilder responseBody = new StringBuilder();
         if (throwable instanceof ConstraintViolationException) {
