@@ -3,6 +3,8 @@ package ir.ac.iust.dml.kg.knowledge.store.access.test;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Source;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
+import ir.ac.iust.dml.kg.knowledge.store.access.entities.TypedValue;
+import ir.ac.iust.dml.kg.knowledge.store.access.entities.ValueType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +22,11 @@ public class AccessTest {
 
     @Test
     public void testTripleDao() {
-        Triple t1 = new Triple("context", "Hossein", "birth_year", "64");
-        Triple t2 = new Triple("context", "Majid", "birth_year", "63");
+        Triple t1 = new Triple("context", "Hossein", "birth_year", new TypedValue(ValueType.Short, "64"));
+        Triple t2 = new Triple("context", "Majid", "birth_year", new TypedValue(ValueType.Short, "63"));
         triples.write(t1, t2);
         try {
-            triples.write(new Triple("context", "Hossein", "birth_year", "64"));
+            triples.write(new Triple("context", "Hossein", "birth_year", new TypedValue(ValueType.Short, "64")));
             assert false;
         } catch (Throwable th) {
             assert true;

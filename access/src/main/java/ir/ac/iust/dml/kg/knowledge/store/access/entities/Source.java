@@ -17,7 +17,8 @@ public class Source {
     public Source(String module, List<String> urls, Map<String, String> parameters, Double precession) {
         this.module = module;
         this.urls = new HashSet<>();
-        this.urls.addAll(urls);
+        if (urls != null)
+            this.urls.addAll(urls);
         this.parameters = parameters;
         this.precession = precession;
     }
