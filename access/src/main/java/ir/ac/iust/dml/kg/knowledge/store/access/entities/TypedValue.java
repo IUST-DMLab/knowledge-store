@@ -68,4 +68,8 @@ public class TypedValue {
     public int hashCode() {
         return value != null ? value.hashCode() : 0;
     }
+
+    public Object parseValue() {
+        return type.parse(value);
+    }
 }

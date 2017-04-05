@@ -4,8 +4,10 @@ import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.ExpertState;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
+import ir.ac.iust.dml.kg.knowledge.store.access.entities.ValueType;
 import ir.ac.iust.dml.kg.knowledge.store.services.v1.data.TripleData;
 import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.util.ModelBuilder;
 import org.eclipse.rdf4j.rio.RDFWriter;
 import org.eclipse.rdf4j.rio.Rio;
@@ -47,13 +49,19 @@ public class TriplesServices implements ITriplesServices {
     public String export(ExpertState state, ExportFormat format, Long epoch, int page, int pageSize) {
         final PagingList<Triple> triples = dao.read(state, epoch, page, pageSize);
         final ModelBuilder builder = new ModelBuilder();
-        triples.getData().forEach(t ->
-                builder.add(t.getSubject(), t.getPredicate(), t.getObject())
-        );
+        triples.getData().forEach(t -> {
+            final Object value;
+            if (t.getObject().getType() == ValueType.Resource)
+                value = SimpleValueFactory.getInstance().createIRI(t.getObject().getValue());
+            else
+                value = t.getObject().parseValue();
+            builder.add(t.getSubject(), t.getPredicate(), value);
+        });
         final Model model = builder.build();
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final RDFWriter writer = Rio.createWriter(format.getRDFFormat(), out);
         writer.startRDF();
+        writer.handleNamespace("kg", "http://knowledgegraph.ir/");
         model.forEach(writer::handleStatement);
         writer.endRDF();
         return out.toString();
