@@ -23,12 +23,11 @@ public class Triple {
     private ObjectId id;
     private String context;
     private String subject;
-    private String object;
     private String predicate;
+    private String object;
     private Set<Source> sources;
     private long creationEpoch;
     private long modificationEpoch;
-    private String module;
     private ExpertState state;
 
     public Triple() {
@@ -97,14 +96,6 @@ public class Triple {
 
     public void setModificationEpoch(long modificationEpoch) {
         this.modificationEpoch = modificationEpoch;
-    }
-
-    public String getModule() {
-        return module;
-    }
-
-    public void setModule(String module) {
-        this.module = module;
     }
 
     public ExpertState getState() {

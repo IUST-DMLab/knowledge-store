@@ -9,3 +9,5 @@
     - Add v1 Service: search
     - Add v1 Service: get triple
     - Add v1 Service: export triple
+    - Add multiple url to a source
+    - Add parameters to a source

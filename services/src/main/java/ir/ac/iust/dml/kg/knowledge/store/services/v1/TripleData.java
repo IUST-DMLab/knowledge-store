@@ -1,9 +1,8 @@
 package ir.ac.iust.dml.kg.knowledge.store.services.v1;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import cz.jirutka.validator.collection.constraints.EachURL;
 import io.swagger.annotations.ApiModelProperty;
-import ir.ac.iust.dml.kg.knowledge.store.access.entities.ExpertState;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Source;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -11,8 +10,10 @@ import org.hibernate.validator.constraints.URL;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlType;
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
+@SuppressWarnings("WeakerAccess")
 @XmlType(name = "TripleData")
 public class TripleData {
     @URL
@@ -25,31 +26,27 @@ public class TripleData {
     private String subject;
     @NotNull
     @NotEmpty
-    @ApiModelProperty(required = true, example = "http://knowledgegraph.ir/mananger")
-    private String object;
-    @NotNull
-    @NotEmpty
     @URL
     @ApiModelProperty(required = true, example = "http://knowledgegraph.ir/Alireza_Mansourian")
     private String predicate;
+    @NotNull
+    @NotEmpty
+    @ApiModelProperty(required = true, example = "http://knowledgegraph.ir/mananger")
+    private String object;
     @NotNull
     @NotEmpty
     @ApiModelProperty(value = "Module that triples was extracted from it", required = true, example = "wikipedia/infobox")
     private String module;
     @NotNull
     @NotEmpty
-    @URL
+    @EachURL
     @ApiModelProperty(value = "Page url that triples was extracted from it", required = true, example = "https://en.wikipedia.org/wiki/Esteghlal_F.C.")
-    private String url;
+    private List<String> urls;
+    @ApiModelProperty(value = "Additional parameter that module used to extract data", required = false, example = "{version: 2}")
+    private HashMap<String, String> parameters;
     private Double precession;
-    private ExpertState state;
 
-    public static TripleData fromString(String json) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(json, TripleData.class);
-    }
-
-    public Triple fill(Triple triple) {
+    Triple fill(Triple triple) {
         if (triple != null)
             assert subject.equals(triple.getSubject()) && object.equals(triple.getObject())
                     && predicate.equals(triple.getPredicate());
@@ -58,13 +55,15 @@ public class TripleData {
 
         boolean found = false;
         for (Source s : triple.getSources())
-            if (s.getModule().equals(module) && s.getUrl().equals(url)) {
+            if (s.getModule().equals(module)) {
+                s.getUrls().addAll(urls);
                 s.setPrecession(precession);
+                if (parameters != null)
+                    s.getParameters().putAll(parameters);
                 found = true;
             }
 
-        if (!found) triple.getSources().add(new Source(module, url, precession));
-        triple.setState(state);
+        if (!found) triple.getSources().add(new Source(module, urls, parameters, precession));
         triple.setModificationEpoch(System.currentTimeMillis());
 
         return triple;
@@ -86,20 +85,20 @@ public class TripleData {
         this.subject = subject;
     }
 
-    public String getObject() {
-        return object;
-    }
-
-    public void setObject(String object) {
-        this.object = object;
-    }
-
     public String getPredicate() {
         return predicate;
     }
 
     public void setPredicate(String predicate) {
         this.predicate = predicate;
+    }
+
+    public String getObject() {
+        return object;
+    }
+
+    public void setObject(String object) {
+        this.object = object;
     }
 
     public String getModule() {
@@ -110,12 +109,20 @@ public class TripleData {
         this.module = module;
     }
 
-    public String getUrl() {
-        return url;
+    public List<String> getUrls() {
+        return urls;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setUrls(List<String> urls) {
+        this.urls = urls;
+    }
+
+    public HashMap<String, String> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(HashMap<String, String> parameters) {
+        this.parameters = parameters;
     }
 
     public Double getPrecession() {
@@ -124,13 +131,5 @@ public class TripleData {
 
     public void setPrecession(Double precession) {
         this.precession = precession;
-    }
-
-    public ExpertState getState() {
-        return state;
-    }
-
-    public void setState(ExpertState state) {
-        this.state = state;
     }
 }
