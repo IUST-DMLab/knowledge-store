@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiParam;
 import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.ExpertState;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
+import ir.ac.iust.dml.kg.knowledge.store.services.v1.data.TripleData;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;

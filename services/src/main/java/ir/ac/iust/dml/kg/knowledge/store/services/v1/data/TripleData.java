@@ -1,13 +1,15 @@
-package ir.ac.iust.dml.kg.knowledge.store.services.v1;
+package ir.ac.iust.dml.kg.knowledge.store.services.v1.data;
 
 
 import cz.jirutka.validator.collection.constraints.EachURL;
 import io.swagger.annotations.ApiModelProperty;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Source;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
+import ir.ac.iust.dml.kg.knowledge.store.services.v1.validation.ValidTypedValue;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlType;
 import java.util.HashMap;
@@ -27,12 +29,13 @@ public class TripleData {
     @NotNull
     @NotEmpty
     @URL
-    @ApiModelProperty(required = true, example = "http://knowledgegraph.ir/Alireza_Mansourian")
+    @ApiModelProperty(required = true, example = "http://knowledgegraph.ir/mananger")
     private String predicate;
     @NotNull
-    @NotEmpty
-    @ApiModelProperty(required = true, example = "http://knowledgegraph.ir/mananger")
-    private String object;
+    @Valid
+    @ValidTypedValue
+    @ApiModelProperty(required = true)
+    private TypedValueData object;
     @NotNull
     @NotEmpty
     @ApiModelProperty(value = "Module that triples was extracted from it", required = true, example = "wikipedia/infobox")
@@ -46,13 +49,13 @@ public class TripleData {
     private HashMap<String, String> parameters;
     private Double precession;
 
-    Triple fill(Triple triple) {
-        if (triple != null)
-            assert subject.equals(triple.getSubject()) && object.equals(triple.getObject())
+    public Triple fill(Triple triple) {
+        if (triple != null) {
+            assert subject.equals(triple.getSubject()) && object.getValue().equals(triple.getObject().getValue())
                     && predicate.equals(triple.getPredicate());
-        else
-            triple = new Triple(context, subject, predicate, object);
-
+            object.fill(triple.getObject());
+        } else
+            triple = new Triple(context, subject, predicate, object.fill(null));
         boolean found = false;
         for (Source s : triple.getSources())
             if (s.getModule().equals(module)) {
@@ -65,7 +68,6 @@ public class TripleData {
 
         if (!found) triple.getSources().add(new Source(module, urls, parameters, precession));
         triple.setModificationEpoch(System.currentTimeMillis());
-
         return triple;
     }
 
@@ -93,11 +95,11 @@ public class TripleData {
         this.predicate = predicate;
     }
 
-    public String getObject() {
+    public TypedValueData getObject() {
         return object;
     }
 
-    public void setObject(String object) {
+    public void setObject(TypedValueData object) {
         this.object = object;
     }
 

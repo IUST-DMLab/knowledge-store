@@ -39,7 +39,7 @@ public class Triple {
         this.object = object;
         this.predicate = predicate;
         this.creationEpoch = this.modificationEpoch = System.currentTimeMillis();
-        this.state = ExpertState.Non;
+        this.state = ExpertState.None;
     }
 
     public ObjectId getId() {

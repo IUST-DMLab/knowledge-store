@@ -4,6 +4,7 @@ import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.ExpertState;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
+import ir.ac.iust.dml.kg.knowledge.store.services.v1.data.TripleData;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.util.ModelBuilder;
 import org.eclipse.rdf4j.rio.RDFWriter;
@@ -25,7 +26,7 @@ public class TriplesServices implements ITriplesServices {
     @Override
     public Boolean insert(@Valid TripleData data) {
         if (data.getContext() == null) data.setContext("http://kg.dml.iust.ac.ir");
-        final Triple oldTriple = dao.read(data.getContext(), data.getSubject(), data.getPredicate(), data.getObject());
+        final Triple oldTriple = dao.read(data.getContext(), data.getSubject(), data.getPredicate(), data.getObject().getValue());
         final Triple newTriple = data.fill(oldTriple);
         dao.write(newTriple);
         return true;

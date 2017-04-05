@@ -11,3 +11,4 @@
     - Add v1 Service: export triple
     - Add multiple url to a source
     - Add parameters to a source
+    - Add TypedValue to v1 insert service for object
