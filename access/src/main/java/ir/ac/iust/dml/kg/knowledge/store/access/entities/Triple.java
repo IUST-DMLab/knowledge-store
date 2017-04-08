@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.xml.bind.annotation.XmlType;
@@ -18,7 +19,10 @@ import java.util.Set;
  */
 @XmlType(name = "Triple", namespace = "http://kg.dml.iust.ac.ir")
 @Document(collection = "triples")
-@CompoundIndex(name = "triple_index", def = "{'context': 1, 'subject' : 2, 'predicate' : 3, 'object.value': 4}", unique = true)
+@CompoundIndexes({
+        @CompoundIndex(name = "triple_index", def = "{'context': 1, 'subject' : 2, 'predicate' : 3, 'object.value': 4}", unique = true),
+        @CompoundIndex(name = "expert_state", def = "{'votes.identifier': 1}", unique = false)
+})
 public class Triple {
     @Id
     @JsonIgnore
@@ -32,6 +36,7 @@ public class Triple {
     private long modificationEpoch;
     private TripleState state;
     private List<ExpertVote> votes;
+    private int votesCount = 0; //It will be better solution, and will work much faster (you can create index on it).
 
     public Triple() {
     }
@@ -125,6 +130,14 @@ public class Triple {
 
     public void setVotes(List<ExpertVote> votes) {
         this.votes = votes;
+    }
+
+    public int getVotesCount() {
+        return votesCount;
+    }
+
+    public void setVotesCount(int votesCount) {
+        this.votesCount = votesCount;
     }
 }
 
