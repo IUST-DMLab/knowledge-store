@@ -4,10 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -16,7 +19,10 @@ import java.util.Set;
  */
 @XmlType(name = "Triple", namespace = "http://kg.dml.iust.ac.ir")
 @Document(collection = "triples")
-@CompoundIndex(name = "triple_index", def = "{'context': 1, 'subject' : 2, 'predicate' : 3, 'object.value': 4}", unique = true)
+@CompoundIndexes({
+        @CompoundIndex(name = "triple_index", def = "{'context': 1, 'subject' : 2, 'predicate' : 3, 'object.value': 4}", unique = true),
+        @CompoundIndex(name = "expert_index", def = "{'votes.expert': 1}", unique = false)
+})
 public class Triple {
     @Id
     @JsonIgnore
@@ -28,7 +34,8 @@ public class Triple {
     private Set<Source> sources;
     private long creationEpoch;
     private long modificationEpoch;
-    private ExpertState state;
+    private TripleState state;
+    private List<ExpertVote> votes;
 
     public Triple() {
     }
@@ -39,7 +46,11 @@ public class Triple {
         this.object = object;
         this.predicate = predicate;
         this.creationEpoch = this.modificationEpoch = System.currentTimeMillis();
-        this.state = ExpertState.None;
+        this.state = TripleState.None;
+    }
+
+    public String getIdentifier() {
+        return id.toString();
     }
 
     public ObjectId getId() {
@@ -99,11 +110,11 @@ public class Triple {
         this.modificationEpoch = modificationEpoch;
     }
 
-    public ExpertState getState() {
+    public TripleState getState() {
         return state;
     }
 
-    public void setState(ExpertState state) {
+    public void setState(TripleState state) {
         this.state = state;
     }
 
@@ -113,6 +124,15 @@ public class Triple {
 
     public void setContext(String context) {
         this.context = context;
+    }
+
+    public List<ExpertVote> getVotes() {
+        if (votes == null) votes = new ArrayList<>();
+        return votes;
+    }
+
+    public void setVotes(List<ExpertVote> votes) {
+        this.votes = votes;
     }
 }
 

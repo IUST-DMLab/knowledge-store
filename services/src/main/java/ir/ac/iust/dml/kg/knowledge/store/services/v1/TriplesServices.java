@@ -2,8 +2,8 @@ package ir.ac.iust.dml.kg.knowledge.store.services.v1;
 
 import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao;
-import ir.ac.iust.dml.kg.knowledge.store.access.entities.ExpertState;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
+import ir.ac.iust.dml.kg.knowledge.store.access.entities.TripleState;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.ValueType;
 import ir.ac.iust.dml.kg.knowledge.store.services.v1.data.TripleData;
 import org.eclipse.rdf4j.model.Model;
@@ -46,7 +46,7 @@ public class TriplesServices implements ITriplesServices {
     }
 
     @Override
-    public String export(ExpertState state, ExportFormat format, Long epoch, int page, int pageSize) {
+    public String export(TripleState state, ExportFormat format, Long epoch, int page, int pageSize) {
         final PagingList<Triple> triples = dao.read(state, epoch, page, pageSize);
         final ModelBuilder builder = new ModelBuilder();
         triples.getData().forEach(t -> {
