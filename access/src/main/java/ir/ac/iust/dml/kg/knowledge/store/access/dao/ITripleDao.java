@@ -1,8 +1,8 @@
 package ir.ac.iust.dml.kg.knowledge.store.access.dao;
 
 import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
-import ir.ac.iust.dml.kg.knowledge.store.access.entities.ExpertState;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
+import ir.ac.iust.dml.kg.knowledge.store.access.entities.TripleState;
 import org.bson.types.ObjectId;
 
 /**
@@ -19,5 +19,5 @@ public interface ITripleDao {
 
     PagingList<Triple> search(String context, String subject, String predicate, String object, int page, int pageSize);
 
-    PagingList<Triple> read(ExpertState state, Long after, int page, int pageSize);
+    PagingList<Triple> read(TripleState state, Long after, int page, int pageSize);
 }
