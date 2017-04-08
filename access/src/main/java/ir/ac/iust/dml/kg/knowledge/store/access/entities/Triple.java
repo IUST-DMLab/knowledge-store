@@ -21,7 +21,7 @@ import java.util.Set;
 @Document(collection = "triples")
 @CompoundIndexes({
         @CompoundIndex(name = "triple_index", def = "{'context': 1, 'subject' : 2, 'predicate' : 3, 'object.value': 4}", unique = true),
-        @CompoundIndex(name = "expert_state", def = "{'votes.identifier': 1}", unique = false)
+        @CompoundIndex(name = "expert_index", def = "{'votes.expert': 1}", unique = false)
 })
 public class Triple {
     @Id
@@ -36,7 +36,6 @@ public class Triple {
     private long modificationEpoch;
     private TripleState state;
     private List<ExpertVote> votes;
-    private int votesCount = 0; //It will be better solution, and will work much faster (you can create index on it).
 
     public Triple() {
     }
@@ -48,6 +47,10 @@ public class Triple {
         this.predicate = predicate;
         this.creationEpoch = this.modificationEpoch = System.currentTimeMillis();
         this.state = TripleState.None;
+    }
+
+    public String getIdentifier() {
+        return id.toString();
     }
 
     public ObjectId getId() {
@@ -130,14 +133,6 @@ public class Triple {
 
     public void setVotes(List<ExpertVote> votes) {
         this.votes = votes;
-    }
-
-    public int getVotesCount() {
-        return votesCount;
-    }
-
-    public void setVotesCount(int votesCount) {
-        this.votesCount = votesCount;
     }
 }
 

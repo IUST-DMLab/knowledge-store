@@ -35,7 +35,7 @@ public class AccessTest {
         triples.write(t1);
         assert triples.search(null, null, "birth_year", null, 0, 0).getTotalSize() == 2;
         assert triples.search(null, "Hossein", "birth_year", "64", 0, 0).getTotalSize() == 1;
-        assert triples.randomTripleForExpert("web", "hossein", 3, 2) != null;
+        assert triples.randomTripleForExpert("web", "hossein", 2) != null;
         triples.delete(t1, t2);
     }
 }

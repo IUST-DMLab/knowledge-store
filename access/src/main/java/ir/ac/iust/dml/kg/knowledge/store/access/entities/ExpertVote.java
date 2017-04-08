@@ -1,19 +1,22 @@
 package ir.ac.iust.dml.kg.knowledge.store.access.entities;
 
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * Vote object for each expert
  */
+@XmlType(name = "ExpertVote", namespace = "http://kg.dml.iust.ac.ir")
 public class ExpertVote {
     private String module;
-    private String identifier;
+    private String expert;
     private Vote vote;
 
     public ExpertVote() {
     }
 
-    public ExpertVote(String module, String identifier, Vote vote) {
+    public ExpertVote(String module, String expert, Vote vote) {
         this.module = module;
-        this.identifier = identifier;
+        this.expert = expert;
         this.vote = vote;
     }
 
@@ -25,12 +28,12 @@ public class ExpertVote {
         this.module = module;
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public String getExpert() {
+        return expert;
     }
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
+    public void setExpert(String expert) {
+        this.expert = expert;
     }
 
     public Vote getVote() {

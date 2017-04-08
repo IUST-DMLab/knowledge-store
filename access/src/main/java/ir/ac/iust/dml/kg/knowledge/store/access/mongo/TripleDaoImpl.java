@@ -27,11 +27,8 @@ public class TripleDaoImpl implements ITripleDao {
 
     @Override
     public void write(Triple... triples) {
-        for (Triple triple : triples) {
-            if (triple.getVotesCount() != triple.getVotes().size())
-                triple.setVotesCount(triple.getVotes().size());
+        for (Triple triple : triples)
             op.save(triple);
-        }
     }
 
     @Override
@@ -85,16 +82,16 @@ public class TripleDaoImpl implements ITripleDao {
     }
 
     @Override
-    public List<Triple> randomTripleForExpert(String notModule, String notIdentifier, int maxVote, int count) {
+    public List<Triple> randomTripleForExpert(String notModule, String notExpert, int count) {
         final Query query = new Query()
                 .addCriteria(Criteria.where("votes.module").ne(notModule))
-                .addCriteria(Criteria.where("votes.identifier").ne(notIdentifier))
-                .addCriteria(Criteria.where("votesCount").lt(maxVote))
+                .addCriteria(Criteria.where("votes.expert").ne(notExpert))
+                .addCriteria(Criteria.where("state").is(TripleState.None))
                 .with(new Sort(Sort.Direction.ASC, "subject"))
                 .with(new Sort(Sort.Direction.ASC, "predicate"));
-        int total = (int) op.count(query, Triple.class);
+        final int total = (int) op.count(query, Triple.class);
         final List<Triple> cs = new ArrayList<>();
-        int[] randomIndexes = Utils.randomIndex(count, total);
+        final int[] randomIndexes = Utils.randomIndex(count, total);
         for (int index : randomIndexes) {
             final PageRequest pageRequest = new PageRequest(index, 1);
             query.with(pageRequest);

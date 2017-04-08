@@ -12,3 +12,6 @@
     - Add multiple url to a source
     - Add parameters to a source
     - Add TypedValue to v1 insert service for object
+
+* 1.2.0
+    - Add Expert Service

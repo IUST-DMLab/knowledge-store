@@ -19,7 +19,7 @@ public interface ITripleDao {
 
     Triple read(String context, String subject, String predicate, String object);
 
-    List<Triple> randomTripleForExpert(String notModule, String notIdentifier, int maxVote, int count);
+    List<Triple> randomTripleForExpert(String notModule, String notExpert, int count);
 
     PagingList<Triple> search(String context, String subject, String predicate, String object, int page, int pageSize);
 
