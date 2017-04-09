@@ -8,9 +8,7 @@ import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.xml.bind.annotation.XmlType;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -35,7 +33,7 @@ public class Triple {
     private long creationEpoch;
     private long modificationEpoch;
     private TripleState state;
-    private List<ExpertVote> votes;
+    private Set<ExpertVote> votes;
 
     public Triple() {
     }
@@ -126,12 +124,12 @@ public class Triple {
         this.context = context;
     }
 
-    public List<ExpertVote> getVotes() {
-        if (votes == null) votes = new ArrayList<>();
+    public Set<ExpertVote> getVotes() {
+        if (votes == null) votes = new HashSet<>();
         return votes;
     }
 
-    public void setVotes(List<ExpertVote> votes) {
+    public void setVotes(Set<ExpertVote> votes) {
         this.votes = votes;
     }
 }
