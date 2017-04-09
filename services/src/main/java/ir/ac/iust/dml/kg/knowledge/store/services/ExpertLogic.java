@@ -3,13 +3,13 @@ package ir.ac.iust.dml.kg.knowledge.store.services;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.ExpertVote;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.TripleState;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  *
  */
 public class ExpertLogic {
-    public static TripleState makeState(List<ExpertVote> votes) {
+    public static TripleState makeState(Set<ExpertVote> votes) {
         int approveCount = 0;
         int rejectCount = 0;
         for (ExpertVote v : votes) {

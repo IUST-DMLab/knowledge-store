@@ -43,4 +43,24 @@ public class ExpertVote {
     public void setVote(Vote vote) {
         this.vote = vote;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ExpertVote that = (ExpertVote) o;
+
+        if (module != null ? !module.equals(that.module) : that.module != null) return false;
+        return expert != null ? expert.equals(that.expert) : that.expert == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = module != null ? module.hashCode() : 0;
+        result = 31 * result + (expert != null ? expert.hashCode() : 0);
+        return result;
+    }
+
+
 }

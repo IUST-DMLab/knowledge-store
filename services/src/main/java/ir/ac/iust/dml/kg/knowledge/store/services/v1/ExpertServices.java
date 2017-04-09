@@ -28,8 +28,11 @@ public class ExpertServices implements IExpertServices {
     public Boolean vote(String identifier, String module, String expert, Vote vote) {
         final Triple triple = dao.read(new ObjectId(identifier));
         if (triple == null) return false;
-        triple.getVotes().add(new ExpertVote(module, expert, vote));
+        final ExpertVote v = new ExpertVote(module, expert, vote);
+        triple.getVotes().remove(v);
+        triple.getVotes().add(v);
         triple.setState(ExpertLogic.makeState(triple.getVotes()));
+        dao.write(triple);
         return true;
     }
 }
