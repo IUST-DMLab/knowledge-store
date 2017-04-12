@@ -4,13 +4,15 @@ package ir.ac.iust.dml.kg.knowledge.store.access.entities;
  * Types of value
  */
 public enum ValueType {
-    Resource, Boolean, Byte, Short, Integer, Long, Double, Float;
+    Resource, String, Boolean, Byte, Short, Integer, Long, Double, Float;
 
     public Object parse(String value) {
         try {
             switch (this) {
                 case Resource:
                     return new java.net.URL(value);
+                case String:
+                    return value;
                 case Boolean:
                     return java.lang.Boolean.parseBoolean(value);
                 case Byte:
