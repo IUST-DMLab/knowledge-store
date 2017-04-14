@@ -8,7 +8,10 @@ import ir.ac.iust.dml.kg.knowledge.store.access.entities.Vote;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
@@ -29,7 +32,7 @@ public interface IExpertServices {
                          @WebParam(name = "expert") @QueryParam("expert") String expert,
                          @WebParam(name = "count") @QueryParam("count") int count);
 
-    @POST
+    @GET
     @Path("/vote")
     @Produces(MediaType.APPLICATION_JSON)
     @WebMethod
