@@ -87,8 +87,7 @@ public class TripleDaoImpl implements ITripleDao {
                 .addCriteria(Criteria.where("votes.module").ne(notModule))
                 .addCriteria(Criteria.where("votes.expert").ne(notExpert))
                 .addCriteria(Criteria.where("state").is(TripleState.None))
-                .with(new Sort(Sort.Direction.ASC, "subject"))
-                .with(new Sort(Sort.Direction.ASC, "predicate"));
+                .with(new Sort(Sort.Direction.ASC, "subject"));
         final int total = (int) op.count(query, Triple.class);
         final List<Triple> cs = new ArrayList<>();
         final int[] randomIndexes = Utils.randomIndex(count, total);

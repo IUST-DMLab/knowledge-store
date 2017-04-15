@@ -5,6 +5,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.xml.bind.annotation.XmlType;
@@ -26,7 +27,9 @@ public class Triple {
     @JsonIgnore
     private ObjectId id;
     private String context;
+    @Indexed
     private String subject;
+    @Indexed
     private String predicate;
     private TypedValue object;
     private Set<Source> sources;
