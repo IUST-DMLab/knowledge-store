@@ -14,6 +14,7 @@ import javax.jws.WebService;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 /**
  * Rest: /rs/v1/triples
@@ -30,6 +31,14 @@ public interface ITriplesServices {
     @WebMethod
     @ApiOperation(value = "Insert or update triple")
     Boolean insert(@Valid TripleData data);
+
+    @POST
+    @Path("/batch/insert")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @WebMethod
+    @ApiOperation(value = "Insert or update triple")
+    Boolean batchInsert(@Valid List<TripleData> data);
 
     @GET
     @Path("/triple")

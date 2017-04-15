@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.jws.WebService;
 import javax.validation.Valid;
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 /**
  * impl {@link ITriplesServices}
@@ -31,6 +32,12 @@ public class TriplesServices implements ITriplesServices {
         final Triple oldTriple = dao.read(data.getContext(), data.getSubject(), data.getPredicate(), data.getObject().getValue());
         final Triple newTriple = data.fill(oldTriple);
         dao.write(newTriple);
+        return true;
+    }
+
+    @Override
+    public Boolean batchInsert(@Valid List<TripleData> data) {
+        data.forEach(this::insert);
         return true;
     }
 
