@@ -1,9 +1,8 @@
 package ir.ac.iust.dml.kg.knowledge.commons;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * Created by HosseiN on 08/04/2017.
@@ -19,14 +18,10 @@ public class Utils {
      * @param max   max of generated
      * @return
      */
-    public static int[] randomIndex(int count, int max) {
-        List<Integer> indexes = new ArrayList<>(max);
-        for (int i = 0; i < max; i++)
-            indexes.add(i);
-        Collections.shuffle(indexes, randomGenerator);
-        int[] result = new int[count < max ? count : max];
-        for (int i = 0; i < result.length; i++)
-            result[i] = indexes.get(i);
-        return result;
+    public static Set<Integer> randomIndex(int count, int max) {
+        final Set<Integer> indexes = new HashSet<>(count);
+        while (indexes.size() < count)
+            indexes.add(randomGenerator.nextInt(max));
+        return indexes;
     }
 }
