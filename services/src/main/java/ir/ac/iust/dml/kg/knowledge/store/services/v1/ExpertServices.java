@@ -21,7 +21,7 @@ public class ExpertServices implements IExpertServices {
 
     @Override
     public List<Triple> triples(String module, String expert, int count) {
-        return dao.randomTripleForExpert(module, expert, count);
+        return dao.randomTripleForExpert(module, expert, count, count);
     }
 
     @Override

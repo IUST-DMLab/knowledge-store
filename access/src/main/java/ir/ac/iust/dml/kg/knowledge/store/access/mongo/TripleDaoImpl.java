@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * impl {@link ITripleDao}
@@ -82,20 +83,22 @@ public class TripleDaoImpl implements ITripleDao {
     }
 
     @Override
-    public List<Triple> randomTripleForExpert(String notModule, String notExpert, int count) {
+    public List<Triple> randomTripleForExpert(String notModule, String notExpert, int count, int pageSize) {
         final Query query = new Query()
                 .addCriteria(Criteria.where("votes.module").ne(notModule))
                 .addCriteria(Criteria.where("votes.expert").ne(notExpert))
                 .addCriteria(Criteria.where("state").is(TripleState.None))
                 .with(new Sort(Sort.Direction.ASC, "subject"));
-        final int total = (int) op.count(query, Triple.class);
+        final int total = (int) op.count(new Query(), Triple.class);
         final List<Triple> cs = new ArrayList<>();
-        final int[] randomIndexes = Utils.randomIndex(count, total);
+        final Set<Integer> randomIndexes = Utils.randomIndex((int) Math.ceil((double) count / pageSize), total / pageSize);
         for (int index : randomIndexes) {
-            final PageRequest pageRequest = new PageRequest(index, 1);
+            final PageRequest pageRequest = new PageRequest(index, pageSize);
             query.with(pageRequest);
-            List<Triple> list = op.find(query, Triple.class);
+            final List<Triple> list = op.find(query, Triple.class);
             cs.addAll(list);
+            if (cs.size() >= count)
+                break;
         }
         return cs;
     }
