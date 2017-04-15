@@ -20,7 +20,7 @@ import java.util.Set;
 @Document(collection = "triples")
 @CompoundIndexes({
         @CompoundIndex(name = "triple_index", def = "{'context': 1, 'subject' : 2, 'predicate' : 3, 'object.value': 4}", unique = true),
-        @CompoundIndex(name = "expert_index", def = "{'votes.expert': 1}", unique = false)
+        @CompoundIndex(name = "expert_index", def = "{'votes.module': 1, 'votes.expert': 1}", unique = false)
 })
 public class Triple {
     @Id
