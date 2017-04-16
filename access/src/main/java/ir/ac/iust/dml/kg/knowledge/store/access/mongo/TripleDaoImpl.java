@@ -68,7 +68,7 @@ public class TripleDaoImpl implements ITripleDao {
         if (predicate != null)
             query.addCriteria(Criteria.where("predicate").is(predicate));
         if (object != null)
-            query.addCriteria(Criteria.where("object.value").is(object));
+            query.addCriteria(Criteria.where("object.value").regex(object));
         return DaoUtils.paging(op, Triple.class, query, page, pageSize);
     }
 
