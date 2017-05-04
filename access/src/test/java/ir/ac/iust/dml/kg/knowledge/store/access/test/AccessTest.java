@@ -1,10 +1,8 @@
 package ir.ac.iust.dml.kg.knowledge.store.access.test;
 
+import ir.ac.iust.dml.kg.knowledge.store.access.dao.IMappingDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao;
-import ir.ac.iust.dml.kg.knowledge.store.access.entities.Source;
-import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
-import ir.ac.iust.dml.kg.knowledge.store.access.entities.TypedValue;
-import ir.ac.iust.dml.kg.knowledge.store.access.entities.ValueType;
+import ir.ac.iust.dml.kg.knowledge.store.access.entities.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +19,8 @@ import java.util.List;
 public class AccessTest {
     @Autowired
     ITripleDao triples;
+    @Autowired
+    IMappingDao mappings;
 
     @Test
     public void testTripleDao() {
@@ -50,5 +50,23 @@ public class AccessTest {
             System.out.println(System.currentTimeMillis());
         }
         System.out.println((System.currentTimeMillis() - s1) / 500);
+    }
+
+    @Test
+    public void mappingTest() {
+        final TemplateMapping m1 = new TemplateMapping("template");
+        mappings.write(m1);
+        try {
+            mappings.write(new TemplateMapping("template"));
+            assert false;
+        } catch (Throwable ignored) {
+        }
+        assert mappings.readTemplate(false, null, 0, 0).getData().contains(m1);
+        assert !mappings.readTemplate(true, null, 0, 0).getData().contains(m1);
+        m1.getRules().add(new MapRule("rdf:type", "dbo:template", ValueType.Resource));
+        mappings.write(m1);
+        assert !mappings.readTemplate(false, null, 0, 0).getData().contains(m1);
+        assert mappings.readTemplate(true, null, 0, 0).getData().contains(m1);
+        mappings.delete(m1);
     }
 }

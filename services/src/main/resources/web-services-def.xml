@@ -25,10 +25,16 @@
 
     <bean id="helloService" class="ir.ac.iust.dml.kg.knowledge.store.services.hello.HelloServiceImpl"/>
     <bean id="v1TriplesServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v1.TriplesServices"/>
+    <bean id="v1MappingServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v1.MappingServices"/>
     <bean id="v1ExpertServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v1.ExpertServices"/>
 
     <jaxws:endpoint implementor="#helloService" address="/ws/v0"/>
     <jaxws:endpoint implementor="#v1TriplesServices" address="/ws/v1/triples">
+        <jaxws:features>
+            <ref bean="commonValidationFeature"/>
+        </jaxws:features>
+    </jaxws:endpoint>
+    <jaxws:endpoint implementor="#v1MappingServices" address="/ws/v1/mappings">
         <jaxws:features>
             <ref bean="commonValidationFeature"/>
         </jaxws:features>
@@ -42,6 +48,7 @@
         <jaxrs:serviceBeans>
             <ref bean="helloService"/>
             <ref bean="v1TriplesServices"/>
+            <ref bean="v1MappingServices"/>
             <ref bean="v1ExpertServices"/>
         </jaxrs:serviceBeans>
         <jaxrs:features>
