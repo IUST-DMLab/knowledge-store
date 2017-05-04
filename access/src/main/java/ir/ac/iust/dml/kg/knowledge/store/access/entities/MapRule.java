@@ -63,4 +63,22 @@ public class MapRule {
     public void setTransform(String transform) {
         this.transform = transform;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MapRule mapRule = (MapRule) o;
+
+        if (predicate != null ? !predicate.equals(mapRule.predicate) : mapRule.predicate != null) return false;
+        return constant != null ? constant.equals(mapRule.constant) : mapRule.constant == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = predicate != null ? predicate.hashCode() : 0;
+        result = 31 * result + (constant != null ? constant.hashCode() : 0);
+        return result;
+    }
 }

@@ -7,9 +7,9 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.xml.bind.annotation.XmlType;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -24,8 +24,8 @@ public class TemplateMapping {
     private ObjectId id;
     @Indexed(unique = true)
     private String template;
-    private Set<PropertyMapping> properties;
-    private List<MapRule> rules;
+    private Map<String, PropertyMapping> properties;
+    private Set<MapRule> rules;
     private long creationEpoch;
     private long modificationEpoch;
 
@@ -53,23 +53,23 @@ public class TemplateMapping {
         this.template = template;
     }
 
-    public Set<PropertyMapping> getProperties() {
+    public Map<String, PropertyMapping> getProperties() {
         if (this.properties == null)
-            this.properties = new HashSet<>();
+            this.properties = new HashMap<>();
         return properties;
     }
 
-    public void setProperties(Set<PropertyMapping> properties) {
+    public void setProperties(Map<String, PropertyMapping> properties) {
         this.properties = properties;
     }
 
-    public List<MapRule> getRules() {
+    public Set<MapRule> getRules() {
         if (this.rules == null)
-            this.rules = new ArrayList<>();
+            this.rules = new HashSet<>();
         return rules;
     }
 
-    public void setRules(List<MapRule> rules) {
+    public void setRules(Set<MapRule> rules) {
         this.rules = rules;
     }
 

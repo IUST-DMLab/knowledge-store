@@ -1,7 +1,7 @@
 package ir.ac.iust.dml.kg.knowledge.store.access.entities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Map template/property to triple
@@ -10,7 +10,15 @@ public class PropertyMapping {
     private String template;
     private String property;
     private Double weight;
-    private List<MapRule> rules;
+    private Set<MapRule> rules;
+
+    public PropertyMapping() {
+    }
+
+    public PropertyMapping(String template, String property) {
+        this.template = template;
+        this.property = property;
+    }
 
     public String getTemplate() {
         return template;
@@ -36,13 +44,13 @@ public class PropertyMapping {
         this.weight = weight;
     }
 
-    public List<MapRule> getRules() {
+    public Set<MapRule> getRules() {
         if (rules == null)
-            rules = new ArrayList<>();
+            rules = new HashSet<>();
         return rules;
     }
 
-    public void setRules(List<MapRule> rules) {
+    public void setRules(Set<MapRule> rules) {
         this.rules = rules;
     }
 
