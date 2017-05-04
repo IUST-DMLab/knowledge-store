@@ -54,8 +54,8 @@ public class MappingDaoImpl implements IMappingDao {
         final Query query = new Query();
         if (hasTemplateMapping != null)
             query.addCriteria(Criteria.where("rules").exists(hasTemplateMapping));
-        if (hasPropertyMapping != null)
-            query.addCriteria(Criteria.where("properties.rules").exists(hasPropertyMapping));
+//        if (hasPropertyMapping != null)
+//            query.addCriteria(Criteria.where("properties.rules").exists(hasPropertyMapping));
         return DaoUtils.paging(op, TemplateMapping.class, query, page, pageSize);
     }
 }
