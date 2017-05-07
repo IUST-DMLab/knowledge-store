@@ -11,6 +11,7 @@ public class PropertyMapping {
     private String property;
     private Double weight;
     private Set<MapRule> rules;
+    private Set<MapRule> recommendations;
 
     public PropertyMapping() {
     }
@@ -52,6 +53,15 @@ public class PropertyMapping {
 
     public void setRules(Set<MapRule> rules) {
         this.rules = rules;
+    }
+
+    public Set<MapRule> getRecommendations() {
+        if (recommendations == null) recommendations = new HashSet<>();
+        return recommendations;
+    }
+
+    public void setRecommendations(Set<MapRule> recommendations) {
+        this.recommendations = recommendations;
     }
 
     @Override

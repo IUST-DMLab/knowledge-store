@@ -26,6 +26,7 @@
     <bean id="helloService" class="ir.ac.iust.dml.kg.knowledge.store.services.hello.HelloServiceImpl"/>
     <bean id="v1TriplesServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v1.TriplesServices"/>
     <bean id="v1MappingServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v1.MappingServices"/>
+    <bean id="v1MappingExpertServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v1.MappingExpertServices"/>
     <bean id="v1ExpertServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v1.ExpertServices"/>
 
     <jaxws:endpoint implementor="#helloService" address="/ws/v0"/>
@@ -44,12 +45,18 @@
             <ref bean="commonValidationFeature"/>
         </jaxws:features>
     </jaxws:endpoint>
+    <jaxws:endpoint implementor="#v1MappingExpertServices" address="/ws/v1/mappings/experts">
+        <jaxws:features>
+            <ref bean="commonValidationFeature"/>
+        </jaxws:features>
+    </jaxws:endpoint>
     <jaxrs:server address="/rs">
         <jaxrs:serviceBeans>
             <ref bean="helloService"/>
             <ref bean="v1TriplesServices"/>
             <ref bean="v1MappingServices"/>
             <ref bean="v1ExpertServices"/>
+            <ref bean="v1MappingExpertServices"/>
         </jaxrs:serviceBeans>
         <jaxrs:features>
             <bean class="org.apache.cxf.jaxrs.swagger.Swagger2Feature"/>
