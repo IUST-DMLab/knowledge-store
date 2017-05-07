@@ -32,10 +32,13 @@ public class TemplateData {
         for (MapRuleData r : rules)
             mapping.getRules().add(r.fill(null));
         for (PropertyData property : properties) {
-            PropertyMapping old = mapping.getProperties().get(property.getProperty());
+            PropertyMapping old = null;
+            for (PropertyMapping m : mapping.getProperties())
+                if (m.getProperty().equals(property.getProperty()))
+                    old = m;
             if (old == null) {
                 old = new PropertyMapping(template, property.getProperty());
-                mapping.getProperties().put(property.getProperty(), old);
+                mapping.getProperties().add(old);
             }
             property.fill(old);
         }

@@ -1,9 +1,11 @@
 package ir.ac.iust.dml.kg.knowledge.store.services.v1;
 
 import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
+import ir.ac.iust.dml.kg.knowledge.store.access.dao.IMappingDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.PropertyMapping;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.TemplateMapping;
 import ir.ac.iust.dml.kg.knowledge.store.services.v1.data.MapRuleData;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.jws.WebService;
 import javax.validation.Valid;
@@ -14,14 +16,17 @@ import java.util.List;
  */
 @WebService(endpointInterface = "ir.ac.iust.dml.kg.knowledge.store.services.v1.IMappingExpertServices")
 public class MappingExpertServices implements IMappingExpertServices {
+    @Autowired
+    private IMappingDao db;
     @Override
     public PagingList<PropertyMapping> searchProperty(String template, String property, int page, int pageSize) {
+
         return null;
     }
 
     @Override
     public PagingList<TemplateMapping> searchTemplate(String template, int page, int pageSize) {
-        return null;
+        return db.searchTemplate(template, page, pageSize);
     }
 
     @Override

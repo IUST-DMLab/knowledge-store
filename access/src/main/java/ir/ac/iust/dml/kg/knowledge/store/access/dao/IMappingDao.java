@@ -17,4 +17,6 @@ public interface IMappingDao {
     TemplateMapping read(String title);
 
     PagingList<TemplateMapping> readTemplate(Boolean hasTemplateMapping, Boolean hasPropertyMapping, int page, int pageSize);
+
+    PagingList<TemplateMapping> searchTemplate(String template, int page, int pageSize);
 }

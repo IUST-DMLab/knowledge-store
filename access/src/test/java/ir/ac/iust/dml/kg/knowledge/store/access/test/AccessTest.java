@@ -55,7 +55,8 @@ public class AccessTest {
     @Test
     public void mappingTest() {
         final TemplateMapping m1 = new TemplateMapping("template");
-        mappings.write(m1);
+        final TemplateMapping m2 = new TemplateMapping("template2");
+        mappings.write(m1, m2);
         try {
             mappings.write(new TemplateMapping("template"));
             assert false;
@@ -67,6 +68,15 @@ public class AccessTest {
         mappings.write(m1);
         assert !mappings.readTemplate(false, null, 0, 0).getData().contains(m1);
         assert mappings.readTemplate(true, null, 0, 0).getData().contains(m1);
-        mappings.delete(m1);
+        m1.getProperties().add(new PropertyMapping("template", "name"));
+        m1.getProperties().add(new PropertyMapping("template", "family"));
+        m2.getProperties().add(new PropertyMapping("template2", "family"));
+        mappings.write(m1, m2);
+        try {
+            m1.getProperties().add(new PropertyMapping("template", "family"));
+            assert false;
+        } catch (Throwable ignored) {
+        }
+        mappings.delete(m1, m2);
     }
 }

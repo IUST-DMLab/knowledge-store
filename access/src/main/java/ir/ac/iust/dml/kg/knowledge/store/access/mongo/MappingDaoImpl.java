@@ -5,6 +5,7 @@ import ir.ac.iust.dml.kg.knowledge.store.access.dao.IMappingDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.TemplateMapping;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -56,6 +57,15 @@ public class MappingDaoImpl implements IMappingDao {
             query.addCriteria(Criteria.where("rules").exists(hasTemplateMapping));
 //        if (hasPropertyMapping != null)
 //            query.addCriteria(Criteria.where("properties.rules").exists(hasPropertyMapping));
+        return DaoUtils.paging(op, TemplateMapping.class, query, page, pageSize);
+    }
+
+    @Override
+    public PagingList<TemplateMapping> searchTemplate(String template, int page, int pageSize) {
+        final Query query = new Query();
+        if (template != null)
+            query.addCriteria(Criteria.where("template").regex(template));
+        query.with(new Sort(Sort.Direction.DESC, "weight"));
         return DaoUtils.paging(op, TemplateMapping.class, query, page, pageSize);
     }
 }
