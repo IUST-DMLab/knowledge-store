@@ -28,6 +28,7 @@ public class TemplateMapping {
     private Set<MapRule> rules;
     private long creationEpoch;
     private long modificationEpoch;
+    private Double weight;
 
     public TemplateMapping() {
     }
@@ -87,6 +88,14 @@ public class TemplateMapping {
 
     public void setModificationEpoch(long modificationEpoch) {
         this.modificationEpoch = modificationEpoch;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
     }
 
     @Override

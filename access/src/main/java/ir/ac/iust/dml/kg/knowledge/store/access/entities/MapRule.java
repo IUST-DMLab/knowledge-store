@@ -72,13 +72,15 @@ public class MapRule {
         MapRule mapRule = (MapRule) o;
 
         if (predicate != null ? !predicate.equals(mapRule.predicate) : mapRule.predicate != null) return false;
-        return constant != null ? constant.equals(mapRule.constant) : mapRule.constant == null;
+        if (constant != null ? !constant.equals(mapRule.constant) : mapRule.constant != null) return false;
+        return transform != null ? transform.equals(mapRule.transform) : mapRule.transform == null;
     }
 
     @Override
     public int hashCode() {
         int result = predicate != null ? predicate.hashCode() : 0;
         result = 31 * result + (constant != null ? constant.hashCode() : 0);
+        result = 31 * result + (transform != null ? transform.hashCode() : 0);
         return result;
     }
 }

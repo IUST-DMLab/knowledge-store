@@ -22,6 +22,7 @@ public class TemplateData {
     @Valid
     private List<PropertyData> properties;
     private List<MapRuleData> rules;
+    private Double weight;
 
     public TemplateMapping fill(TemplateMapping mapping) {
         if (mapping == null)
@@ -38,6 +39,7 @@ public class TemplateData {
             }
             property.fill(old);
         }
+        mapping.setWeight(weight);
         return mapping;
     }
 
@@ -63,5 +65,13 @@ public class TemplateData {
 
     public void setRules(List<MapRuleData> rules) {
         this.rules = rules;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
     }
 }

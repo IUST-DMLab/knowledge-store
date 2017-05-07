@@ -20,12 +20,15 @@ public class PropertyData {
     @ApiModelProperty(required = false, example = "2.0")
     private Double weight;
     private List<MapRuleData> rules;
+    private List<MapRuleData> recommendations;
 
 
     public PropertyMapping fill(PropertyMapping mapping) {
         mapping.setWeight(weight);
         for (MapRuleData r : rules)
             mapping.getRules().add(r.fill(null));
+        for (MapRuleData r : recommendations)
+            mapping.getRecommendations().add(r.fill(null));
         return mapping;
     }
 
@@ -53,4 +56,11 @@ public class PropertyData {
         this.rules = rules;
     }
 
+    public List<MapRuleData> getRecommendations() {
+        return recommendations;
+    }
+
+    public void setRecommendations(List<MapRuleData> recommendations) {
+        this.recommendations = recommendations;
+    }
 }
