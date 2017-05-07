@@ -3,13 +3,15 @@ package ir.ac.iust.dml.kg.knowledge.store.access.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.xml.bind.annotation.XmlType;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -18,16 +20,20 @@ import java.util.Set;
  */
 @XmlType(name = "TemplateMapping", namespace = "http://kg.dml.iust.ac.ir")
 @Document(collection = "template-mapping")
+@CompoundIndexes({
+        @CompoundIndex(name = "property_mapping", def = "{'properties.template': 1, 'properties.property' : 2}", unique = false, sparse = true)
+})
 public class TemplateMapping {
     @Id
     @JsonIgnore
     private ObjectId id;
     @Indexed(unique = true)
     private String template;
-    private Map<String, PropertyMapping> properties;
+    private List<PropertyMapping> properties;
     private Set<MapRule> rules;
     private long creationEpoch;
     private long modificationEpoch;
+    @Indexed
     private Double weight;
 
     public TemplateMapping() {
@@ -54,13 +60,13 @@ public class TemplateMapping {
         this.template = template;
     }
 
-    public Map<String, PropertyMapping> getProperties() {
+    public List<PropertyMapping> getProperties() {
         if (this.properties == null)
-            this.properties = new HashMap<>();
+            this.properties = new ArrayList<>();
         return properties;
     }
 
-    public void setProperties(Map<String, PropertyMapping> properties) {
+    public void setProperties(List<PropertyMapping> properties) {
         this.properties = properties;
     }
 
