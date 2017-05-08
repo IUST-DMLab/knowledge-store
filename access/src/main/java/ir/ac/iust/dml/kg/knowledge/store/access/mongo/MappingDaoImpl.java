@@ -1,5 +1,6 @@
 package ir.ac.iust.dml.kg.knowledge.store.access.mongo;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
@@ -10,6 +11,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
@@ -102,5 +104,21 @@ public class MappingDaoImpl implements IMappingDao {
         final Iterable<DBObject> aggCountResult = op.getCollection("template-mapping").aggregate(pipeline).results();
         int count = (int) ((DBObject) (((ArrayList) aggCountResult).get(0))).get("_count");
         return new PagingList<>(convertedResult, page, pageSize, count);
+    }
+
+    @Override
+    public List<String> searchPredicate(String predicate, int max) {
+        Aggregation ag = Aggregation.newAggregation(
+                Aggregation.unwind("properties"),
+                Aggregation.unwind("properties.rules"),
+                Aggregation.group("properties.rules.predicate"),
+                Aggregation.match(Criteria.where("_id").regex(predicate)),
+                Aggregation.limit(max)
+        );
+        BasicDBList list = ((BasicDBList) (op.aggregate(ag, "template-mapping", String.class).getRawResults().get("result")));
+        List<String> result = new ArrayList<>();
+        list.forEach(
+                a -> result.add(((BasicDBObject) a).get("_id").toString()));
+        return result;
     }
 }

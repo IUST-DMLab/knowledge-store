@@ -32,7 +32,7 @@ public class MappingExpertServices implements IMappingExpertServices {
 
     @Override
     public List<String> predicates(String keyword) {
-        return null;
+        return db.searchPredicate(keyword, 10);
     }
 
     @Override
