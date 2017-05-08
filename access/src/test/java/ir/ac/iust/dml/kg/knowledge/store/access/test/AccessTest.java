@@ -77,6 +77,10 @@ public class AccessTest {
             assert false;
         } catch (Throwable ignored) {
         }
+
+        assert mappings.searchProperty("template", null, 0, 1).getTotalSize() == 3;
+        assert mappings.searchProperty("template2", null, 0, 1).getTotalSize() == 1;
+        assert mappings.searchPredicate("ty", 10).size() > 0;
         mappings.delete(m1, m2);
     }
 }

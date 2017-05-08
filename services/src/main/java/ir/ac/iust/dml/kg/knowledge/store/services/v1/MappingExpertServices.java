@@ -22,8 +22,7 @@ public class MappingExpertServices implements IMappingExpertServices {
 
     @Override
     public PagingList<PropertyMapping> searchProperty(String template, String property, int page, int pageSize) {
-
-        return null;
+        return db.searchProperty(template, property, page, pageSize);
     }
 
     @Override
@@ -33,7 +32,7 @@ public class MappingExpertServices implements IMappingExpertServices {
 
     @Override
     public List<String> predicates(String keyword) {
-        return null;
+        return db.searchPredicate(keyword, 10);
     }
 
     @Override

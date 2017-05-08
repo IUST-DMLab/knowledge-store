@@ -29,19 +29,21 @@ public class TemplateData {
             mapping = new TemplateMapping(template);
         else
             assert template.equals(mapping.getTemplate());
-        for (MapRuleData r : rules)
-            mapping.getRules().add(r.fill(null));
-        for (PropertyData property : properties) {
-            PropertyMapping old = null;
-            for (PropertyMapping m : mapping.getProperties())
-                if (m.getProperty().equals(property.getProperty()))
-                    old = m;
-            if (old == null) {
-                old = new PropertyMapping(template, property.getProperty());
-                mapping.getProperties().add(old);
+        if (rules != null)
+            for (MapRuleData r : rules)
+                mapping.getRules().add(r.fill(null));
+        if (properties != null)
+            for (PropertyData property : properties) {
+                PropertyMapping old = null;
+                for (PropertyMapping m : mapping.getProperties())
+                    if (m.getProperty().equals(property.getProperty()))
+                        old = m;
+                if (old == null) {
+                    old = new PropertyMapping(template, property.getProperty());
+                    mapping.getProperties().add(old);
+                }
+                property.fill(old);
             }
-            property.fill(old);
-        }
         mapping.setWeight(weight);
         return mapping;
     }
