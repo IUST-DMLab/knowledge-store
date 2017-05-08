@@ -25,10 +25,12 @@ public class PropertyData {
 
     public PropertyMapping fill(PropertyMapping mapping) {
         mapping.setWeight(weight);
-        for (MapRuleData r : rules)
-            mapping.getRules().add(r.fill(null));
-        for (MapRuleData r : recommendations)
-            mapping.getRecommendations().add(r.fill(null));
+        if (rules != null)
+            for (MapRuleData r : rules)
+                mapping.getRules().add(r.fill(null));
+        if (recommendations != null)
+            for (MapRuleData r : recommendations)
+                mapping.getRecommendations().add(r.fill(null));
         return mapping;
     }
 

@@ -22,8 +22,7 @@ public class MappingExpertServices implements IMappingExpertServices {
 
     @Override
     public PagingList<PropertyMapping> searchProperty(String template, String property, int page, int pageSize) {
-
-        return null;
+        return db.searchProperty(template, property, page, pageSize);
     }
 
     @Override

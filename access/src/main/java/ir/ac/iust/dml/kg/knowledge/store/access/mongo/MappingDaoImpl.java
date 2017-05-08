@@ -1,7 +1,10 @@
 package ir.ac.iust.dml.kg.knowledge.store.access.mongo;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.IMappingDao;
+import ir.ac.iust.dml.kg.knowledge.store.access.entities.PropertyMapping;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.TemplateMapping;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,9 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * impl {@link IMappingDao}
@@ -67,5 +73,34 @@ public class MappingDaoImpl implements IMappingDao {
             query.addCriteria(Criteria.where("template").regex(template));
         query.with(new Sort(Sort.Direction.DESC, "weight"));
         return DaoUtils.paging(op, TemplateMapping.class, query, page, pageSize);
+    }
+
+    @Override
+    public PagingList<PropertyMapping> searchProperty(String template, String property, int page, int pageSize) {
+        List<DBObject> pipeline = new ArrayList<>();
+        if (template != null)
+            pipeline.add(new BasicDBObject()
+                    .append("$match", new BasicDBObject("template", new BasicDBObject().append("$regex", template))));
+        pipeline.add(new BasicDBObject().append("$unwind", "$properties"));
+        pipeline.add(new BasicDBObject().append("$replaceRoot", new BasicDBObject().append("newRoot", "$properties")));
+        if (property != null)
+            pipeline.add(new BasicDBObject()
+                    .append("$match", new BasicDBObject("property", new BasicDBObject().append("$regex", property))));
+        if (pageSize > 0) {
+            pipeline.add(new BasicDBObject().append("$limit", pageSize));
+            pipeline.add(new BasicDBObject().append("$skip", page * pageSize));
+        }
+        final Iterable<DBObject> result = op.getCollection("template-mapping").aggregate(pipeline).results();
+        final ArrayList<PropertyMapping> convertedResult = new ArrayList<>();
+        result.forEach(obj -> convertedResult.add(op.getConverter().read(PropertyMapping.class, obj)));
+
+        if (pageSize <= 0)
+            return new PagingList<>(convertedResult);
+        pipeline.remove(pipeline.size() - 1);
+        pipeline.remove(pipeline.size() - 1);
+        pipeline.add(new BasicDBObject("$group", new BasicDBObject().append("_id", null).append("_count", new BasicDBObject("$sum", 1))));
+        final Iterable<DBObject> aggCountResult = op.getCollection("template-mapping").aggregate(pipeline).results();
+        int count = (int) ((DBObject) (((ArrayList) aggCountResult).get(0))).get("_count");
+        return new PagingList<>(convertedResult, page, pageSize, count);
     }
 }
