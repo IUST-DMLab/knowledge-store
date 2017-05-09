@@ -17,6 +17,7 @@ import java.util.Map;
 /**
  * Utils for mongo query dao
  */
+@SuppressWarnings("Duplicates")
 class DaoUtils {
     @SuppressWarnings("unchecked")
     static <T> PagingList<T> paging(MongoOperations op, Class<T> clazz, Query query, int page, int pageSize) {
@@ -58,7 +59,7 @@ class DaoUtils {
             final Aggregation agg = Aggregation.newAggregation(operations);
             final AggregationResults<T2> aggRes = op.aggregate(agg, source, destination);
             final List<T2> result = aggRes.getMappedResults();
-            return new PagingList<>(result, page, pageSize, result.size());
+            return new PagingList<>(result);
         }
     }
 
