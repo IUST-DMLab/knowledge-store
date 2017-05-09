@@ -19,9 +19,15 @@ public class Utils {
      * @return
      */
     public static Set<Integer> randomIndex(int count, int max) {
-        final Set<Integer> indexes = new HashSet<>(count);
-        while (indexes.size() < count)
-            indexes.add(randomGenerator.nextInt(max));
-        return indexes;
+        if (count >= max) {
+            final Set<Integer> indexes = new HashSet<>(count);
+            for (int i = 0; i < max; i++) indexes.add(i);
+            return indexes;
+        } else {
+            final Set<Integer> indexes = new HashSet<>(count);
+            while (indexes.size() < count)
+                indexes.add(randomGenerator.nextInt(max));
+            return indexes;
+        }
     }
 }

@@ -21,7 +21,7 @@ public class ExpertServices implements IExpertServices {
 
     @Override
     public List<Triple> triples(String module, String expert, int count) {
-        return dao.randomTripleForExpert(module, expert, count, count);
+        return dao.randomTripleForExpert(module, expert, count);
     }
 
     @Override
@@ -34,5 +34,10 @@ public class ExpertServices implements IExpertServices {
         triple.setState(ExpertLogic.makeState(triple.getVotes()));
         dao.write(triple);
         return true;
+    }
+
+    @Override
+    public List<Triple> triplesSubject(String sourceModule, String module, String expert, String subject) {
+        return dao.randomSubjectForExpert(sourceModule, module, expert, subject);
     }
 }

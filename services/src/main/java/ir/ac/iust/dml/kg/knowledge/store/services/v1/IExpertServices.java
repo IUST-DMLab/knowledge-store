@@ -41,4 +41,15 @@ public interface IExpertServices {
                  @WebParam(name = "module") @QueryParam("module") String module,
                  @WebParam(name = "expert") @QueryParam("expert") String expert,
                  @WebParam(name = "vote") @QueryParam("vote") Vote vote);
+
+    @GET
+    @Path("/triples/subject")
+    @Produces(MediaType.APPLICATION_JSON)
+    @WebMethod
+    @ApiOperation(value = "Vote on triple")
+    List<Triple> triplesSubject(
+            @WebParam(name = "sourceModule") @QueryParam("sourceModule") String sourceModule,
+            @WebParam(name = "module") @QueryParam("module") String module,
+            @WebParam(name = "expert") @QueryParam("expert") String expert,
+            @WebParam(name = "subject") @QueryParam("subject") String subject);
 }

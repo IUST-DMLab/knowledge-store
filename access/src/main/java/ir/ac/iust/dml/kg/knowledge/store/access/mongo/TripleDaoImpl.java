@@ -5,11 +5,14 @@ import ir.ac.iust.dml.kg.knowledge.commons.Utils;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.TripleState;
+import ir.ac.iust.dml.kg.knowledge.store.access.stats.KeyCount;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
@@ -83,7 +86,7 @@ public class TripleDaoImpl implements ITripleDao {
     }
 
     @Override
-    public List<Triple> randomTripleForExpert(String notModule, String notExpert, int count, int pageSize) {
+    public List<Triple> randomTripleForExpert(String notModule, String notExpert, int count) {
         final Query query = new Query()
                 .addCriteria(Criteria.where("votes.module").ne(notModule))
                 .addCriteria(Criteria.where("votes.expert").ne(notExpert))
@@ -91,9 +94,9 @@ public class TripleDaoImpl implements ITripleDao {
                 .with(new Sort(Sort.Direction.ASC, "subject"));
         final int total = (int) op.count(new Query(), Triple.class);
         final List<Triple> cs = new ArrayList<>();
-        final Set<Integer> randomIndexes = Utils.randomIndex((int) Math.ceil((double) count / pageSize), total / pageSize);
+        final Set<Integer> randomIndexes = Utils.randomIndex(count, total);
         for (int index : randomIndexes) {
-            final PageRequest pageRequest = new PageRequest(index, pageSize);
+            final PageRequest pageRequest = new PageRequest(index, 10);
             query.with(pageRequest);
             final List<Triple> list = op.find(query, Triple.class);
             cs.addAll(list);
@@ -101,5 +104,37 @@ public class TripleDaoImpl implements ITripleDao {
                 break;
         }
         return cs;
+    }
+
+    @Override
+    public List<Triple> randomSubjectForExpert(String isSourceModule, String neModule, String neExpert, String subject) {
+        final PagingList<KeyCount> subjects = searchSubjectForExpert(isSourceModule, neModule, neExpert, subject, 0, 1);
+        if (subjects.getTotalSize() == 0) return new ArrayList<>();
+        final int index = Utils.randomGenerator.nextInt((int) subjects.getTotalSize());
+        final PagingList<KeyCount> selectedSubject = searchSubjectForExpert(isSourceModule, neModule, neExpert, subject, index, 1);
+        final Query query = new Query().addCriteria(Criteria.where("subject").is(selectedSubject.getData().get(0).getId()));
+        if (neModule != null)
+            query.addCriteria(Criteria.where("votes.module").ne(neModule));
+        if (neExpert != null)
+            query.addCriteria(Criteria.where("votes.expert").ne(neExpert));
+        query.addCriteria(Criteria.where("state").is(TripleState.None));
+        return op.find(query, Triple.class);
+    }
+
+    @Override
+    public PagingList<KeyCount> searchSubjectForExpert(String isSourceModule, String neModule, String neExpert, String subject, int page, int pageSize) {
+        final List<AggregationOperation> operations = new ArrayList<>();
+        if (isSourceModule != null)
+            operations.add(Aggregation.match(Criteria.where("sources.module").is(isSourceModule)));
+        if (neModule != null)
+            operations.add(Aggregation.match(Criteria.where("votes.module").ne(neModule)));
+        if (neExpert != null)
+            operations.add(Aggregation.match(Criteria.where("votes.expert").ne(neExpert)));
+        if (subject != null)
+            operations.add(Aggregation.match(Criteria.where("subject").regex(subject)));
+        operations.add(Aggregation.group("subject").count().as("count"));
+        return DaoUtils
+                .aggregate(op, Triple.class, KeyCount.class, page, pageSize,
+                        operations.toArray(new AggregationOperation[operations.size()]));
     }
 }

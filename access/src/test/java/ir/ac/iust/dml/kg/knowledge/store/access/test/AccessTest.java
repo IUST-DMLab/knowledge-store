@@ -1,8 +1,10 @@
 package ir.ac.iust.dml.kg.knowledge.store.access.test;
 
+import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.IMappingDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.*;
+import ir.ac.iust.dml.kg.knowledge.store.access.stats.KeyCount;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,20 +39,22 @@ public class AccessTest {
         triples.write(t1);
         assert triples.search(null, null, "birth_year", null, 0, 0).getTotalSize() == 2;
         assert triples.search(null, "Hossein", "birth_year", "64", 0, 0).getTotalSize() == 1;
-        assert triples.randomTripleForExpert("web", "hossein", 2, 2) != null;
+        assert triples.randomTripleForExpert("web", "hossein", 2) != null;
         triples.delete(t1, t2);
     }
 
     @Test
     public void randomTest() {
+        PagingList<KeyCount> subjects = triples.searchSubjectForExpert("wikipedia/infobox", "web", "hossein", "/c", 0, 2);
         long s1 = System.currentTimeMillis();
         for (int i = 0; i < 20; i++) {
-            List<Triple> x = triples.randomTripleForExpert("web", "hossein", 30, 50);
+            List<Triple> x = triples.randomTripleForExpert("web", "hossein", 30);
             assert !x.isEmpty();
             System.out.println(System.currentTimeMillis());
         }
         System.out.println((System.currentTimeMillis() - s1) / 500);
     }
+
 
     @Test
     public void mappingTest() {
