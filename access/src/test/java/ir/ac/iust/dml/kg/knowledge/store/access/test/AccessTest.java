@@ -1,10 +1,8 @@
 package ir.ac.iust.dml.kg.knowledge.store.access.test;
 
-import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.IMappingDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.*;
-import ir.ac.iust.dml.kg.knowledge.store.access.stats.KeyCount;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +43,8 @@ public class AccessTest {
 
     @Test
     public void randomTest() {
-        PagingList<KeyCount> subjects = triples.searchSubjectForExpert("wikipedia/infobox", "web", "hossein", "/c", 0, 2);
+        long s0 = System.currentTimeMillis();
+        List<Triple> subjects = triples.randomSubjectForExpert("wiki", "web", "hossein", "/c");
         long s1 = System.currentTimeMillis();
         for (int i = 0; i < 20; i++) {
             List<Triple> x = triples.randomTripleForExpert("web", "hossein", 30);

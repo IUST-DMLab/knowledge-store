@@ -108,11 +108,23 @@ public class TripleDaoImpl implements ITripleDao {
 
     @Override
     public List<Triple> randomSubjectForExpert(String isSourceModule, String neModule, String neExpert, String subject) {
-        final PagingList<KeyCount> subjects = searchSubjectForExpert(isSourceModule, neModule, neExpert, subject, 0, 1);
-        if (subjects.getTotalSize() == 0) return new ArrayList<>();
-        final int index = Utils.randomGenerator.nextInt((int) subjects.getTotalSize());
-        final PagingList<KeyCount> selectedSubject = searchSubjectForExpert(isSourceModule, neModule, neExpert, subject, index, 1);
-        final Query query = new Query().addCriteria(Criteria.where("subject").is(selectedSubject.getData().get(0).getId()));
+        final Query selectSubjectQuery = new Query();
+        if (isSourceModule != null)
+            selectSubjectQuery.addCriteria(Criteria.where("sources.module").is(isSourceModule));
+        if (neModule != null)
+            selectSubjectQuery.addCriteria(Criteria.where("votes.module").ne(neModule));
+        if (neExpert != null)
+            selectSubjectQuery.addCriteria(Criteria.where("votes.expert").ne(neExpert));
+        if (subject != null)
+            selectSubjectQuery.addCriteria(Criteria.where("subject").regex(subject));
+        selectSubjectQuery.addCriteria(Criteria.where("state").is(TripleState.None));
+        final long total = op.count(selectSubjectQuery, Triple.class);
+        if (total == 0) return new ArrayList<>();
+        final int index = Utils.randomGenerator.nextInt((int) total);
+        selectSubjectQuery.with(new PageRequest(index, 1));
+        final List<Triple> selectedSubject = op.find(selectSubjectQuery, Triple.class);
+        if (selectedSubject.isEmpty()) return new ArrayList<>();
+        final Query query = new Query().addCriteria(Criteria.where("subject").is(selectedSubject.get(0).getSubject()));
         if (neModule != null)
             query.addCriteria(Criteria.where("votes.module").ne(neModule));
         if (neExpert != null)
