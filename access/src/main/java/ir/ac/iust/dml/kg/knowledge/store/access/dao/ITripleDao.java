@@ -22,7 +22,8 @@ public interface ITripleDao {
 
     List<Triple> randomTripleForExpert(String notModule, String notExpert, int count);
 
-    List<Triple> randomSubjectForExpert(String isSourceModule, String neModule, String neExpert, String subject);
+    List<Triple> randomSubjectForExpert(String isSourceModule, String neModule, String neExpert, String subjectRegex,
+                                        String subject, Integer size);
 
     PagingList<KeyCount> searchSubjectForExpert(String isSourceModule, String neModule, String neExpert, String subject, int page, int pageSize);
 
