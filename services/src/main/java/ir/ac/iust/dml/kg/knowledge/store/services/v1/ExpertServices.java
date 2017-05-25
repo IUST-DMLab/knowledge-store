@@ -37,7 +37,7 @@ public class ExpertServices implements IExpertServices {
     }
 
     @Override
-    public List<Triple> triplesSubject(String sourceModule, String module, String expert, String subject) {
-        return dao.randomSubjectForExpert(sourceModule, module, expert, subject);
+    public List<Triple> triplesSubject(String sourceModule, String module, String expert, String subjectQuery, String subjectMatch, Integer size) {
+        return dao.randomSubjectForExpert(sourceModule, module, expert, subjectQuery, subjectMatch, size != null && size > 0 ? size : null);
     }
 }

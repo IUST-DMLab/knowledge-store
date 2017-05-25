@@ -1,5 +1,7 @@
 package ir.ac.iust.dml.kg.knowledge.store.access.mongo;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
 import ir.ac.iust.dml.kg.knowledge.commons.Utils;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao;
@@ -18,6 +20,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -107,24 +110,29 @@ public class TripleDaoImpl implements ITripleDao {
     }
 
     @Override
-    public List<Triple> randomSubjectForExpert(String isSourceModule, String neModule, String neExpert, String subject) {
-        final Query selectSubjectQuery = new Query();
-        if (isSourceModule != null)
-            selectSubjectQuery.addCriteria(Criteria.where("sources.module").is(isSourceModule));
-        if (neModule != null)
-            selectSubjectQuery.addCriteria(Criteria.where("votes.module").ne(neModule));
-        if (neExpert != null)
-            selectSubjectQuery.addCriteria(Criteria.where("votes.expert").ne(neExpert));
+    public List<Triple> randomSubjectForExpert(String isSourceModule, String neModule, String neExpert, String subjectRegex,
+                                               String subject, Integer size) {
+        final List<BasicDBObject> sampleQuery = new ArrayList<>();
         if (subject != null)
-            selectSubjectQuery.addCriteria(Criteria.where("subject").regex(subject));
-        selectSubjectQuery.addCriteria(Criteria.where("state").is(TripleState.None));
-        final long total = op.count(selectSubjectQuery, Triple.class);
-        if (total == 0) return new ArrayList<>();
-        final int index = Utils.randomGenerator.nextInt((int) total);
-        selectSubjectQuery.with(new PageRequest(index, 1));
-        final List<Triple> selectedSubject = op.find(selectSubjectQuery, Triple.class);
-        if (selectedSubject.isEmpty()) return new ArrayList<>();
-        final Query query = new Query().addCriteria(Criteria.where("subject").is(selectedSubject.get(0).getSubject()));
+            sampleQuery.add(new BasicDBObject("$match", new BasicDBObject("subject", subject)));
+        if (size != null)
+            sampleQuery.add(new BasicDBObject("$sample", new BasicDBObject("size", size)));
+        if (subjectRegex != null)
+            sampleQuery.add(new BasicDBObject("$match", new BasicDBObject("subject", new BasicDBObject("$regex", subjectRegex))));
+        if (isSourceModule != null)
+            sampleQuery.add(new BasicDBObject("$match", new BasicDBObject("sources.module", isSourceModule)));
+        if (neModule != null)
+            sampleQuery.add(new BasicDBObject("$match", new BasicDBObject("votes.module", new BasicDBObject("$ne", neModule))));
+        if (neExpert != null)
+            sampleQuery.add(new BasicDBObject("$match", new BasicDBObject("votes.expert", new BasicDBObject("$ne", neExpert))));
+        sampleQuery.add(new BasicDBObject("$match", new BasicDBObject("state", TripleState.None.toString())));
+        sampleQuery.add(new BasicDBObject("$sample", new BasicDBObject("size", 1)));
+
+        final Iterator<DBObject> subjectAggregate = op.getCollection("triples").aggregate(sampleQuery).results().iterator();
+        if (!subjectAggregate.hasNext()) return new ArrayList<>();
+        final Triple selectedSubject = op.getConverter().read(Triple.class, subjectAggregate.next());
+        if (selectedSubject == null) return new ArrayList<>();
+        final Query query = new Query().addCriteria(Criteria.where("subject").is(selectedSubject.getSubject()));
         if (neModule != null)
             query.addCriteria(Criteria.where("votes.module").ne(neModule));
         if (neExpert != null)

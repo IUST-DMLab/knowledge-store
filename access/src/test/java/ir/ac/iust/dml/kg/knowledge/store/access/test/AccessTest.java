@@ -44,7 +44,7 @@ public class AccessTest {
     @Test
     public void randomTest() {
         long s0 = System.currentTimeMillis();
-        List<Triple> subjects = triples.randomSubjectForExpert("wiki", "web", "hossein", "/c");
+        List<Triple> subjects = triples.randomSubjectForExpert("wiki", "web", "hossein", null, null, 10000);
         long s1 = System.currentTimeMillis();
         for (int i = 0; i < 20; i++) {
             List<Triple> x = triples.randomTripleForExpert("web", "hossein", 30);

@@ -51,5 +51,7 @@ public interface IExpertServices {
             @WebParam(name = "sourceModule") @QueryParam("sourceModule") String sourceModule,
             @WebParam(name = "module") @QueryParam("module") String module,
             @WebParam(name = "expert") @QueryParam("expert") String expert,
-            @WebParam(name = "subject") @QueryParam("subject") String subject);
+            @WebParam(name = "subjectQuery") @QueryParam("subjectQuery") String subjectQuery,
+            @WebParam(name = "subjectMatch") @QueryParam("subjectMatch") String subjectMatch,
+            @WebParam(name = "size") @QueryParam("size") Integer size);
 }

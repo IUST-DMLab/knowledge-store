@@ -10,7 +10,7 @@
         <relativePath>../</relativePath>
         <groupId>ir.ac.iust.dml.kg.knowledge.store</groupId>
         <artifactId>parent</artifactId>
-        <version>1.5.0</version>
+        <version>1.6.0</version>
     </parent>
 
     <build>
@@ -21,14 +21,14 @@
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
-            <version>3.4.1</version>
+            <version>3.4.2</version>
         </dependency>
 
         <!-- Spring data MongoDB -->
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
-            <version>1.9.6.RELEASE</version>
+            <version>1.10.3.RELEASE</version>
         </dependency>
 
 
