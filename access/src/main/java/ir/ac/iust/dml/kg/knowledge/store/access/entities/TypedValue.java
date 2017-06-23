@@ -1,5 +1,9 @@
 package ir.ac.iust.dml.kg.knowledge.store.access.entities;
 
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
+
 /**
  * TypedValue of object
  */
@@ -69,7 +73,30 @@ public class TypedValue {
         return value != null ? value.hashCode() : 0;
     }
 
-    public Object parseValue() {
-        return type.parse(value);
+    public Object createValue() {
+        final ValueFactory vf = SimpleValueFactory.getInstance();
+        if (type != null)
+            switch (type) {
+                case Resource:
+                    return vf.createIRI(value);
+                case String:
+                    return vf.createLiteral(value, lang);
+                case Boolean:
+                    return vf.createLiteral(value, XMLSchema.BOOLEAN);
+                case Byte:
+                    return vf.createLiteral(value, XMLSchema.BYTE);
+                case Short:
+                    return vf.createLiteral(value, XMLSchema.SHORT);
+                case Integer:
+                    return vf.createLiteral(value, XMLSchema.INTEGER);
+                case Long:
+                    return vf.createLiteral(value, XMLSchema.LONG);
+                case Double:
+                    return vf.createLiteral(value, XMLSchema.DOUBLE);
+                case Float:
+                    return vf.createLiteral(value, XMLSchema.FLOAT);
+
+            }
+        return vf.createLiteral(value);
     }
 }
