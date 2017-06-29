@@ -40,6 +40,15 @@ public class TriplesServices implements ITriplesServices {
     }
 
     @Override
+    public Triple remove(String context, String subject, String predicate, String object) {
+        if (context == null) context = "http://kg.dml.iust.ac.ir";
+        Triple triple = dao.read(context, subject, predicate, object);
+        if (triple != null)
+            dao.delete(triple);
+        return triple;
+    }
+
+    @Override
     public Triple triple(String context, String subject, String predicate, String object) {
         if (context == null) context = "http://kg.dml.iust.ac.ir";
         return dao.read(context, subject, predicate, object);

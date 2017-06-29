@@ -40,6 +40,22 @@ public interface ITriplesServices {
     @ApiOperation(value = "Insert or update triple")
     Boolean batchInsert(@Valid List<TripleData> data);
 
+
+    @POST
+    @Path("/remove")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @WebMethod
+    @ApiOperation(value = "Remove triple")
+    Triple remove(@ApiParam(required = false, example = "http://kg.dml.iust.ac.ir")
+                  @WebParam(name = "context") @QueryParam("context") String context,
+                  @ApiParam(required = true, example = "http://url.com/subject")
+                  @WebParam(name = "subject") @QueryParam("subject") String subject,
+                  @ApiParam(required = true, example = "http://url.com/predicate")
+                  @WebParam(name = "predicate") @QueryParam("predicate") String predicate,
+                  @ApiParam(required = true, example = "http://url.com/object")
+                  @WebParam(name = "object") @QueryParam("object") String object);
+
     @GET
     @Path("/triple")
     @Produces(MediaType.APPLICATION_JSON)
