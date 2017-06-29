@@ -5,6 +5,7 @@ import cz.jirutka.validator.collection.constraints.EachURL;
 import io.swagger.annotations.ApiModelProperty;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Source;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
+import ir.ac.iust.dml.kg.knowledge.store.access.entities.TripleState;
 import ir.ac.iust.dml.kg.knowledge.store.services.v1.validation.ValidTypedValue;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
@@ -48,6 +49,8 @@ public class TripleData {
     @ApiModelProperty(value = "Additional parameter that module used to extract data", required = false, example = "{version: 2}")
     private HashMap<String, String> parameters;
     private Double precession;
+    @ApiModelProperty(value = "If true (state = approved) else if false (state = reject) else if is null (nothing)", required = false, example = "{version: 2}")
+    private Boolean approved;
 
     public Triple fill(Triple triple) {
         if (triple != null) {
@@ -68,6 +71,10 @@ public class TripleData {
 
         if (!found) triple.getSources().add(new Source(module, urls, parameters, precession));
         triple.setModificationEpoch(System.currentTimeMillis());
+        if (approved != null && approved)
+            triple.setState(TripleState.Approved);
+        else if (approved != null)
+            triple.setState(TripleState.Rejected);
         return triple;
     }
 
@@ -133,5 +140,13 @@ public class TripleData {
 
     public void setPrecession(Double precession) {
         this.precession = precession;
+    }
+
+    public Boolean getApproved() {
+        return approved;
+    }
+
+    public void setApproved(Boolean approved) {
+        this.approved = approved;
     }
 }

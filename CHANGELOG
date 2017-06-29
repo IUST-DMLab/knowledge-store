@@ -1,8 +1,10 @@
-* 1.0.0
-    - Soap web service
-    - Rest web service
-    - Swagger UI
-    - Insert triples metadata on mongodb
+* 1.8.0
+    - Add approve/reject on insert triple
+* 1.7.0
+    - Add language to export
+
+* 1.2.0
+    - Add Expert Service
 
 * 1.1.0
     - Add context
@@ -13,8 +15,15 @@
     - Add parameters to a source
     - Add TypedValue to v1 insert service for object
 
-* 1.2.0
-    - Add Expert Service
 
-* 1.7.0
-    - Add language to export
+* 1.0.0
+    - Soap web service
+    - Rest web service
+    - Swagger UI
+    - Insert triples metadata on mongodb
+
+
+
+
+
+
