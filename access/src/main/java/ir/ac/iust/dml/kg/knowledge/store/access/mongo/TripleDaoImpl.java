@@ -64,16 +64,38 @@ public class TripleDaoImpl implements ITripleDao {
         );
     }
 
+
     @Override
     public PagingList<Triple> search(String context, String subject, String predicate, String object, int page, int pageSize) {
+        return search(context, false, subject, false, predicate, false, object, false, page, pageSize);
+    }
+
+    @Override
+    public PagingList<Triple> search(
+            String context, boolean useRegexForContext,
+            String subject, boolean useRegexForSubject,
+            String predicate, boolean useRegexForPredicate,
+            String object, boolean useRegexForObject,
+            int page, int pageSize) {
         final Query query = new Query();
-        if (context != null)
+        if (context != null && !useRegexForContext)
             query.addCriteria(Criteria.where("context").is(context));
-        if (subject != null)
+        else if (context != null)
+            query.addCriteria(Criteria.where("context").regex(context));
+
+        if (subject != null && !useRegexForSubject)
             query.addCriteria(Criteria.where("subject").is(subject));
-        if (predicate != null)
+        else if (subject != null)
+            query.addCriteria(Criteria.where("subject").regex(subject));
+
+        if (predicate != null && !useRegexForPredicate)
             query.addCriteria(Criteria.where("predicate").is(predicate));
-        if (object != null)
+        else if (predicate != null)
+            query.addCriteria(Criteria.where("predicate").regex(predicate));
+
+        if (object != null && !useRegexForObject)
+            query.addCriteria(Criteria.where("object.value").is(object));
+        else if (object != null)
             query.addCriteria(Criteria.where("object.value").regex(object));
         return DaoUtils.paging(op, Triple.class, query, page, pageSize);
     }

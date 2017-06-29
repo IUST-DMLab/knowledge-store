@@ -76,9 +76,13 @@ public interface ITriplesServices {
     @WebMethod
     @ApiOperation(value = "Search triples by (context, subject, predicate, object)")
     PagingList<Triple> search(@WebParam(name = "context") @QueryParam("context") String context,
+                              @WebParam(name = "useRegexForContext") @QueryParam("useRegexForContext") Boolean useRegexForContext,
                               @WebParam(name = "subject") @QueryParam("subject") String subject,
+                              @WebParam(name = "useRegexForSubject") @QueryParam("useRegexForSubject") Boolean useRegexForSubject,
                               @WebParam(name = "predicate") @QueryParam("predicate") String predicate,
+                              @WebParam(name = "useRegexForPredicate") @QueryParam("useRegexForPredicate") Boolean useRegexForPredicate,
                               @WebParam(name = "object") @QueryParam("object") String object,
+                              @WebParam(name = "useRegexForObject") @QueryParam("useRegexForObject") Boolean useRegexForObject,
                               @WebParam(name = "page") @QueryParam("page") int page,
                               @WebParam(name = "pageSize") @QueryParam("pageSize") int pageSize);
 

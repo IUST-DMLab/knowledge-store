@@ -1,6 +1,7 @@
 * 1.8.0
     - Add approve/reject on insert triple
     - Add service remove triple
+    - Change search service and add use regex to it
 
 * 1.7.0
     - Add language to export

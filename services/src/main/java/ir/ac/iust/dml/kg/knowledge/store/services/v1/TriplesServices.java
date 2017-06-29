@@ -55,8 +55,17 @@ public class TriplesServices implements ITriplesServices {
     }
 
     @Override
-    public PagingList<Triple> search(String context, String subject, String predicate, String object, int page, int pageSize) {
-        return dao.search(context, subject, predicate, object, page, pageSize);
+    public PagingList<Triple> search(String context, Boolean useRegexForContext,
+                                     String subject, Boolean useRegexForSubject,
+                                     String predicate, Boolean useRegexForPredicate,
+                                     String object, Boolean useRegexForObject,
+                                     int page, int pageSize) {
+        return dao.search(
+                context, useRegexForContext != null && useRegexForContext,
+                subject, useRegexForSubject != null && useRegexForSubject,
+                predicate, useRegexForPredicate != null && useRegexForPredicate,
+                object, useRegexForObject != null && useRegexForObject,
+                page, pageSize);
     }
 
     @Override
