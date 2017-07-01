@@ -1,8 +1,8 @@
 package ir.ac.iust.dml.kg.knowledge.store.services.v1.data;
 
 import io.swagger.annotations.ApiModelProperty;
-import ir.ac.iust.dml.kg.knowledge.store.access.entities.TypedValue;
-import ir.ac.iust.dml.kg.knowledge.store.access.entities.ValueType;
+import ir.ac.iust.dml.kg.knowledge.core.TypedValue;
+import ir.ac.iust.dml.kg.knowledge.core.ValueType;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;

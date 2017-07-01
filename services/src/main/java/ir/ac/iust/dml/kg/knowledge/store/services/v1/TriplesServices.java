@@ -1,12 +1,16 @@
 package ir.ac.iust.dml.kg.knowledge.store.services.v1;
 
 import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
+import ir.ac.iust.dml.kg.knowledge.core.TypedValue;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.TripleState;
 import ir.ac.iust.dml.kg.knowledge.store.services.v1.data.TripleData;
 import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.util.ModelBuilder;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 import org.eclipse.rdf4j.rio.RDFWriter;
 import org.eclipse.rdf4j.rio.Rio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +77,7 @@ public class TriplesServices implements ITriplesServices {
         final PagingList<Triple> triples = dao.read(state, epoch, page, pageSize);
         final ModelBuilder builder = new ModelBuilder();
         triples.getData().forEach(t ->
-                builder.add(t.getSubject(), t.getPredicate(), t.getObject().createValue())
+                builder.add(t.getSubject(), t.getPredicate(), createValue(t.getObject()))
         );
 
         final Model model = builder.build();
@@ -84,5 +88,32 @@ public class TriplesServices implements ITriplesServices {
         model.forEach(writer::handleStatement);
         writer.endRDF();
         return out.toString();
+    }
+
+    public Object createValue(TypedValue v) {
+        final ValueFactory vf = SimpleValueFactory.getInstance();
+        if (v.getType() != null)
+            switch (v.getType()) {
+                case Resource:
+                    return vf.createIRI(v.getValue());
+                case String:
+                    return vf.createLiteral(v.getValue(), v.getLang());
+                case Boolean:
+                    return vf.createLiteral(v.getValue(), XMLSchema.BOOLEAN);
+                case Byte:
+                    return vf.createLiteral(v.getValue(), XMLSchema.BYTE);
+                case Short:
+                    return vf.createLiteral(v.getValue(), XMLSchema.SHORT);
+                case Integer:
+                    return vf.createLiteral(v.getValue(), XMLSchema.INTEGER);
+                case Long:
+                    return vf.createLiteral(v.getValue(), XMLSchema.LONG);
+                case Double:
+                    return vf.createLiteral(v.getValue(), XMLSchema.DOUBLE);
+                case Float:
+                    return vf.createLiteral(v.getValue(), XMLSchema.FLOAT);
+
+            }
+        return vf.createLiteral(v.getValue());
     }
 }

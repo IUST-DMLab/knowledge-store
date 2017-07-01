@@ -1,5 +1,7 @@
 package ir.ac.iust.dml.kg.knowledge.store.access.test;
 
+import ir.ac.iust.dml.kg.knowledge.core.TypedValue;
+import ir.ac.iust.dml.kg.knowledge.core.ValueType;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.IMappingDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.*;

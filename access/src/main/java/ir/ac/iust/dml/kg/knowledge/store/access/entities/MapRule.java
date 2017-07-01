@@ -1,5 +1,7 @@
 package ir.ac.iust.dml.kg.knowledge.store.access.entities;
 
+import ir.ac.iust.dml.kg.knowledge.core.ValueType;
+
 /**
  * Mapped result
  */

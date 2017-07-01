@@ -1,6 +1,7 @@
 package ir.ac.iust.dml.kg.knowledge.store.access.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import ir.ac.iust.dml.kg.knowledge.core.TypedValue;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;

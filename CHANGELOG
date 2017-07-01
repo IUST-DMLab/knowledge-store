@@ -1,3 +1,6 @@
+* 1.9.0
+    - Use knowledge-core
+
 * 1.8.0
     - Add approve/reject on insert triple
     - Add service remove triple
