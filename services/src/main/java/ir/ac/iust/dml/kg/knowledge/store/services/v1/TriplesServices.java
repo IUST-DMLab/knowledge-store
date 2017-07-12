@@ -18,13 +18,14 @@ import org.eclipse.rdf4j.rio.RDFWriter;
 import org.eclipse.rdf4j.rio.Rio;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
 import javax.jws.WebService;
 import javax.validation.Valid;
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * impl {@link ITriplesServices}
@@ -35,13 +36,23 @@ public class TriplesServices implements ITriplesServices {
     private ITripleDao dao;
     @Autowired
     private IVersionDao versionDao;
+    private Map<String, Version> versionMap = new ConcurrentHashMap<>();
+
+    @PostConstruct
+    public void setup() {
+        final List<Version> versions = versionDao.readAll();
+        versions.forEach(v -> versionMap.put(v.getModule(), v));
+    }
 
     @Override
     public Integer newVersion(String module) {
         synchronized (this) {
-            Version version = versionDao.readByModule(module);
-            if (version == null) version = new Version(module);
-            else version.addNextVersion();
+            Version version = versionMap.get(module);
+            if (version == null) {
+                version = new Version(module);
+                versionMap.put(module, version);
+            } else
+                version.addNextVersion();
             versionDao.write(version);
             return version.getNextVersion();
         }
@@ -50,7 +61,7 @@ public class TriplesServices implements ITriplesServices {
     @Override
     public Boolean activateVersion(String module, Integer version) {
         synchronized (this) {
-            final Version db = versionDao.readByModule(module);
+            final Version db = versionMap.get(module);
             if (db == null) return false;
             db.setActiveVersion(version != null ? version : db.getNextVersion());
             versionDao.write(db);
@@ -61,6 +72,10 @@ public class TriplesServices implements ITriplesServices {
     @Override
     public Boolean insert(@Valid TripleData data) {
         if (data.getContext() == null) data.setContext("http://kg.dml.iust.ac.ir");
+        if (data.getVersion() == null && data.getModule() != null) {
+            final Version version = versionMap.get(data.getModule());
+            if (version != null) data.setVersion(version.getNextVersion());
+        }
         final Triple oldTriple = dao.read(data.getContext(), data.getSubject(), data.getPredicate(), data.getObject().getValue());
         final Triple newTriple = data.fill(oldTriple);
         dao.write(newTriple);
@@ -104,17 +119,15 @@ public class TriplesServices implements ITriplesServices {
 
     @Override
     public String export(TripleState state, ExportFormat format, Long epoch, int page, int pageSize) {
-        final List<Version> versions = versionDao.readAll();
-        final Map<String, Integer> versionMap = new HashMap<>();
-        versions.forEach(v -> versionMap.put(v.getModule(), v.getActiveVersion()));
+
 
         final PagingList<Triple> triples = dao.read(state, epoch, page, pageSize);
         final ModelBuilder builder = new ModelBuilder();
         triples.getData().forEach(t -> {
             boolean isLatestVersion = t.getSources().isEmpty();
             for (Source s : t.getSources()) {
-                Integer sv = versionMap.get(s.getModule());
-                if (sv == null || Objects.equals(sv, s.getVersion()))
+                Version sv = versionMap.get(s.getModule());
+                if (sv == null || Objects.equals(sv.getActiveVersion(), s.getVersion()))
                     isLatestVersion = true;
             }
             if (isLatestVersion)

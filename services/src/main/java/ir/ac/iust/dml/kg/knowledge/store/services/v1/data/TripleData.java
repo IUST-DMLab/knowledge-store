@@ -41,7 +41,7 @@ public class TripleData {
     @NotEmpty
     @ApiModelProperty(value = "Module that triples was extracted from it", required = true, example = "wikipedia/infobox")
     private String module;
-    @ApiModelProperty(value = "Version of triple, version must be valid", required = false, example = "1")
+    @ApiModelProperty(value = "Version of triple, if be null replace it bu nextVersion of module", required = false, example = "1")
     private Integer version;
     @NotNull
     @NotEmpty
