@@ -7,6 +7,7 @@ import java.util.*;
  */
 public class Source {
     private String module;
+    private Integer version;
     private Set<String> urls;
     private Map<String, String> parameters;
     private Double precession;
@@ -29,6 +30,14 @@ public class Source {
 
     public void setModule(String module) {
         this.module = module;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     public Set<String> getUrls() {
