@@ -31,10 +31,16 @@ public class Version {
     public Version(String module) {
         this.module = module;
         this.nextVersion = 1;
+        this.creationEpoch = System.currentTimeMillis();
     }
 
     public String getIdentifier() {
         return id.toString();
+    }
+
+    public void addNextVersion() {
+        if (nextVersion == null) nextVersion = 1;
+        else nextVersion++;
     }
 
 

@@ -3,8 +3,11 @@ package ir.ac.iust.dml.kg.knowledge.store.services.v1;
 import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
 import ir.ac.iust.dml.kg.knowledge.core.TypedValue;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao;
+import ir.ac.iust.dml.kg.knowledge.store.access.dao.IVersionDao;
+import ir.ac.iust.dml.kg.knowledge.store.access.entities.Source;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.TripleState;
+import ir.ac.iust.dml.kg.knowledge.store.access.entities.Version;
 import ir.ac.iust.dml.kg.knowledge.store.services.v1.data.TripleData;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.ValueFactory;
@@ -18,7 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.jws.WebService;
 import javax.validation.Valid;
 import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * impl {@link ITriplesServices}
@@ -27,6 +33,30 @@ import java.util.List;
 public class TriplesServices implements ITriplesServices {
     @Autowired
     private ITripleDao dao;
+    @Autowired
+    private IVersionDao versionDao;
+
+    @Override
+    public Integer newVersion(String module) {
+        synchronized (this) {
+            Version version = versionDao.readByModule(module);
+            if (version == null) version = new Version(module);
+            else version.addNextVersion();
+            versionDao.write(version);
+            return version.getNextVersion();
+        }
+    }
+
+    @Override
+    public Boolean activateVersion(String module, Integer version) {
+        synchronized (this) {
+            final Version db = versionDao.readByModule(module);
+            if (db == null) return false;
+            db.setActiveVersion(version != null ? version : db.getNextVersion());
+            versionDao.write(db);
+            return true;
+        }
+    }
 
     @Override
     public Boolean insert(@Valid TripleData data) {
@@ -74,11 +104,22 @@ public class TriplesServices implements ITriplesServices {
 
     @Override
     public String export(TripleState state, ExportFormat format, Long epoch, int page, int pageSize) {
+        final List<Version> versions = versionDao.readAll();
+        final Map<String, Integer> versionMap = new HashMap<>();
+        versions.forEach(v -> versionMap.put(v.getModule(), v.getActiveVersion()));
+
         final PagingList<Triple> triples = dao.read(state, epoch, page, pageSize);
         final ModelBuilder builder = new ModelBuilder();
-        triples.getData().forEach(t ->
-                builder.add(t.getSubject(), t.getPredicate(), createValue(t.getObject()))
-        );
+        triples.getData().forEach(t -> {
+            boolean isLatestVersion = t.getSources().isEmpty();
+            for (Source s : t.getSources()) {
+                Integer sv = versionMap.get(s.getModule());
+                if (sv == null || Objects.equals(sv, s.getVersion()))
+                    isLatestVersion = true;
+            }
+            if (isLatestVersion)
+                builder.add(t.getSubject(), t.getPredicate(), createValue(t.getObject()));
+        });
 
         final Model model = builder.build();
         final ByteArrayOutputStream out = new ByteArrayOutputStream();

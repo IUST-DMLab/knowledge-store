@@ -15,8 +15,9 @@ public class Source {
     public Source() {
     }
 
-    public Source(String module, List<String> urls, Map<String, String> parameters, Double precession) {
+    public Source(String module, Integer version, List<String> urls, Map<String, String> parameters, Double precession) {
         this.module = module;
+        this.version = version;
         this.urls = new HashSet<>();
         if (urls != null)
             this.urls.addAll(urls);

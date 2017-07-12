@@ -38,7 +38,7 @@ public class AccessTest {
         } catch (Throwable th) {
             assert true;
         }
-        t1.getSources().add(new Source("Test", null, null, null));
+        t1.getSources().add(new Source("Test", 0, null, null, null));
         triples.write(t1);
         assert triples.search(null, null, "birth_year", null, 0, 0).getTotalSize() == 2;
         assert triples.search(null, "Hossein", "birth_year", "64", 0, 0).getTotalSize() == 1;

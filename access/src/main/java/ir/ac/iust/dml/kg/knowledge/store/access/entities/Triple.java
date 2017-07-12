@@ -22,8 +22,7 @@ import java.util.Set;
 @CompoundIndexes({
         @CompoundIndex(name = "triple_index", def = "{'context': 1, 'subject' : 2, 'predicate' : 3, 'object.value': 4}", unique = true),
         @CompoundIndex(name = "expert_index", def = "{'votes.module': 1, 'votes.expert': 1}", unique = false, sparse = true),
-        @CompoundIndex(name = "source-module", def = "{'sources.module': 1}", unique = false, sparse = true),
-        @CompoundIndex(name = "source-version", def = "{'sources.version': 1}", unique = false, sparse = true)
+        @CompoundIndex(name = "source-module", def = "{'sources.module': 1}", unique = false)
 })
 public class Triple {
     @Id

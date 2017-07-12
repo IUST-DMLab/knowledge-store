@@ -41,6 +41,8 @@ public class TripleData {
     @NotEmpty
     @ApiModelProperty(value = "Module that triples was extracted from it", required = true, example = "wikipedia/infobox")
     private String module;
+    @ApiModelProperty(value = "Version of triple, version must be valid", required = false, example = "1")
+    private Integer version;
     @NotNull
     @NotEmpty
     @EachURL
@@ -66,10 +68,13 @@ public class TripleData {
                 s.setPrecession(precession);
                 if (parameters != null)
                     s.getParameters().putAll(parameters);
+                s.setVersion(version);
                 found = true;
             }
 
-        if (!found) triple.getSources().add(new Source(module, urls, parameters, precession));
+        if (!found) {
+            triple.getSources().add(new Source(module, version, urls, parameters, precession));
+        }
         triple.setModificationEpoch(System.currentTimeMillis());
         if (approved != null && approved)
             triple.setState(TripleState.Approved);
@@ -116,6 +121,14 @@ public class TripleData {
 
     public void setModule(String module) {
         this.module = module;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     public List<String> getUrls() {

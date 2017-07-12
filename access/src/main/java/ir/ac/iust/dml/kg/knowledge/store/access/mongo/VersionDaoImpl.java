@@ -21,8 +21,10 @@ public class VersionDaoImpl implements IVersionDao {
 
     @Override
     public void write(Version... versions) {
-        for (Version v : versions)
+        for (Version v : versions) {
+            v.setModificationEpoch(System.currentTimeMillis());
             op.save(v);
+        }
     }
 
     @Override

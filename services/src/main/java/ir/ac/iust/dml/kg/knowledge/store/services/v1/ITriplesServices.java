@@ -24,6 +24,28 @@ import java.util.List;
 @Path("/v1/triples")
 @Api("/v1/triples")
 public interface ITriplesServices {
+    @GET
+    @Path("/version/new")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @WebMethod
+    @ApiOperation(value = "Insert or update triple")
+    Integer newVersion(
+            @ApiParam(required = true, example = "wiki")
+            @WebParam(name = "module") @QueryParam("module") String module);
+
+    @GET
+    @Path("/version/activate")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @WebMethod
+    @ApiOperation(value = "Insert or update triple")
+    Boolean activateVersion(
+            @ApiParam(required = true, example = "wiki")
+            @WebParam(name = "module") @QueryParam("module") String module,
+            @ApiParam(required = false, value = "if be null set it to next version")
+            @WebParam(name = "version") @QueryParam("version") Integer version);
+
     @POST
     @Path("/insert")
     @Consumes(MediaType.APPLICATION_JSON)
