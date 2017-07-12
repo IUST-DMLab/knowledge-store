@@ -24,6 +24,28 @@ import java.util.List;
 @Path("/v1/triples")
 @Api("/v1/triples")
 public interface ITriplesServices {
+    @GET
+    @Path("/version/new")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @WebMethod
+    @ApiOperation(value = "Insert or update triple")
+    Integer newVersion(
+            @ApiParam(required = true, example = "wiki")
+            @WebParam(name = "module") @QueryParam("module") String module);
+
+    @GET
+    @Path("/version/activate")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @WebMethod
+    @ApiOperation(value = "Insert or update triple")
+    Boolean activateVersion(
+            @ApiParam(required = true, example = "wiki")
+            @WebParam(name = "module") @QueryParam("module") String module,
+            @ApiParam(required = false, value = "if be null set it to next version")
+            @WebParam(name = "version") @QueryParam("version") Integer version);
+
     @POST
     @Path("/insert")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -39,6 +61,22 @@ public interface ITriplesServices {
     @WebMethod
     @ApiOperation(value = "Insert or update triple")
     Boolean batchInsert(@Valid List<TripleData> data);
+
+
+    @POST
+    @Path("/remove")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @WebMethod
+    @ApiOperation(value = "Remove triple")
+    Triple remove(@ApiParam(required = false, example = "http://kg.dml.iust.ac.ir")
+                  @WebParam(name = "context") @QueryParam("context") String context,
+                  @ApiParam(required = true, example = "http://url.com/subject")
+                  @WebParam(name = "subject") @QueryParam("subject") String subject,
+                  @ApiParam(required = true, example = "http://url.com/predicate")
+                  @WebParam(name = "predicate") @QueryParam("predicate") String predicate,
+                  @ApiParam(required = true, example = "http://url.com/object")
+                  @WebParam(name = "object") @QueryParam("object") String object);
 
     @GET
     @Path("/triple")
@@ -60,9 +98,13 @@ public interface ITriplesServices {
     @WebMethod
     @ApiOperation(value = "Search triples by (context, subject, predicate, object)")
     PagingList<Triple> search(@WebParam(name = "context") @QueryParam("context") String context,
+                              @WebParam(name = "useRegexForContext") @QueryParam("useRegexForContext") Boolean useRegexForContext,
                               @WebParam(name = "subject") @QueryParam("subject") String subject,
+                              @WebParam(name = "useRegexForSubject") @QueryParam("useRegexForSubject") Boolean useRegexForSubject,
                               @WebParam(name = "predicate") @QueryParam("predicate") String predicate,
+                              @WebParam(name = "useRegexForPredicate") @QueryParam("useRegexForPredicate") Boolean useRegexForPredicate,
                               @WebParam(name = "object") @QueryParam("object") String object,
+                              @WebParam(name = "useRegexForObject") @QueryParam("useRegexForObject") Boolean useRegexForObject,
                               @WebParam(name = "page") @QueryParam("page") int page,
                               @WebParam(name = "pageSize") @QueryParam("pageSize") int pageSize);
 

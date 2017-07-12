@@ -29,5 +29,12 @@ public interface ITripleDao {
 
     PagingList<Triple> search(String context, String subject, String predicate, String object, int page, int pageSize);
 
+    PagingList<Triple> search(
+            String context, boolean useRegexForContext,
+            String subject, boolean useRegexForSubject,
+            String predicate, boolean useRegexForPredicate,
+            String object, boolean useRegexForObject,
+            int page, int pageSize);
+
     PagingList<Triple> read(TripleState state, Long after, int page, int pageSize);
 }

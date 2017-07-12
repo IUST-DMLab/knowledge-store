@@ -1,7 +1,10 @@
 package ir.ac.iust.dml.kg.knowledge.store.access.test;
 
+import ir.ac.iust.dml.kg.knowledge.core.TypedValue;
+import ir.ac.iust.dml.kg.knowledge.core.ValueType;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.IMappingDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao;
+import ir.ac.iust.dml.kg.knowledge.store.access.dao.IVersionDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,12 +18,14 @@ import java.util.List;
  * Unit test for access
  */
 @RunWith(value = SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:persistence-context.xml")
+@ContextConfiguration("classpath:persistence-context-test.xml")
 public class AccessTest {
     @Autowired
     ITripleDao triples;
     @Autowired
     IMappingDao mappings;
+    @Autowired
+    IVersionDao versions;
 
     @Test
     public void testTripleDao() {
@@ -33,7 +38,7 @@ public class AccessTest {
         } catch (Throwable th) {
             assert true;
         }
-        t1.getSources().add(new Source("Test", null, null, null));
+        t1.getSources().add(new Source("Test", 0, null, null, null));
         triples.write(t1);
         assert triples.search(null, null, "birth_year", null, 0, 0).getTotalSize() == 2;
         assert triples.search(null, "Hossein", "birth_year", "64", 0, 0).getTotalSize() == 1;
@@ -85,5 +90,20 @@ public class AccessTest {
         assert mappings.searchProperty("template2", null, 0, 1).getTotalSize() == 1;
         assert mappings.searchPredicate("ty", 10).size() > 0;
         mappings.delete(m1, m2);
+    }
+
+    @Test
+    public void versionTest() {
+        final Version version1 = new Version("test");
+        versions.write(version1);
+        try {
+            versions.write(new Version("test"));
+            assert false;
+        } catch (Throwable ignored) {
+        }
+        assert versions.readAll().size() == 1;
+        assert versions.readByModule("test").getId().equals(version1.getId());
+        versions.delete(version1);
+        assert versions.readAll().size() == 0;
     }
 }

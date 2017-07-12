@@ -7,6 +7,7 @@ import java.util.*;
  */
 public class Source {
     private String module;
+    private Integer version;
     private Set<String> urls;
     private Map<String, String> parameters;
     private Double precession;
@@ -14,8 +15,9 @@ public class Source {
     public Source() {
     }
 
-    public Source(String module, List<String> urls, Map<String, String> parameters, Double precession) {
+    public Source(String module, Integer version, List<String> urls, Map<String, String> parameters, Double precession) {
         this.module = module;
+        this.version = version;
         this.urls = new HashSet<>();
         if (urls != null)
             this.urls.addAll(urls);
@@ -29,6 +31,14 @@ public class Source {
 
     public void setModule(String module) {
         this.module = module;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     public Set<String> getUrls() {

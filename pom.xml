@@ -7,7 +7,7 @@
     <groupId>ir.ac.iust.dml.kg.knowledge.store</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.7.0</version>
+    <version>1.9.0</version>
     <name>Knowledge Store</name>
 
     <modules>
@@ -53,6 +53,11 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>ir.ac.iust.dml.kg</groupId>
+            <artifactId>knowledge-core</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
         <!-- AspectJ -->
         <dependency>
