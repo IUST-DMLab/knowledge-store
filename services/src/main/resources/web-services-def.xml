@@ -63,7 +63,7 @@
         </jaxrs:features>
         <jaxrs:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="ir.ac.iust.dml.kg.knowledge.store.services.JAXRSExceptionMapper"/>
+            <bean class="ir.ac.iust.dml.kg.knowledge.commons.JAXRSExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:inInterceptors>
             <ref bean="beanValidationInInterceptor"/>
