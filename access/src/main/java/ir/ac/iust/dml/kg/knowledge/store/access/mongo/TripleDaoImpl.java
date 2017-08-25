@@ -155,6 +155,8 @@ public class TripleDaoImpl implements ITripleDao {
         final Triple selectedSubject = op.getConverter().read(Triple.class, subjectAggregate.next());
         if (selectedSubject == null) return new ArrayList<>();
         final Query query = new Query().addCriteria(Criteria.where("subject").is(selectedSubject.getSubject()));
+        if (isSourceModule != null)
+            query.addCriteria(Criteria.where("sources.module").is(isSourceModule));
         if (neModule != null)
             query.addCriteria(Criteria.where("votes.module").ne(neModule));
         if (neExpert != null)
