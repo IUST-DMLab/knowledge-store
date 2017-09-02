@@ -2,6 +2,7 @@ package ir.ac.iust.dml.kg.knowledge.store.access2.dao;
 
 import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
 import ir.ac.iust.dml.kg.knowledge.store.access2.entities.Ontology;
+import ir.ac.iust.dml.kg.knowledge.store.access2.entities.TripleState;
 import org.bson.types.ObjectId;
 
 /**
@@ -16,5 +17,5 @@ public interface IOntologyDao {
 
     Ontology read(String context, String subject, String predicate, String object);
 
-    PagingList<Ontology> search(String context, String subject, String predicate, String object, int page, int pageSize);
+    PagingList<Ontology> search(String context, String subject, String predicate, String object, TripleState state, int page, int pageSize);
 }

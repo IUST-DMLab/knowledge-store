@@ -42,13 +42,13 @@ public interface IOntologyServices {
     @Produces(MediaType.APPLICATION_JSON)
     @WebMethod
     @ApiOperation(value = "Remove ontology")
-    Ontology remove(@ApiParam(required = false, example = "http://kg.dml.iust.ac.ir")
+    Ontology remove(@ApiParam(example = "http://kg.dml.iust.ac.ir")
                   @WebParam(name = "context") @QueryParam("context") String context,
-                  @ApiParam(required = true, example = "http://url.com/subject")
+                    @ApiParam(required = true, example = "http://url.com/subject")
                   @WebParam(name = "subject") @QueryParam("subject") String subject,
-                  @ApiParam(required = true, example = "http://url.com/predicate")
+                    @ApiParam(required = true, example = "http://url.com/predicate")
                   @WebParam(name = "predicate") @QueryParam("predicate") String predicate,
-                  @ApiParam(required = true, example = "http://url.com/object")
+                    @ApiParam(required = true, example = "http://url.com/object")
                   @WebParam(name = "object") @QueryParam("object") String object);
 
     @GET
@@ -56,13 +56,13 @@ public interface IOntologyServices {
     @Produces(MediaType.APPLICATION_JSON)
     @WebMethod
     @ApiOperation(value = "Return ontology by (context, subject, predicate, object)")
-    Ontology ontology(@ApiParam(required = false, example = "http://kg.dml.iust.ac.ir")
+    Ontology ontology(@ApiParam(example = "http://kg.dml.iust.ac.ir")
                   @WebParam(name = "context") @QueryParam("context") String context,
-                  @ApiParam(required = true, example = "http://url.com/subject")
+                      @ApiParam(required = true, example = "http://url.com/subject")
                   @WebParam(name = "subject") @QueryParam("subject") String subject,
-                  @ApiParam(required = true, example = "http://url.com/predicate")
+                      @ApiParam(required = true, example = "http://url.com/predicate")
                   @WebParam(name = "predicate") @QueryParam("predicate") String predicate,
-                  @ApiParam(required = true, example = "http://url.com/object")
+                      @ApiParam(required = true, example = "http://url.com/object")
                   @WebParam(name = "object") @QueryParam("object") String object);
 
     @GET
@@ -71,9 +71,10 @@ public interface IOntologyServices {
     @WebMethod
     @ApiOperation(value = "Search ontology by (context, subject, predicate, object)")
     PagingList<Ontology> search(@WebParam(name = "context") @QueryParam("context") String context,
-                              @WebParam(name = "subject") @QueryParam("subject") String subject,
-                              @WebParam(name = "predicate") @QueryParam("predicate") String predicate,
-                              @WebParam(name = "object") @QueryParam("object") String object,
-                              @WebParam(name = "page") @QueryParam("page") int page,
-                              @WebParam(name = "pageSize") @QueryParam("pageSize") int pageSize);
+                                @WebParam(name = "subject") @QueryParam("subject") String subject,
+                                @WebParam(name = "predicate") @QueryParam("predicate") String predicate,
+                                @WebParam(name = "object") @QueryParam("object") String object,
+                                @WebParam(name = "approved") @QueryParam("approved") boolean approved,
+                                @WebParam(name = "page") @QueryParam("page") int page,
+                                @WebParam(name = "pageSize") @QueryParam("pageSize") int pageSize);
 }

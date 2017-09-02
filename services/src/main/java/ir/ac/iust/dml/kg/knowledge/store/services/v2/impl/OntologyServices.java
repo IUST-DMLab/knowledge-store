@@ -4,6 +4,7 @@ package ir.ac.iust.dml.kg.knowledge.store.services.v2.impl;
 import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
 import ir.ac.iust.dml.kg.knowledge.store.access2.dao.IOntologyDao;
 import ir.ac.iust.dml.kg.knowledge.store.access2.entities.Ontology;
+import ir.ac.iust.dml.kg.knowledge.store.access2.entities.TripleState;
 import ir.ac.iust.dml.kg.knowledge.store.services.v2.IOntologyServices;
 import ir.ac.iust.dml.kg.knowledge.store.services.v2.data.OntologyData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import java.util.List;
 /**
  * impl {@link IOntologyServices}
  */
+@SuppressWarnings("SpringAutowiredFieldsWarningInspection")
 @WebService(endpointInterface = "ir.ac.iust.dml.kg.knowledge.store.services.v2.IOntologyServices")
 public class OntologyServices implements IOntologyServices {
     @Autowired
@@ -53,7 +55,7 @@ public class OntologyServices implements IOntologyServices {
     }
 
     @Override
-    public PagingList<Ontology> search(String context, String subject, String predicate, String object, int page, int pageSize) {
-        return dao.search(context, subject, predicate, object, page, pageSize);
+    public PagingList<Ontology> search(String context, String subject, String predicate, String object, boolean approved, int page, int pageSize) {
+        return dao.search(context, subject, predicate, object, approved ? TripleState.Approved : null, page, pageSize);
     }
 }

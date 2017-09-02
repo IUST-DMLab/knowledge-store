@@ -4,6 +4,7 @@
     - Triple store Resource object in secreted string for efficient indexing
     - Triple can has other properties like startDate, endDate, ...
     - Index revisited
+    - Add Ontology Service to separate ontology from triples
 
 * 1.9.0
     - Use knowledge-core
