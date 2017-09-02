@@ -108,4 +108,8 @@ public class Ontology {
     public void setState(TripleState state) {
         this.state = state;
     }
+
+    public String getIdentifier() {
+        return id != null ? id.toString() : null;
+    }
 }
