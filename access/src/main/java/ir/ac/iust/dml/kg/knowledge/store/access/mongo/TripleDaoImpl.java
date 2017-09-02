@@ -10,6 +10,7 @@ import ir.ac.iust.dml.kg.knowledge.store.access.entities.TripleState;
 import ir.ac.iust.dml.kg.knowledge.store.access.stats.KeyCount;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -30,6 +31,7 @@ import java.util.Set;
 @Repository
 public class TripleDaoImpl implements ITripleDao {
     @Autowired
+    @Qualifier("store1")
     private MongoOperations op;
 
     @Override

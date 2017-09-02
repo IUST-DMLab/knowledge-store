@@ -1,7 +1,7 @@
-package ir.ac.iust.dml.kg.knowledge.store.access.mongo;
+package ir.ac.iust.dml.kg.knowledge.store.access2.mongo;
 
-import ir.ac.iust.dml.kg.knowledge.store.access.dao.IVersionDao;
-import ir.ac.iust.dml.kg.knowledge.store.access.entities.Version;
+import ir.ac.iust.dml.kg.knowledge.store.access2.dao.IVersionDao;
+import ir.ac.iust.dml.kg.knowledge.store.access2.entities.Version;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,10 +16,13 @@ import java.util.List;
  * impl {@link IVersionDao}
  */
 @Repository
-public class VersionDaoImpl implements IVersionDao {
+public class VersionDaoImpl2 implements IVersionDao {
+    private final MongoOperations op;
+
     @Autowired
-    @Qualifier("store1")
-    private MongoOperations op;
+    public VersionDaoImpl2(@Qualifier("store2") MongoOperations op) {
+        this.op = op;
+    }
 
     @Override
     public void write(Version... versions) {

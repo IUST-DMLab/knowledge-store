@@ -3,9 +3,9 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <artifactId>knowlede-store-access</artifactId>
+    <artifactId>knowlede-store-access2</artifactId>
     <modelVersion>4.0.0</modelVersion>
-    <name>Knowledge Store Access</name>
+    <name>Knowledge Store Access 2</name>
     <parent>
         <relativePath>../</relativePath>
         <groupId>ir.ac.iust.dml.kg.knowledge.store</groupId>

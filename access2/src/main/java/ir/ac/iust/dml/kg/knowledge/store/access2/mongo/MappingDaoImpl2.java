@@ -1,12 +1,13 @@
-package ir.ac.iust.dml.kg.knowledge.store.access.mongo;
+package ir.ac.iust.dml.kg.knowledge.store.access2.mongo;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import ir.ac.iust.dml.kg.knowledge.commons.MongoDaoUtils;
 import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
-import ir.ac.iust.dml.kg.knowledge.store.access.dao.IMappingDao;
-import ir.ac.iust.dml.kg.knowledge.store.access.entities.PropertyMapping;
-import ir.ac.iust.dml.kg.knowledge.store.access.entities.TemplateMapping;
+import ir.ac.iust.dml.kg.knowledge.store.access2.dao.IMappingDao;
+import ir.ac.iust.dml.kg.knowledge.store.access2.entities.PropertyMapping;
+import ir.ac.iust.dml.kg.knowledge.store.access2.entities.TemplateMapping;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,11 +24,15 @@ import java.util.List;
 /**
  * impl {@link IMappingDao}
  */
+@SuppressWarnings("Duplicates")
 @Repository
-public class MappingDaoImpl implements IMappingDao {
+public class MappingDaoImpl2 implements IMappingDao {
+    private final MongoOperations op;
+
     @Autowired
-    @Qualifier("store1")
-    private MongoOperations op;
+    public MappingDaoImpl2(@Qualifier("store2") MongoOperations op) {
+        this.op = op;
+    }
 
 
     @Override
@@ -67,7 +72,7 @@ public class MappingDaoImpl implements IMappingDao {
             query.addCriteria(Criteria.where("rules").exists(hasTemplateMapping));
 //        if (hasPropertyMapping != null)
 //            query.addCriteria(Criteria.where("properties.rules").exists(hasPropertyMapping));
-        return DaoUtils.paging(op, TemplateMapping.class, query, page, pageSize);
+        return MongoDaoUtils.paging(op, TemplateMapping.class, query, page, pageSize);
     }
 
     @Override
@@ -76,7 +81,7 @@ public class MappingDaoImpl implements IMappingDao {
         if (template != null)
             query.addCriteria(Criteria.where("template").regex(template));
         query.with(new Sort(Sort.Direction.DESC, "weight"));
-        return DaoUtils.paging(op, TemplateMapping.class, query, page, pageSize);
+        return MongoDaoUtils.paging(op, TemplateMapping.class, query, page, pageSize);
     }
 
     @Override

@@ -12,10 +12,11 @@
           http://www.springframework.org/schema/data/mongo
           http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
     <context:annotation-config/>
-    <context:component-scan base-package="ir.ac.iust.dml.kg.knowledge.store.access"/>
+    <context:property-placeholder location="persistence-context2.properties"/>
+    <context:component-scan base-package="ir.ac.iust.dml.kg.knowledge.store.access2"/>
     <aop:aspectj-autoproxy/>
 
-    <mongo:mongo-client id="mongo" host="localhost" port="27017">
+    <mongo:mongo-client id="mongo2" host="localhost" port="27017">
         <mongo:client-options
                 write-concern="ACKNOWLEDGED"
                 max-wait-time="10000"
@@ -23,8 +24,8 @@
                 connections-per-host="10"
                 threads-allowed-to-block-for-connection-multiplier="10000"/>
     </mongo:mongo-client>
-    <bean class="org.springframework.data.mongodb.core.MongoTemplate" id="store1">
-        <constructor-arg ref="mongo"/>
-        <constructor-arg name="databaseName" value="KGStore"/>
+    <bean class="org.springframework.data.mongodb.core.MongoTemplate" id="store2">
+        <constructor-arg ref="mongo2"/>
+        <constructor-arg name="databaseName" value="${database}"/>
     </bean>
 </beans>
