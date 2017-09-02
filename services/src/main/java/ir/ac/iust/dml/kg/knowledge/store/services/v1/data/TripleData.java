@@ -18,6 +18,7 @@ import java.util.List;
 
 @SuppressWarnings("WeakerAccess")
 @XmlType(name = "TripleData")
+@Deprecated
 public class TripleData {
     @URL
     @ApiModelProperty(required = false, example = "http://kg.dml.iust.ac.ir")

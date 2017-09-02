@@ -123,4 +123,8 @@ public class TemplateMapping {
     public String toString() {
         return String.format("%s", template);
     }
+
+    public String getIdentifier() {
+        return id != null ? id.toString() : null;
+    }
 }

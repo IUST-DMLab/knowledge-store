@@ -1,18 +1,19 @@
-package ir.ac.iust.dml.kg.knowledge.store.services.v1.data;
+package ir.ac.iust.dml.kg.knowledge.store.services.v2.data;
 
 import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModelProperty;
-import ir.ac.iust.dml.kg.knowledge.store.access.entities.PropertyMapping;
+import ir.ac.iust.dml.kg.knowledge.store.access2.entities.MapRule;
+import ir.ac.iust.dml.kg.knowledge.store.access2.entities.PropertyMapping;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Data for define property of a template
  */
 @XmlType(name = "PropertyData")
-@Deprecated
 public class PropertyData {
     @NotNull
     @NotEmpty
@@ -25,6 +26,7 @@ public class PropertyData {
 
 
     public PropertyMapping fill(PropertyMapping mapping) {
+        if (mapping == null) mapping = new PropertyMapping();
         mapping.setWeight(weight);
         if (rules != null)
             for (MapRuleData r : rules)
@@ -33,6 +35,18 @@ public class PropertyData {
             for (MapRuleData r : recommendations)
                 mapping.getRecommendations().add(r.fill(null));
         return mapping;
+    }
+
+    public PropertyData sync(PropertyMapping mapping) {
+        if (mapping == null) return null;
+        weight = mapping.getWeight();
+        rules = new ArrayList<>();
+        for (MapRule r : mapping.getRules())
+            rules.add(new MapRuleData().sync(r));
+        recommendations = new ArrayList<>();
+        for (MapRule r : mapping.getRecommendations())
+            recommendations.add(new MapRuleData().sync(r));
+        return this;
     }
 
     public String getProperty() {

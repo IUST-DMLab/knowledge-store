@@ -1,8 +1,8 @@
-package ir.ac.iust.dml.kg.knowledge.store.services.v1.data;
+package ir.ac.iust.dml.kg.knowledge.store.services.v2.data;
 
 import io.swagger.annotations.ApiModelProperty;
 import ir.ac.iust.dml.kg.knowledge.core.ValueType;
-import ir.ac.iust.dml.kg.knowledge.store.access.entities.MapRule;
+import ir.ac.iust.dml.kg.knowledge.store.access2.entities.MapRule;
 import org.hibernate.validator.constraints.URL;
 
 import javax.validation.constraints.NotNull;
@@ -11,20 +11,20 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * Rule data of mapping
  */
+@SuppressWarnings("Duplicates")
 @XmlType(name = "MapRuleData")
-@Deprecated
 public class MapRuleData {
     @NotNull
     @URL
     @ApiModelProperty(required = true, example = "http://www.w3.org/TR/rdf-schema/type")
     private String predicate;
-    @ApiModelProperty(required = false, example = "http://knowledgegraph.ir/mananger")
+    @ApiModelProperty(example = "http://knowledgegraph.ir/mananger")
     private String constant;
-    @ApiModelProperty(required = false, example = "Resource")
+    @ApiModelProperty(example = "Resource")
     private ValueType type;
-    @ApiModelProperty(required = false, example = "Reserved")
+    @ApiModelProperty(example = "Reserved")
     private String unit;
-    @ApiModelProperty(required = false, example = "Reserved")
+    @ApiModelProperty(example = "Reserved")
     private String transform;
 
     public MapRule fill(MapRule o) {
@@ -36,6 +36,16 @@ public class MapRuleData {
         o.setUnit(unit);
         o.setTransform(transform);
         return o;
+    }
+
+    MapRuleData sync(MapRule o) {
+        if (o == null) return null;
+        predicate = o.getPredicate();
+        constant = o.getConstant();
+        type = o.getType();
+        unit = o.getUnit();
+        transform = o.getTransform();
+        return this;
     }
 
     public String getPredicate() {

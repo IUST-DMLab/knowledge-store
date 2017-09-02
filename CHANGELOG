@@ -5,6 +5,7 @@
     - Triple can has other properties like startDate, endDate, ...
     - Index revisited
     - Add Ontology Service to separate ontology from triples
+    - Copy Template mapping to v2 service to save in store2
 
 * 1.9.0
     - Use knowledge-core

@@ -1,21 +1,24 @@
-package ir.ac.iust.dml.kg.knowledge.store.services.v1.data;
+package ir.ac.iust.dml.kg.knowledge.store.services.v2.data;
 
 import io.swagger.annotations.ApiModelProperty;
-import ir.ac.iust.dml.kg.knowledge.store.access.entities.PropertyMapping;
-import ir.ac.iust.dml.kg.knowledge.store.access.entities.TemplateMapping;
+import ir.ac.iust.dml.kg.knowledge.store.access2.entities.MapRule;
+import ir.ac.iust.dml.kg.knowledge.store.access2.entities.PropertyMapping;
+import ir.ac.iust.dml.kg.knowledge.store.access2.entities.TemplateMapping;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Data for define template
  */
+@SuppressWarnings("Duplicates")
 @XmlType(name = "TemplateData")
-@Deprecated
 public class TemplateData {
+    private String identifier;
     @NotNull
     @NotEmpty
     @ApiModelProperty(required = true, example = "شخص")
@@ -49,6 +52,20 @@ public class TemplateData {
         return mapping;
     }
 
+    public TemplateData sync(TemplateMapping mapping) {
+        if (mapping == null) return null;
+        identifier = mapping.getIdentifier();
+        template = mapping.getTemplate();
+        rules = new ArrayList<>();
+        for (MapRule r : mapping.getRules())
+            rules.add(new MapRuleData().sync(r));
+        properties = new ArrayList<>();
+        for (PropertyMapping p : mapping.getProperties())
+            properties.add(new PropertyData().sync(p));
+        weight = mapping.getWeight();
+        return this;
+    }
+
     public String getTemplate() {
         return template;
     }
@@ -79,5 +96,13 @@ public class TemplateData {
 
     public void setWeight(Double weight) {
         this.weight = weight;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 }
