@@ -13,6 +13,7 @@
     <modules>
         <module>access</module>
         <module>access2</module>
+        <module>migration</module>
         <module>services</module>
     </modules>
 
