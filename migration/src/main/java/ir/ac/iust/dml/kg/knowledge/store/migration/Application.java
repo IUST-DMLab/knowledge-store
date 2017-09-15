@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@SuppressWarnings("SpringAutowiredFieldsWarningInspection")
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
 @ImportResource({"classpath:persistence-context.xml", "classpath:persistence-context2.xml"})
