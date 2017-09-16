@@ -23,9 +23,6 @@ public class Application implements CommandLineRunner {
     @Autowired
     private ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao tripleDao;
 
-
-    @Autowired
-    private ir.ac.iust.dml.kg.knowledge.store.access2.dao.ITripleDao tripleDao2;
     @Autowired
     private ir.ac.iust.dml.kg.knowledge.store.access2.dao.IOntologyDao ontologyDao2;
 

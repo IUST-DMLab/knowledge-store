@@ -4,7 +4,7 @@ import ir.ac.iust.dml.kg.knowledge.core.TypedValue;
 import ir.ac.iust.dml.kg.knowledge.core.ValueType;
 import ir.ac.iust.dml.kg.knowledge.store.access2.dao.IMappingDao;
 import ir.ac.iust.dml.kg.knowledge.store.access2.dao.IOntologyDao;
-import ir.ac.iust.dml.kg.knowledge.store.access2.dao.ITripleDao;
+import ir.ac.iust.dml.kg.knowledge.store.access2.dao.ISubjectDao;
 import ir.ac.iust.dml.kg.knowledge.store.access2.dao.IVersionDao;
 import ir.ac.iust.dml.kg.knowledge.store.access2.entities.*;
 import org.junit.Test;
@@ -21,7 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration("classpath:persistence-context2.xml")
 public class AccessTest {
     @Autowired
-    ITripleDao triples;
+    ISubjectDao subjects;
     @Autowired
     IMappingDao mappings;
     @Autowired
@@ -31,21 +31,21 @@ public class AccessTest {
 
     @Test
     public void testTripleDao() {
-        Triple t1 = new Triple("context", "Hossein", "birth_year", "64");
-        Triple t2 = new Triple("context", "Majid", "birth_year", "63");
-        triples.write(t1, t2);
-//        try {
-//            triples.write(new Triple("context", "Hossein", "birth_year", "64"));
-//            assert false;
-//        } catch (Throwable th) {
-//            assert true;
-//        }
-        t1.getSources().add(new Source("Test", 0, null, null, null));
-        triples.write(t1);
-        assert triples.search(null, null, "birth_year", null, 0, 0).getTotalSize() == 2;
-        assert triples.search(null, "Hossein", "birth_year", null, 0, 0).getTotalSize() == 1;
-        assert triples.randomSubjectForExpert(null,"web", "hossein", null, 20) != null;
-        triples.delete(t1, t2);
+        Subject t1 = new Subject("context", "Hossein");
+        Subject t2 = new Subject("context", "Majid");
+        subjects.write(t1, t2);
+        try {
+            subjects.write(new Subject("context", "Hossein"));
+            assert false;
+        } catch (Throwable th) {
+            assert true;
+        }
+        t1.getVoters().add("majid@web");
+        t1.getSourcesNeedVote().add("wiki");
+        subjects.write(t1);
+        assert subjects.randomSubjectForExpert("wiki", "majid@web") == null;
+        assert subjects.randomSubjectForExpert("wiki", "hossein@web") != null;
+        subjects.delete(t1, t2);
     }
 
     @Test
