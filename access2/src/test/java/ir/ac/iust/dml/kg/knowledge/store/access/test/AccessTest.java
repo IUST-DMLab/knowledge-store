@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Unit test for access
  */
@@ -46,6 +49,18 @@ public class AccessTest {
         assert subjects.randomSubjectForExpert("wiki", "majid@web") == null;
         assert subjects.randomSubjectForExpert("wiki", "hossein@web") != null;
         subjects.delete(t1, t2);
+    }
+
+    @Test
+    public void subjectIndex() {
+        final Subject t1 = new Subject("context", "Hossein");
+        final List<TripleObject> triples = new ArrayList<>();
+        triples.add(new TripleObject(ValueType.Resource, "https://www.w3.org/TR/rdf-schema/#boolean"));
+        t1.getTriples().put("https://www.w3.org/TR/rdf-schema/#ch_datatype", triples);
+        subjects.write(t1);
+        subjects.createIndex("triples.https://www+++w3+++org/TR/rdf-schema/#ch_datatype.value");
+        assert subjects.read(t1.getId()).getTriples().containsKey("https://www.w3.org/TR/rdf-schema/#ch_datatype");
+        subjects.delete(t1);
     }
 
     @Test

@@ -7,7 +7,9 @@ import ir.ac.iust.dml.kg.knowledge.store.access2.entities.Subject;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
@@ -23,6 +25,13 @@ public class SubjectDaoImpl2 implements ISubjectDao {
     @Autowired
     public SubjectDaoImpl2(@Qualifier("store2") MongoOperations op) {
         this.op = op;
+    }
+
+    @Override
+    public void createIndex(String... fileds) {
+        for (String filed : fileds)
+            op.indexOps(Subject.class).
+                    ensureIndex(new Index().on(filed, Sort.Direction.ASC));
     }
 
     @Override

@@ -72,4 +72,12 @@ public class TypedValueData {
         else
             return String.format("\"%s\"^^%s@%s}", value, type, lang);
     }
+
+    @Override
+    public int hashCode() {
+        int result = type != null ? type.hashCode() : 0;
+        result = 31 * result + (value != null ? value.hashCode() : 0);
+        result = 31 * result + (lang != null ? lang.hashCode() : 0);
+        return result;
+    }
 }

@@ -1,6 +1,7 @@
 package ir.ac.iust.dml.kg.knowledge.store.access2.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import ir.ac.iust.dml.kg.knowledge.core.TypedValue;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
@@ -9,10 +10,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.xml.bind.annotation.XmlType;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Data class for subject
@@ -62,6 +60,33 @@ public class Subject {
         return id != null ? id.toString() : null;
     }
 
+    public TripleObject addObject(String predicate, TypedValue value, String source, Map<String, TypedValue> properties) {
+        if (triples == null) triples = new HashMap<>();
+        final List<TripleObject> objects;
+        if (triples.containsKey(predicate))
+            objects = triples.get(predicate);
+        else {
+            objects = new ArrayList<>();
+            triples.put(predicate, objects);
+        }
+        final TripleObject o2 = new TripleObject(value, properties, source);
+        for (TripleObject o : objects)
+            if (o.equals(o2))
+                return o;
+        objects.add(o2);
+        return o2;
+    }
+
+    public void updateSourcesNeedVote() {
+        sourcesNeedVote = new HashSet<>();
+        triples.forEach((k, v) ->
+                v.forEach(t -> {
+                    if (t.getState() != TripleState.Approved)
+                        sourcesNeedVote.add(t.getSource().getModule());
+                })
+        );
+    }
+
     public ObjectId getId() {
         return id;
     }
@@ -103,6 +128,7 @@ public class Subject {
     }
 
     public Map<String, List<TripleObject>> getTriples() {
+        if (triples == null) triples = new HashMap<>();
         return triples;
     }
 

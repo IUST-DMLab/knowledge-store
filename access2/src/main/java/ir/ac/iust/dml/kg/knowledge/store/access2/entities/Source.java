@@ -15,6 +15,10 @@ public class Source {
     public Source() {
     }
 
+    public Source(String module) {
+        this.module = module;
+    }
+
     public Source(String module, Integer version, List<String> urls, Map<String, String> parameters, Double precession) {
         this.module = module;
         this.version = version;
@@ -42,6 +46,8 @@ public class Source {
     }
 
     public Set<String> getUrls() {
+        if (urls == null)
+            urls = new HashSet<>();
         return urls;
     }
 

@@ -23,9 +23,19 @@
                 connect-timeout="30000"
                 connections-per-host="10"
                 threads-allowed-to-block-for-connection-multiplier="10000"/>
+
     </mongo:mongo-client>
+    <mongo:db-factory id="factory2" mongo-ref="mongo2" dbname="${database}"/>
     <bean class="org.springframework.data.mongodb.core.MongoTemplate" id="store2">
-        <constructor-arg ref="mongo2"/>
-        <constructor-arg name="databaseName" value="${database}"/>
+        <constructor-arg ref="factory2"/>
+        <constructor-arg>
+            <bean class="org.springframework.data.mongodb.core.convert.MappingMongoConverter">
+                <constructor-arg index="0" ref="factory2"/>
+                <constructor-arg index="1">
+                    <bean class="org.springframework.data.mongodb.core.mapping.MongoMappingContext"/>
+                </constructor-arg>
+                <property name="mapKeyDotReplacement" value="\+++"/>
+            </bean>
+        </constructor-arg>
     </bean>
 </beans>
