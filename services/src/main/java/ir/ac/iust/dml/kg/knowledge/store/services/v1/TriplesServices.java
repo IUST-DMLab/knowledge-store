@@ -33,6 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * impl {@link ITriplesServices}
  */
+@Deprecated
 @WebService(endpointInterface = "ir.ac.iust.dml.kg.knowledge.store.services.v1.ITriplesServices")
 public class TriplesServices implements ITriplesServices {
     @Autowired

@@ -21,11 +21,11 @@ public class TripleObject extends TypedValue {
     public TripleObject() {
     }
 
-    public TripleObject(TypedValue value, HashMap<String, TypedValue> properties, String module) {
+    public TripleObject(TypedValue value, String module, String url) {
         super(value.getType(), value.getValue(), value.getLang());
         this.creationEpoch = System.currentTimeMillis();
         this.properties = properties;
-        this.source = new Source(module);
+        this.source = new Source(module, url);
     }
 
     public TripleObject(ValueType type, String value) {
@@ -96,14 +96,12 @@ public class TripleObject extends TypedValue {
 
         TripleObject that = (TripleObject) o;
 
-        if (properties != null ? !properties.equals(that.properties) : that.properties != null) return false;
         return source != null ? source.equals(that.source) : that.source == null;
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (properties != null ? properties.hashCode() : 0);
         result = 31 * result + (source != null ? source.hashCode() : 0);
         return result;
     }

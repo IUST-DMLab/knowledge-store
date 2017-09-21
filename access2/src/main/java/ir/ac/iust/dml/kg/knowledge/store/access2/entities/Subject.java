@@ -22,7 +22,7 @@ import java.util.Set;
  * Each predicate can have multi value
  * * Sometimes value are from multi source
  * * Sometimes value are multi in value for example jobs of a person
- * * Sometimes value are diff in properties
+ * * Sometimes value are diff in url of source
  */
 @XmlType(name = "Subject", namespace = "http://kg.dml.iust.ac.ir")
 @Document(collection = "subjects")
@@ -63,7 +63,7 @@ public class Subject {
         return id != null ? id.toString() : null;
     }
 
-    public TripleObject addObject(String predicate, TypedValue value, String source, HashMap<String, TypedValue> properties) {
+    public TripleObject addObject(String predicate, TypedValue value, String module, String url) {
         if (triples == null) triples = new HashMap<>();
         final ArrayList<TripleObject> objects;
         if (triples.containsKey(predicate))
@@ -72,7 +72,7 @@ public class Subject {
             objects = new ArrayList<>();
             triples.put(predicate, objects);
         }
-        final TripleObject o2 = new TripleObject(value, properties, source);
+        final TripleObject o2 = new TripleObject(value, module, url);
         for (TripleObject o : objects)
             if (o.equals(o2))
                 return o;

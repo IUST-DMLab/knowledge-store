@@ -1,6 +1,7 @@
 package ir.ac.iust.dml.kg.knowledge.store.access2.entities;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * data class for encapsulate
@@ -8,23 +9,22 @@ import java.util.*;
 public class Source {
     private String module;
     private Integer version;
-    private Set<String> urls;
+    private String url;
     private Map<String, String> parameters;
     private Double precession;
 
     public Source() {
     }
 
-    public Source(String module) {
+    public Source(String module, String url) {
         this.module = module;
+        this.url = url;
     }
 
-    public Source(String module, Integer version, List<String> urls, Map<String, String> parameters, Double precession) {
+    public Source(String module, Integer version, String url, Map<String, String> parameters, Double precession) {
         this.module = module;
         this.version = version;
-        this.urls = new HashSet<>();
-        if (urls != null)
-            this.urls.addAll(urls);
+        this.url = url;
         this.parameters = parameters;
         this.precession = precession;
     }
@@ -45,14 +45,12 @@ public class Source {
         this.version = version;
     }
 
-    public Set<String> getUrls() {
-        if (urls == null)
-            urls = new HashSet<>();
-        return urls;
+    public String getUrl() {
+        return url;
     }
 
-    public void setUrls(Set<String> urls) {
-        this.urls = urls;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public Map<String, String> getParameters() {
@@ -80,19 +78,19 @@ public class Source {
 
         Source source = (Source) o;
 
-        return module != null ? module.equals(source.module) : source.module == null;
+        if (module != null ? !module.equals(source.module) : source.module != null) return false;
+        return url != null ? url.equals(source.url) : source.url == null;
     }
 
     @Override
     public int hashCode() {
-        return module != null ? module.hashCode() : 0;
+        int result = module != null ? module.hashCode() : 0;
+        result = 31 * result + (url != null ? url.hashCode() : 0);
+        return result;
     }
 
     @Override
     public String toString() {
-        final StringBuilder urlBuilder = new StringBuilder("[");
-        urls.forEach(u -> urlBuilder.append(u).append(" "));
-        urlBuilder.append("]");
-        return String.format("Source{ %s@%s}", urlBuilder, module);
+        return String.format("Source{ %s@%s}", url, module);
     }
 }

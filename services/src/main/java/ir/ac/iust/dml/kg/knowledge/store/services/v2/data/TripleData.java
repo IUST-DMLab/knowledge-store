@@ -1,6 +1,5 @@
 package ir.ac.iust.dml.kg.knowledge.store.services.v2.data;
 
-import cz.jirutka.validator.collection.constraints.EachURL;
 import io.swagger.annotations.ApiModelProperty;
 import ir.ac.iust.dml.kg.knowledge.core.TypedValue;
 import ir.ac.iust.dml.kg.knowledge.store.access2.entities.Subject;
@@ -13,9 +12,7 @@ import org.hibernate.validator.constraints.URL;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlType;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 @SuppressWarnings("WeakerAccess")
 @XmlType(name = "TripleData")
@@ -48,9 +45,9 @@ public class TripleData {
     private Integer version;
     @NotNull
     @NotEmpty
-    @EachURL
+    @URL
     @ApiModelProperty(value = "Page url that triples was extracted from it", required = true, example = "https://en.wikipedia.org/wiki/Esteghlal_F.C.")
-    private List<String> urls;
+    private String url;
     @ApiModelProperty(value = "Additional parameter that module used to extract data", required = false, example = "{version: 2}")
     private HashMap<String, String> parameters;
     private Double precession;
@@ -62,16 +59,21 @@ public class TripleData {
             s = new Subject(context, subject);
         else
             assert s.getSubject().equals(subject) && s.getContext().equals(context);
+        final TripleObject obj = s.addObject(predicate, object.fill(null), module, url);
         final HashMap<String, TypedValue> properties = new HashMap<>();
         if (this.properties != null)
             this.properties.forEach((k, v) -> properties.put(k, v.fill(null)));
-        final TripleObject obj = s.addObject(predicate, object.fill(null), module, properties);
-        obj.getSource().setVersion(version);
-        obj.getSource().getUrls().addAll(urls);
-        obj.getSource().setParameters(parameters);
-        obj.getSource().setPrecession(precession);
         if (approved)
             obj.setState(TripleState.Approved);
+        else if (obj.getState() == TripleState.Rejected && !properties.equals(obj.getProperties()))
+            obj.setState(TripleState.None);
+        else if (obj.getState() == TripleState.Approved && !properties.equals(obj.getProperties()))
+            obj.setState(TripleState.None);
+        obj.setProperties(properties);
+        obj.getSource().setVersion(version);
+        obj.getSource().setParameters(parameters);
+        obj.getSource().setPrecession(precession);
+
         obj.setModificationEpoch(System.currentTimeMillis());
         return s;
     }
@@ -88,8 +90,7 @@ public class TripleData {
             this.parameters = new HashMap<>();
             this.parameters.putAll(tripleObject.getSource().getParameters());
             this.precession = tripleObject.getSource().getPrecession();
-            this.urls = new ArrayList<>();
-            this.urls.addAll(tripleObject.getSource().getUrls());
+            this.url = tripleObject.getSource().getUrl();
             this.version = tripleObject.getSource().getVersion();
         }
         return this;
@@ -151,12 +152,12 @@ public class TripleData {
         this.version = version;
     }
 
-    public List<String> getUrls() {
-        return urls;
+    public String getUrl() {
+        return url;
     }
 
-    public void setUrls(List<String> urls) {
-        this.urls = urls;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public HashMap<String, String> getParameters() {
