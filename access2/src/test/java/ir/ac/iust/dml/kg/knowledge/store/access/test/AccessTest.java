@@ -14,7 +14,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Unit test for access
@@ -54,7 +53,7 @@ public class AccessTest {
     @Test
     public void subjectIndex() {
         final Subject t1 = new Subject("context", "Hossein");
-        final List<TripleObject> triples = new ArrayList<>();
+        final ArrayList<TripleObject> triples = new ArrayList<>();
         triples.add(new TripleObject(ValueType.Resource, "https://www.w3.org/TR/rdf-schema/#boolean"));
         t1.getTriples().put("https://www.w3.org/TR/rdf-schema/#ch_datatype", triples);
         subjects.write(t1);

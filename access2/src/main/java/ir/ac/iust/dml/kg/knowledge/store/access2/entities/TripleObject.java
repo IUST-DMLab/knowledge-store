@@ -4,7 +4,6 @@ import ir.ac.iust.dml.kg.knowledge.core.TypedValue;
 import ir.ac.iust.dml.kg.knowledge.core.ValueType;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * data class for triples
@@ -12,17 +11,17 @@ import java.util.Map;
  */
 
 public class TripleObject extends TypedValue {
-    private Map<String, TypedValue> properties;
+    private HashMap<String, TypedValue> properties;
     private Source source;
     private TripleState state;
-    private Map<String, ExpertVote> votes;
+    private HashMap<String, ExpertVote> votes;
     private long creationEpoch;
     private long modificationEpoch;
 
     public TripleObject() {
     }
 
-    public TripleObject(TypedValue value, Map<String, TypedValue> properties, String module) {
+    public TripleObject(TypedValue value, HashMap<String, TypedValue> properties, String module) {
         super(value.getType(), value.getValue(), value.getLang());
         this.creationEpoch = System.currentTimeMillis();
         this.properties = properties;
@@ -38,13 +37,13 @@ public class TripleObject extends TypedValue {
         this.creationEpoch = System.currentTimeMillis();
     }
 
-    public Map<String, TypedValue> getProperties() {
+    public HashMap<String, TypedValue> getProperties() {
         if (properties == null)
             properties = new HashMap<>();
         return properties;
     }
 
-    public void setProperties(Map<String, TypedValue> properties) {
+    public void setProperties(HashMap<String, TypedValue> properties) {
         this.properties = properties;
     }
 
@@ -64,12 +63,12 @@ public class TripleObject extends TypedValue {
         this.state = state;
     }
 
-    public Map<String, ExpertVote> getVotes() {
+    public HashMap<String, ExpertVote> getVotes() {
         if (votes == null) votes = new HashMap<>();
         return votes;
     }
 
-    public void setVotes(Map<String, ExpertVote> votes) {
+    public void setVotes(HashMap<String, ExpertVote> votes) {
         this.votes = votes;
     }
 

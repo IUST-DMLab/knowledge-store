@@ -2,6 +2,8 @@ package ir.ac.iust.dml.kg.knowledge.store.access2.mongo;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import ir.ac.iust.dml.kg.knowledge.commons.MongoDaoUtils;
+import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
 import ir.ac.iust.dml.kg.knowledge.store.access2.dao.ISubjectDao;
 import ir.ac.iust.dml.kg.knowledge.store.access2.entities.Subject;
 import org.bson.types.ObjectId;
@@ -79,5 +81,19 @@ public class SubjectDaoImpl2 implements ISubjectDao {
         final Iterator<DBObject> subjectAggregate = op.getCollection("subjects").aggregate(sampleQuery).results().iterator();
         if (!subjectAggregate.hasNext()) return null;
         return op.getConverter().read(Subject.class, subjectAggregate.next());
+    }
+
+    @Override
+    public PagingList<Subject> searchHasPredicate(String predicate, int page, int pageSize) {
+        final Query query = new Query();
+        query.addCriteria(Criteria.where("triples." + predicate.replace(".", "+++") + ".value").exists(true));
+        return MongoDaoUtils.paging(op, Subject.class, query, page, pageSize);
+    }
+
+    @Override
+    public PagingList<Subject> searchHasValue(String predicate, String object, int page, int pageSize) {
+        final Query query = new Query();
+        query.addCriteria(Criteria.where("triples." + predicate.replace(".", "+++") + ".value").is(object));
+        return MongoDaoUtils.paging(op, Subject.class, query, page, pageSize);
     }
 }

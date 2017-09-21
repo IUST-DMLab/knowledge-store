@@ -16,7 +16,6 @@ import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings("WeakerAccess")
 @XmlType(name = "TripleData")
@@ -63,7 +62,7 @@ public class TripleData {
             s = new Subject(context, subject);
         else
             assert s.getSubject().equals(subject) && s.getContext().equals(context);
-        final Map<String, TypedValue> properties = new HashMap<>();
+        final HashMap<String, TypedValue> properties = new HashMap<>();
         if (this.properties != null)
             this.properties.forEach((k, v) -> properties.put(k, v.fill(null)));
         final TripleObject obj = s.addObject(predicate, object.fill(null), module, properties);

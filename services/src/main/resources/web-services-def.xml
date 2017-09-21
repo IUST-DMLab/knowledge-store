@@ -30,6 +30,7 @@
     <bean id="v1MappingServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v1.MappingServices"/>
     <bean id="v1MappingExpertServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v1.MappingExpertServices"/>
     <bean id="v2TriplesServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v2.impl.TriplesServices"/>
+    <bean id="v2SubjectServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v2.impl.SubjectServices"/>
     <bean id="v2OntologyServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v2.impl.OntologyServices"/>
     <bean id="v2MappingServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v2.impl.MappingServices"/>
     <bean id="v2MappingExpertServices"
@@ -61,6 +62,11 @@
             <ref bean="commonValidationFeature"/>
         </jaxws:features>
     </jaxws:endpoint>
+    <jaxws:endpoint implementor="#v2SubjectServices" address="/ws/v2/subjects">
+        <jaxws:features>
+            <ref bean="commonValidationFeature"/>
+        </jaxws:features>
+    </jaxws:endpoint>
     <jaxws:endpoint implementor="#v2OntologyServices" address="/ws/v2/ontology">
         <jaxws:features>
             <ref bean="commonValidationFeature"/>
@@ -84,6 +90,7 @@
             <ref bean="v1MappingServices"/>
             <ref bean="v1MappingExpertServices"/>
             <ref bean="v2TriplesServices"/>
+            <ref bean="v2SubjectServices"/>
             <ref bean="v2OntologyServices"/>
             <ref bean="v2MappingServices"/>
             <ref bean="v2MappingExpertServices"/>

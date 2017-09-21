@@ -25,7 +25,7 @@ public class OntologyServices implements IOntologyServices {
 
     @Override
     public OntologyData insert(@Valid OntologyData data) {
-        if (data.getContext() == null) data.setContext("http://kg.dml.iust.ac.ir");
+        if (data.getContext() == null) data.setContext("http://fkg.iust.ac.ir/");
         final Ontology old = dao.read(data.getContext(), data.getSubject(), data.getPredicate(), data.getObject().getValue());
         final Ontology ontology = data.fill(old);
         dao.write(ontology);
@@ -41,7 +41,7 @@ public class OntologyServices implements IOntologyServices {
 
     @Override
     public Ontology remove(String context, String subject, String predicate, String object) {
-        if (context == null) context = "http://kg.dml.iust.ac.ir";
+        if (context == null) context = "http://fkg.iust.ac.ir/";
         Ontology ontology = dao.read(context, subject, predicate, object);
         if (ontology != null)
             dao.delete(ontology);
@@ -50,7 +50,7 @@ public class OntologyServices implements IOntologyServices {
 
     @Override
     public Ontology ontology(String context, String subject, String predicate, String object) {
-        if (context == null) context = "http://kg.dml.iust.ac.ir";
+        if (context == null) context = "http://fkg.iust.ac.ir/";
         return dao.read(context, subject, predicate, object);
     }
 

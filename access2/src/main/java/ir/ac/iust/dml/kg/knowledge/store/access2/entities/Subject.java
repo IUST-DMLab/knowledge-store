@@ -10,7 +10,10 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.xml.bind.annotation.XmlType;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Data class for subject
@@ -34,7 +37,7 @@ public class Subject {
     private String subject;
     private long creationEpoch;
     private long modificationEpoch;
-    private Map<String, List<TripleObject>> triples;
+    private HashMap<String, ArrayList<TripleObject>> triples;
     /**
      * Set of source that has triple for voting
      */
@@ -60,9 +63,9 @@ public class Subject {
         return id != null ? id.toString() : null;
     }
 
-    public TripleObject addObject(String predicate, TypedValue value, String source, Map<String, TypedValue> properties) {
+    public TripleObject addObject(String predicate, TypedValue value, String source, HashMap<String, TypedValue> properties) {
         if (triples == null) triples = new HashMap<>();
-        final List<TripleObject> objects;
+        final ArrayList<TripleObject> objects;
         if (triples.containsKey(predicate))
             objects = triples.get(predicate);
         else {
@@ -127,12 +130,12 @@ public class Subject {
         this.modificationEpoch = modificationEpoch;
     }
 
-    public Map<String, List<TripleObject>> getTriples() {
+    public HashMap<String, ArrayList<TripleObject>> getTriples() {
         if (triples == null) triples = new HashMap<>();
         return triples;
     }
 
-    public void setTriples(Map<String, List<TripleObject>> triples) {
+    public void setTriples(HashMap<String, ArrayList<TripleObject>> triples) {
         this.triples = triples;
     }
 
