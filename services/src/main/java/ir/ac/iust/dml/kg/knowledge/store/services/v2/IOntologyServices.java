@@ -15,6 +15,13 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
+/**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ * <p>
+ * Service to define and use ontology
+ */
 @WebService
 @Path("/v2/ontology")
 @Api("/v2/ontology")
@@ -43,13 +50,13 @@ public interface IOntologyServices {
     @WebMethod
     @ApiOperation(value = "Remove ontology")
     Ontology remove(@ApiParam(example = "http://kg.dml.iust.ac.ir")
-                  @WebParam(name = "context") @QueryParam("context") String context,
+                    @WebParam(name = "context") @QueryParam("context") String context,
                     @ApiParam(required = true, example = "http://url.com/subject")
-                  @WebParam(name = "subject") @QueryParam("subject") String subject,
+                    @WebParam(name = "subject") @QueryParam("subject") String subject,
                     @ApiParam(required = true, example = "http://url.com/predicate")
-                  @WebParam(name = "predicate") @QueryParam("predicate") String predicate,
+                    @WebParam(name = "predicate") @QueryParam("predicate") String predicate,
                     @ApiParam(required = true, example = "http://url.com/object")
-                  @WebParam(name = "object") @QueryParam("object") String object);
+                    @WebParam(name = "object") @QueryParam("object") String object);
 
     @GET
     @Path("/ontology")
@@ -57,13 +64,13 @@ public interface IOntologyServices {
     @WebMethod
     @ApiOperation(value = "Return ontology by (context, subject, predicate, object)")
     Ontology ontology(@ApiParam(example = "http://kg.dml.iust.ac.ir")
-                  @WebParam(name = "context") @QueryParam("context") String context,
+                      @WebParam(name = "context") @QueryParam("context") String context,
                       @ApiParam(required = true, example = "http://url.com/subject")
-                  @WebParam(name = "subject") @QueryParam("subject") String subject,
+                      @WebParam(name = "subject") @QueryParam("subject") String subject,
                       @ApiParam(required = true, example = "http://url.com/predicate")
-                  @WebParam(name = "predicate") @QueryParam("predicate") String predicate,
+                      @WebParam(name = "predicate") @QueryParam("predicate") String predicate,
                       @ApiParam(required = true, example = "http://url.com/object")
-                  @WebParam(name = "object") @QueryParam("object") String object);
+                      @WebParam(name = "object") @QueryParam("object") String object);
 
     @GET
     @Path("/search")

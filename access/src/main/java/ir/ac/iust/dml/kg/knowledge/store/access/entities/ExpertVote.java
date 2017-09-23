@@ -3,8 +3,13 @@ package ir.ac.iust.dml.kg.knowledge.store.access.entities;
 import javax.xml.bind.annotation.XmlType;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Vote object for each expert
  */
+@Deprecated
 @XmlType(name = "ExpertVote", namespace = "http://kg.dml.iust.ac.ir")
 public class ExpertVote {
     private String module;

@@ -13,6 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * impl {@link IMappingServices}
  */
 @WebService(endpointInterface = "ir.ac.iust.dml.kg.knowledge.store.services.v2.IMappingServices")

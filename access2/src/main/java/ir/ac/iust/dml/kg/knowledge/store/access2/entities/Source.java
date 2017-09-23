@@ -4,7 +4,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * data class for encapsulate
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
+ * data class for encapsulate source
+ * Each triple has one source
+ * module: is name of extractor: wiki/text/table
+ * version: is version of extractor that increment each time it has been run
+ * url: page address that triple has extracted
+ * parameters: parameter of extracted triples
+ * precession: is not used
  */
 public class Source {
     private String module;

@@ -8,6 +8,10 @@ import org.bson.types.ObjectId;
 import java.util.List;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * interface for read and write TemplateMapping
  */
 public interface IMappingDao {

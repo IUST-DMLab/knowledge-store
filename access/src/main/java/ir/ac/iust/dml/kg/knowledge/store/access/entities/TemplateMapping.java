@@ -15,9 +15,14 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Class for mapping for map template
  * title: is template mapping class
  */
+@Deprecated
 @XmlType(name = "TemplateMapping", namespace = "http://kg.dml.iust.ac.ir")
 @Document(collection = "template-mapping")
 @CompoundIndexes({

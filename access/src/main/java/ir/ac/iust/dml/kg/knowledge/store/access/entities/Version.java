@@ -9,8 +9,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.xml.bind.annotation.XmlType;
 
 /**
+ *
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
  * Keep latest version of each module
  */
+@Deprecated
 @XmlType(name = "version", namespace = "http://kg.dml.iust.ac.ir")
 @Document(collection = "versions")
 public class Version {

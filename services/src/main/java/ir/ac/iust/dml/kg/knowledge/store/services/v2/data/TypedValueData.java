@@ -9,6 +9,10 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlType;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Data for typed value
  */
 @SuppressWarnings("Duplicates")

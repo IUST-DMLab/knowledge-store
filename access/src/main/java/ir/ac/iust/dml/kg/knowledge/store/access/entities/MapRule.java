@@ -3,8 +3,13 @@ package ir.ac.iust.dml.kg.knowledge.store.access.entities;
 import ir.ac.iust.dml.kg.knowledge.core.ValueType;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Mapped result
  */
+@Deprecated
 public class MapRule {
     private String predicate;
     private String constant;

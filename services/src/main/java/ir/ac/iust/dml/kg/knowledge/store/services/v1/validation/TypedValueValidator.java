@@ -7,8 +7,14 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 /**
+ *
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Validate TypedValueData
  */
+@Deprecated
 public class TypedValueValidator implements ConstraintValidator<ValidTypedValue, TypedValueData> {
     private URLValidator urlValidator = new URLValidator();
 

@@ -15,6 +15,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ * <p>
+ * Migrate data from v1 access to v2 access
+ */
 @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
@@ -32,9 +39,9 @@ public class Application implements CommandLineRunner {
     }
 
     private String[] ontologyPredicates = new String[]{
-        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"};
-  private String[] ontologyObjects = new String[]{"http://www.w3.org/2002/07/owl#Class",
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"};
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"};
+    private String[] ontologyObjects = new String[]{"http://www.w3.org/2002/07/owl#Class",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"};
 
     @Override
     public void run(String... strings) throws Exception {
@@ -43,25 +50,25 @@ public class Application implements CommandLineRunner {
             for (String object : ontologyObjects) {
                 final List<Triple> subjects =
                         tripleDao.search(null, null, predicate, object, 0, 0).getData();
-              System.out.println(String.format("number of triples: %d for p: %s o: %s", subjects.size(), predicate, object));
+                System.out.println(String.format("number of triples: %d for p: %s o: %s", subjects.size(), predicate, object));
                 for (Triple triple : subjects)
                     ontologySubjects.add(triple.getSubject());
             }
-      int duplicates = 0;
+        int duplicates = 0;
         for (String subject : ontologySubjects) {
             final List<Triple> ontologies =
                     tripleDao.search(null, subject, null, null, 0, 0)
                             .getData();
-          System.out.println(String.format("number of triples of %s is %d", subject, ontologies.size()));
-          for (Triple o : ontologies) {
-            try {
-              ontologyDao2.write(new Ontology(o.getContext(), o.getSubject(), o.getPredicate(), o.getObject()));
-            } catch (Throwable ignored) {
-              System.err.println(o.getContext() + " - " + o.getSubject() + "-" + o.getPredicate() + "-" + o.getObject());
-              duplicates++;
+            System.out.println(String.format("number of triples of %s is %d", subject, ontologies.size()));
+            for (Triple o : ontologies) {
+                try {
+                    ontologyDao2.write(new Ontology(o.getContext(), o.getSubject(), o.getPredicate(), o.getObject()));
+                } catch (Throwable ignored) {
+                    System.err.println(o.getContext() + " - " + o.getSubject() + "-" + o.getPredicate() + "-" + o.getObject());
+                    duplicates++;
+                }
             }
-          }
         }
-      System.out.println("duplicates: " + duplicates);
+        System.out.println("duplicates: " + duplicates);
     }
 }

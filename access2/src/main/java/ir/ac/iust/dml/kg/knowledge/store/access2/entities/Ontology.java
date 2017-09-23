@@ -11,16 +11,20 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.xml.bind.annotation.XmlType;
 
+/**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ * <p>
+ * Entity to keep ontology it differ from triple because it has not source and not updated by extractors
+ */
 @XmlType(name = "Ontology", namespace = "http://kg.dml.iust.ac.ir")
 @Document(collection = "ontology")
 @CompoundIndexes({
-    @CompoundIndex(name = "triple_index", def = "{'context': 1, 'subject' : 2, 'predicate' : 3, 'object.value': 4}", unique = true),
-    @CompoundIndex(name = "subject_predicate_index", def = "{'subject' : 1, 'predicate' : 2}"),
-    @CompoundIndex(name = "predicate_object_index", def = "{'predicate' : 1, 'object.value' : 2}}")
+        @CompoundIndex(name = "triple_index", def = "{'context': 1, 'subject' : 2, 'predicate' : 3, 'object.value': 4}", unique = true),
+        @CompoundIndex(name = "subject_predicate_index", def = "{'subject' : 1, 'predicate' : 2}"),
+        @CompoundIndex(name = "predicate_object_index", def = "{'predicate' : 1, 'object.value' : 2}}")
 })
-/**
- * Entity to keep ontology it differ from triple because it has not source and not updated by extractors
- */
 public class Ontology {
     @Id
     @JsonIgnore
