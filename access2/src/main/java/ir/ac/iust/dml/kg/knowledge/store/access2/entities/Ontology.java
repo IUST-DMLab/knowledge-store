@@ -114,4 +114,9 @@ public class Ontology {
     public String getIdentifier() {
         return id != null ? id.toString() : null;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Ontology{%s <%s %s %s>", context, subject, predicate, object);
+    }
 }
