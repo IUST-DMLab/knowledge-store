@@ -21,4 +21,6 @@ public interface ISubjectDao {
     PagingList<Subject> searchHasPredicate(String predicate, int page, int pageSize);
 
     PagingList<Subject> searchHasValue(String predicate, String object, int page, int pageSize);
+
+    PagingList<Subject> readAll(int page, int pageSize);
 }

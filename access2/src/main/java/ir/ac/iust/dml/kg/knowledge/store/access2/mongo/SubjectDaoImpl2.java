@@ -96,4 +96,10 @@ public class SubjectDaoImpl2 implements ISubjectDao {
         query.addCriteria(Criteria.where("triples." + predicate.replace(".", "+++") + ".value").is(object));
         return MongoDaoUtils.paging(op, Subject.class, query, page, pageSize);
     }
+
+    @Override
+    public PagingList<Subject> readAll(int page, int pageSize) {
+        final Query query = new Query();
+        return MongoDaoUtils.paging(op, Subject.class, query, page, pageSize);
+    }
 }
