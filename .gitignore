@@ -150,6 +150,7 @@ buildNumber.properties
 
 # Package Files #
 *.jar
+!export/src/lib/*.jar
 *.war
 *.ear
 
