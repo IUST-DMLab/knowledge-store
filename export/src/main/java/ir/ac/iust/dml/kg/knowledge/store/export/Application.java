@@ -26,6 +26,7 @@ import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfigurat
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.ImportResource;
 import virtuoso.rdf4j.driver.VirtuosoRepository;
+import virtuoso.rdf4j.driver.VirtuosoRepositoryConnection;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -61,13 +62,17 @@ public class Application implements CommandLineRunner {
         final String port = "1111";
         final String user = "dba";
         final String password = "dba";
-        final String tempGraph = "http://temp.com";
+        final String tempGraph = "http://temp.fkg.iust.ir";
+        final String finalGraph = "http://fkg.iust.ir";
         VirtuosoRepository repository = new VirtuosoRepository("jdbc:virtuoso://" + ip + ":" + port + "/",
                 user, password);
         try (RepositoryConnection con = repository.getConnection()) {
             con.clear(SimpleValueFactory.getInstance().createIRI(tempGraph));
-//            exportOntology(con, 0, 10, tempGraph);
+            exportOntology(con, 0, 10, tempGraph);
             exportTriples(con, 10, 100, tempGraph);
+            con.clear(SimpleValueFactory.getInstance().createIRI(finalGraph));
+            ((VirtuosoRepositoryConnection) con).executeSPARUL(String.format("MOVE <%s> TO <%s>", tempGraph, finalGraph));
+            con.clear(SimpleValueFactory.getInstance().createIRI(tempGraph));
 
         }
     }
@@ -79,7 +84,7 @@ public class Application implements CommandLineRunner {
         printProgress(0, minProgress, maxProgress);
         PagingList<Subject> result = null;
         do {
-            result = subjectDao.readAll(result == null ? 0 : result.getPage() + 1, 1000);
+            result = subjectDao.readAll(result == null ? 0 : result.getPage() + 1, 100);
             if (!result.getData().isEmpty()) {
                 final ModelBuilder builder = new ModelBuilder();
                 for (Subject s : result.getData()) {
@@ -112,8 +117,11 @@ public class Application implements CommandLineRunner {
                                 final String relation = s.getSubject() + "/relation_" + relationIndex++;
                                 final TypedValue relationValue = new TypedValue(ValueType.Resource, relation);
                                 if (hasValidURIs(s.getSubject(), p, relationValue)) {
-                                    builder.namedGraph(tempGraph).add(s.getSubject(), "http://dbpedia.org/ontology/termPeriod", createValue(relationValue));
-                                    builder.namedGraph(tempGraph).add(relation, p, o);
+                                    builder.namedGraph(tempGraph)
+                                            .add(s.getSubject(), "http://fkg.iust.ac.ir/ontology/relatedPredicates", createValue(relationValue))
+                                            .add(relation, "https://www.w3.org/1999/02/22-rdf-syntax-ns#type", SimpleValueFactory.getInstance().createIRI("http://fkg.iust.ac.ir/ontology/RelatedPredicates"))
+                                            .add(relation, "http://fkg.iust.ac.ir/ontology/mainPredicate", SimpleValueFactory.getInstance().createIRI(p))
+                                            .add(relation, p, o);
                                     for (Map.Entry<String, TypedValue> prop : properties.entrySet()) {
                                         if (hasValidURIs(relation, prop.getKey(), prop.getValue()))
                                             builder.namedGraph(tempGraph).add(relation, prop.getKey(), prop.getValue());
