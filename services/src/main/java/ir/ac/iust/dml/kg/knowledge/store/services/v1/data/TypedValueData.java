@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlType;
  * Data for typed value
  */
 @XmlType(name = "TypedValueData")
+@Deprecated
 public class TypedValueData {
     @NotNull
     @ApiModelProperty(required = true, example = "Resource")

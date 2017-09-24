@@ -4,6 +4,7 @@ import ir.ac.iust.dml.kg.knowledge.store.access.dao.IVersionDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Version;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -12,11 +13,17 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
+ *
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
  * impl {@link IVersionDao}
  */
+@Deprecated
 @Repository
 public class VersionDaoImpl implements IVersionDao {
     @Autowired
+    @Qualifier("store1")
     private MongoOperations op;
 
     @Override

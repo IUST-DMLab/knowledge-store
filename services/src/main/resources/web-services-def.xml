@@ -9,6 +9,7 @@
             http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
     <context:annotation-config/>
     <import resource="persistence-context.xml"/>
+    <import resource="persistence-context2.xml"/>
     <import resource="classpath:META-INF/cxf/cxf.xml"/>
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
 
@@ -25,17 +26,18 @@
 
     <bean id="helloService" class="ir.ac.iust.dml.kg.knowledge.store.services.hello.HelloServiceImpl"/>
     <bean id="v1TriplesServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v1.TriplesServices"/>
+    <bean id="v1ExpertServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v1.ExpertServices"/>
     <bean id="v1MappingServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v1.MappingServices"/>
     <bean id="v1MappingExpertServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v1.MappingExpertServices"/>
-    <bean id="v1ExpertServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v1.ExpertServices"/>
+    <bean id="v2TriplesServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v2.impl.TriplesServices"/>
+    <bean id="v2SubjectServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v2.impl.SubjectServices"/>
+    <bean id="v2OntologyServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v2.impl.OntologyServices"/>
+    <bean id="v2MappingServices" class="ir.ac.iust.dml.kg.knowledge.store.services.v2.impl.MappingServices"/>
+    <bean id="v2MappingExpertServices"
+          class="ir.ac.iust.dml.kg.knowledge.store.services.v2.impl.MappingExpertServices"/>
 
     <jaxws:endpoint implementor="#helloService" address="/ws/v0"/>
     <jaxws:endpoint implementor="#v1TriplesServices" address="/ws/v1/triples">
-        <jaxws:features>
-            <ref bean="commonValidationFeature"/>
-        </jaxws:features>
-    </jaxws:endpoint>
-    <jaxws:endpoint implementor="#v1MappingServices" address="/ws/v1/mappings">
         <jaxws:features>
             <ref bean="commonValidationFeature"/>
         </jaxws:features>
@@ -45,7 +47,37 @@
             <ref bean="commonValidationFeature"/>
         </jaxws:features>
     </jaxws:endpoint>
+    <jaxws:endpoint implementor="#v1MappingServices" address="/ws/v1/mappings">
+        <jaxws:features>
+            <ref bean="commonValidationFeature"/>
+        </jaxws:features>
+    </jaxws:endpoint>
     <jaxws:endpoint implementor="#v1MappingExpertServices" address="/ws/v1/mappings/experts">
+        <jaxws:features>
+            <ref bean="commonValidationFeature"/>
+        </jaxws:features>
+    </jaxws:endpoint>
+    <jaxws:endpoint implementor="#v2TriplesServices" address="/ws/v2/triples">
+        <jaxws:features>
+            <ref bean="commonValidationFeature"/>
+        </jaxws:features>
+    </jaxws:endpoint>
+    <jaxws:endpoint implementor="#v2SubjectServices" address="/ws/v2/subjects">
+        <jaxws:features>
+            <ref bean="commonValidationFeature"/>
+        </jaxws:features>
+    </jaxws:endpoint>
+    <jaxws:endpoint implementor="#v2OntologyServices" address="/ws/v2/ontology">
+        <jaxws:features>
+            <ref bean="commonValidationFeature"/>
+        </jaxws:features>
+    </jaxws:endpoint>
+    <jaxws:endpoint implementor="#v2MappingServices" address="/ws/v2/mappings">
+        <jaxws:features>
+            <ref bean="commonValidationFeature"/>
+        </jaxws:features>
+    </jaxws:endpoint>
+    <jaxws:endpoint implementor="#v2MappingExpertServices" address="/ws/v2/mappings/experts">
         <jaxws:features>
             <ref bean="commonValidationFeature"/>
         </jaxws:features>
@@ -54,9 +86,14 @@
         <jaxrs:serviceBeans>
             <ref bean="helloService"/>
             <ref bean="v1TriplesServices"/>
-            <ref bean="v1MappingServices"/>
             <ref bean="v1ExpertServices"/>
+            <ref bean="v1MappingServices"/>
             <ref bean="v1MappingExpertServices"/>
+            <ref bean="v2TriplesServices"/>
+            <ref bean="v2SubjectServices"/>
+            <ref bean="v2OntologyServices"/>
+            <ref bean="v2MappingServices"/>
+            <ref bean="v2MappingExpertServices"/>
         </jaxrs:serviceBeans>
         <jaxrs:features>
             <bean class="org.apache.cxf.jaxrs.swagger.Swagger2Feature"/>

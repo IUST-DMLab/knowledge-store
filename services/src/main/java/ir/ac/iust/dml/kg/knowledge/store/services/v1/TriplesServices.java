@@ -2,6 +2,7 @@ package ir.ac.iust.dml.kg.knowledge.store.services.v1;
 
 import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
 import ir.ac.iust.dml.kg.knowledge.core.TypedValue;
+import ir.ac.iust.dml.kg.knowledge.core.ValueType;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.IVersionDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Source;
@@ -22,6 +23,8 @@ import javax.annotation.PostConstruct;
 import javax.jws.WebService;
 import javax.validation.Valid;
 import java.io.ByteArrayOutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -30,6 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * impl {@link ITriplesServices}
  */
+@Deprecated
 @WebService(endpointInterface = "ir.ac.iust.dml.kg.knowledge.store.services.v1.ITriplesServices")
 public class TriplesServices implements ITriplesServices {
     @Autowired
@@ -110,11 +114,11 @@ public class TriplesServices implements ITriplesServices {
                                      String object, Boolean useRegexForObject,
                                      int page, int pageSize) {
         return dao.search(
-                context, useRegexForContext != null && useRegexForContext,
-                subject, useRegexForSubject != null && useRegexForSubject,
-                predicate, useRegexForPredicate != null && useRegexForPredicate,
-                object, useRegexForObject != null && useRegexForObject,
-                page, pageSize);
+            context, useRegexForContext != null && useRegexForContext,
+            subject, useRegexForSubject != null && useRegexForSubject,
+            predicate, useRegexForPredicate != null && useRegexForPredicate,
+            object, useRegexForObject != null && useRegexForObject,
+            page, pageSize);
     }
 
     @Override
@@ -130,7 +134,7 @@ public class TriplesServices implements ITriplesServices {
                 if (sv == null || Objects.equals(sv.getActiveVersion(), s.getVersion()))
                     isLatestVersion = true;
             }
-            if (isLatestVersion)
+            if (isLatestVersion && hasValidURIs(t))
                 builder.add(t.getSubject(), t.getPredicate(), createValue(t.getObject()));
         });
 
@@ -142,6 +146,19 @@ public class TriplesServices implements ITriplesServices {
         model.forEach(writer::handleStatement);
         writer.endRDF();
         return out.toString();
+    }
+
+    private boolean hasValidURIs(Triple triple) {
+        try {
+            new URL(triple.getSubject());
+            new URL(triple.getPredicate());
+            if (triple.getObject().getType() == ValueType.Resource)
+                new URL(triple.getObject().getValue());
+            return true;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public Object createValue(TypedValue v) {

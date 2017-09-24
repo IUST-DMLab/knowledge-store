@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <artifactId>knowlede-store-export</artifactId>
+    <modelVersion>4.0.0</modelVersion>
+    <name>Knowledge Store Export</name>
+    <parent>
+        <relativePath>../</relativePath>
+        <groupId>ir.ac.iust.dml.kg.knowledge.store</groupId>
+        <artifactId>parent</artifactId>
+        <version>2.0.0</version>
+    </parent>
+
+    <properties>
+        <spring.boot.version>1.4.5.RELEASE</spring.boot.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <!-- Import dependency management from Spring Boot -->
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+    </build>
+
+    <dependencies>
+        <!-- Other Dependencies -->
+        <dependency>
+            <groupId>ir.ac.iust.dml.kg.knowledge.store</groupId>
+            <artifactId>knowlede-store-access2</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+            <version>${spring.boot.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>virt_rdf4j</groupId>
+            <artifactId>com.openlinksw.virtuoso</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/lib/virt_rdf4j.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>virtjdbc</groupId>
+            <artifactId>com.openlinksw.virtuoso</artifactId>
+            <version>4.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/lib/virtjdbc4_2.jar</systemPath>
+        </dependency>
+    </dependencies>
+</project>

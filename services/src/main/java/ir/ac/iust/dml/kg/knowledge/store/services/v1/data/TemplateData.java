@@ -14,6 +14,7 @@ import java.util.List;
  * Data for define template
  */
 @XmlType(name = "TemplateData")
+@Deprecated
 public class TemplateData {
     @NotNull
     @NotEmpty

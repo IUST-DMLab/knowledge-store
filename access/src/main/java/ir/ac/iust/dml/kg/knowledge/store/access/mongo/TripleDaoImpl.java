@@ -2,14 +2,15 @@ package ir.ac.iust.dml.kg.knowledge.store.access.mongo;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import ir.ac.iust.dml.kg.knowledge.commons.MongoDaoUtils;
 import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
-import ir.ac.iust.dml.kg.knowledge.commons.Utils;
 import ir.ac.iust.dml.kg.knowledge.store.access.dao.ITripleDao;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.Triple;
 import ir.ac.iust.dml.kg.knowledge.store.access.entities.TripleState;
 import ir.ac.iust.dml.kg.knowledge.store.access.stats.KeyCount;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -19,17 +20,20 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * impl {@link ITripleDao}
  */
+@Deprecated
 @Repository
 public class TripleDaoImpl implements ITripleDao {
     @Autowired
+    @Qualifier("store1")
     private MongoOperations op;
 
     @Override
@@ -97,7 +101,7 @@ public class TripleDaoImpl implements ITripleDao {
             query.addCriteria(Criteria.where("object.value").is(object));
         else if (object != null)
             query.addCriteria(Criteria.where("object.value").regex(object));
-        return DaoUtils.paging(op, Triple.class, query, page, pageSize);
+        return MongoDaoUtils.paging(op, Triple.class, query, page, pageSize);
     }
 
     @Override
@@ -107,7 +111,7 @@ public class TripleDaoImpl implements ITripleDao {
             query.addCriteria(Criteria.where("state").is(state));
         if (after != null)
             query.addCriteria(Criteria.where("modificationEpoch").gte(after));
-        return DaoUtils.paging(op, Triple.class, query, page, pageSize);
+        return MongoDaoUtils.paging(op, Triple.class, query, page, pageSize);
     }
 
     @Override
@@ -119,7 +123,7 @@ public class TripleDaoImpl implements ITripleDao {
                 .with(new Sort(Sort.Direction.ASC, "subject"));
         final int total = (int) op.count(new Query(), Triple.class);
         final List<Triple> cs = new ArrayList<>();
-        final Set<Integer> randomIndexes = Utils.randomIndex(count, total);
+        final Set<Integer> randomIndexes = randomIndex(count, total);
         for (int index : randomIndexes) {
             final PageRequest pageRequest = new PageRequest(index, 10);
             query.with(pageRequest);
@@ -177,8 +181,31 @@ public class TripleDaoImpl implements ITripleDao {
         if (subject != null)
             operations.add(Aggregation.match(Criteria.where("subject").regex(subject)));
         operations.add(Aggregation.group("subject").count().as("count"));
-        return DaoUtils
+        return MongoDaoUtils
                 .aggregate(op, Triple.class, KeyCount.class, page, pageSize,
                         operations.toArray(new AggregationOperation[operations.size()]));
+    }
+
+    private static final Random randomGenerator = new Random(System
+            .currentTimeMillis());
+
+    /**
+     * Generate random unique array of 0 to max - 1
+     *
+     * @param count size of array
+     * @param max   max of generated
+     * @return
+     */
+    public static Set<Integer> randomIndex(int count, int max) {
+        if (count >= max) {
+            final Set<Integer> indexes = new HashSet<>(count);
+            for (int i = 0; i < max; i++) indexes.add(i);
+            return indexes;
+        } else {
+            final Set<Integer> indexes = new HashSet<>(count);
+            while (indexes.size() < count)
+                indexes.add(randomGenerator.nextInt(max));
+            return indexes;
+        }
     }
 }

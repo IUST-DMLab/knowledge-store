@@ -7,11 +7,14 @@
     <groupId>ir.ac.iust.dml.kg.knowledge.store</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.9.0</version>
+    <version>2.0.0</version>
     <name>Knowledge Store</name>
 
     <modules>
         <module>access</module>
+        <module>access2</module>
+        <module>export</module>
+        <module>migration</module>
         <module>services</module>
     </modules>
 
@@ -57,6 +60,20 @@
             <groupId>ir.ac.iust.dml.kg</groupId>
             <artifactId>knowledge-core</artifactId>
             <version>1.0.0</version>
+        </dependency>
+
+        <!-- MongoDB java driver -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.5.0</version>
+        </dependency>
+
+        <!-- Spring data MongoDB -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb</artifactId>
+            <version>1.10.6.RELEASE</version>
         </dependency>
 
         <!-- AspectJ -->

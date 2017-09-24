@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlType;
  * Rule data of mapping
  */
 @XmlType(name = "MapRuleData")
+@Deprecated
 public class MapRuleData {
     @NotNull
     @URL

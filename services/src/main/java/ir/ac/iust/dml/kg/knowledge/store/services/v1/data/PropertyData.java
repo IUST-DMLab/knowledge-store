@@ -12,6 +12,7 @@ import java.util.List;
  * Data for define property of a template
  */
 @XmlType(name = "PropertyData")
+@Deprecated
 public class PropertyData {
     @NotNull
     @NotEmpty
