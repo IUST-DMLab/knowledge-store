@@ -6,10 +6,12 @@ import ir.ac.iust.dml.kg.knowledge.core.ValueType;
 import java.util.HashMap;
 
 /**
- * data class for triples
- * http://194.225.227.161:8081/browse/KG-180
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
+ * Value of a object a triple
  */
-
 public class TripleObject extends TypedValue {
     private HashMap<String, TypedValue> properties;
     private Source source;

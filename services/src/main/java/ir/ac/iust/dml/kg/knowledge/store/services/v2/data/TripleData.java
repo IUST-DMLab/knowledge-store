@@ -14,6 +14,11 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlType;
 import java.util.HashMap;
 
+/**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ */
 @SuppressWarnings("WeakerAccess")
 @XmlType(name = "TripleData")
 public class TripleData {

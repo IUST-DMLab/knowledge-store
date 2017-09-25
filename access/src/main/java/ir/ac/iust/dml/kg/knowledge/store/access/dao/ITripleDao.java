@@ -9,8 +9,13 @@ import org.bson.types.ObjectId;
 import java.util.List;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Interface for read and write triples
  */
+@Deprecated
 public interface ITripleDao {
     void write(Triple... triples);
 

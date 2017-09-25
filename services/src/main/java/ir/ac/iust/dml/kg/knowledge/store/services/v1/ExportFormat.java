@@ -3,8 +3,14 @@ package ir.ac.iust.dml.kg.knowledge.store.services.v1;
 import org.eclipse.rdf4j.rio.RDFFormat;
 
 /**
+ *
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Format of export
  */
+@Deprecated
 public enum ExportFormat {
     RDFXML, NTRIPLES, TURTLE, N3, NQUADS, JSONLD, RDFJSON;
 

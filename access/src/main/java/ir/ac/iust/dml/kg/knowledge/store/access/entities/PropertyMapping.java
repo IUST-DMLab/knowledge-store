@@ -4,8 +4,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Map template/property to triple
  */
+@Deprecated
 public class PropertyMapping {
     private String template;
     private String property;

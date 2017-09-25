@@ -4,6 +4,12 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
 
+/**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ */
+@Deprecated
 @Constraint(validatedBy = {TypedValueValidator.class})
 //This constraint annotation can be used only on fields and method parameters.
 @Target({ElementType.FIELD, ElementType.PARAMETER})

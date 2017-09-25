@@ -14,8 +14,15 @@ import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 /**
+ *
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Rest: /rs/v2/triples
  * SOA: /ws/v2/triples
+ *
+ * Service to define versions
  */
 @WebService
 @Path("/v2/triples")
