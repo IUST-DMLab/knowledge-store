@@ -15,6 +15,10 @@ import javax.validation.Valid;
 import java.util.List;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * impl {@link IMappingExpertServices}
  */
 @SuppressWarnings("Duplicates")

@@ -12,8 +12,14 @@ import javax.jws.WebService;
 import java.util.List;
 
 /**
+ *
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * impl {@link IExpertServices}
  */
+@Deprecated
 @WebService(endpointInterface = "ir.ac.iust.dml.kg.knowledge.store.services.v1.IExpertServices")
 public class ExpertServices implements IExpertServices {
     @Autowired

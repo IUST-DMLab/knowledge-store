@@ -15,8 +15,15 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Class for mapping for map template
  * title: is template mapping class
+ * properties: each template has multiple properties that triples extracted from it
+ * rules: some time we can generate triples from template name
+ *      for example if template of x be IranVillage we know that (x :isIn Iran)
  */
 @XmlType(name = "TemplateMapping", namespace = "http://kg.dml.iust.ac.ir")
 @Document(collection = "template-mapping")

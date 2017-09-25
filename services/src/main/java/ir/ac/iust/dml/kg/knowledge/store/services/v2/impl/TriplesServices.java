@@ -19,6 +19,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ *
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * impl {@link ITriplesServices}
  */
 @WebService(endpointInterface = "ir.ac.iust.dml.kg.knowledge.store.services.v2.ITriplesServices")

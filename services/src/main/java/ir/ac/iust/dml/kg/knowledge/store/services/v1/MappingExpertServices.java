@@ -13,8 +13,14 @@ import javax.validation.Valid;
 import java.util.List;
 
 /**
+ *
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * impl {@link IMappingExpertServices}
  */
+@Deprecated
 @WebService(endpointInterface = "ir.ac.iust.dml.kg.knowledge.store.services.v1.IMappingExpertServices")
 public class MappingExpertServices implements IMappingExpertServices {
     @Autowired

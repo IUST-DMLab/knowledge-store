@@ -16,6 +16,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.ArrayList;
 
 /**
+ *
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Unit test for access
  */
 @SuppressWarnings("Duplicates")

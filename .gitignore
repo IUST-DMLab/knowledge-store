@@ -149,8 +149,6 @@ buildNumber.properties
 .mtj.tmp/
 
 # Package Files #
-*.jar
-!export/src/lib/*.jar
 *.war
 *.ear
 

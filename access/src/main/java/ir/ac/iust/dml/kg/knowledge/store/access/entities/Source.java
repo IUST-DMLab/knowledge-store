@@ -3,8 +3,13 @@ package ir.ac.iust.dml.kg.knowledge.store.access.entities;
 import java.util.*;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * data class for encapsulate
  */
+@Deprecated
 public class Source {
     private String module;
     private Integer version;

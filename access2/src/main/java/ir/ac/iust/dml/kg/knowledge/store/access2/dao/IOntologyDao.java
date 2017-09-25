@@ -6,6 +6,10 @@ import ir.ac.iust.dml.kg.knowledge.store.access2.entities.TripleState;
 import org.bson.types.ObjectId;
 
 /**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ *
  * Interface for read and write triples
  */
 public interface IOntologyDao {

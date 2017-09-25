@@ -11,6 +11,13 @@ import javax.jws.WebService;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+/**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ * <p>
+ * Service to define triples
+ */
 @WebService
 @Path("/v2/subjects")
 @Api("/v2/subjects")

@@ -10,6 +10,11 @@ import org.hibernate.validator.constraints.URL;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+/**
+ * Farsi Knowledge Graph Project
+ * Iran University of Science and Technology (Year 2017)
+ * Developed by HosseiN Khademi khaledi
+ */
 public class OntologyData {
     private String identifier;
     @URL
