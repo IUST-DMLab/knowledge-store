@@ -30,7 +30,10 @@ import virtuoso.rdf4j.driver.VirtuosoRepositoryConnection;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Farsi Knowledge Graph Project
@@ -61,9 +64,9 @@ public class Application implements CommandLineRunner {
         final String ip = "localhost";
         final String port = "1111";
         final String user = "dba";
-        final String password = "dba";
+        final String password = "fkgVIRTUOSO2017";
         final String tempGraph = "http://temp.fkg.iust.ir";
-        final String finalGraph = "http://fkg.iust.ir";
+        final String finalGraph = "http://type2.fkg.iust.ir/";
         VirtuosoRepository repository = new VirtuosoRepository("jdbc:virtuoso://" + ip + ":" + port + "/",
                 user, password);
         try (RepositoryConnection con = repository.getConnection()) {
@@ -96,8 +99,9 @@ public class Application implements CommandLineRunner {
                         for (TripleObject o : allObjects) {
                             if (o.getSource() == null || o.getSource().getModule() == null) continue;
                             final Version activeVersion = versionMap.get(o.getSource().getModule());
-                            if (activeVersion == null) continue;
-                            if (Objects.equals(o.getSource().getVersion(), activeVersion.getActiveVersion())) {
+                            if (activeVersion == null || activeVersion.getActiveVersion() == null
+                                    || o.getSource().getVersion() != null &&
+                                    o.getSource().getVersion() >= activeVersion.getActiveVersion()) {
                                 final String key = o.toString();
                                 if (acceptedProperties.containsKey(key)) {
                                     acceptedProperties.get(key).putAll(o.getProperties());
@@ -121,10 +125,11 @@ public class Application implements CommandLineRunner {
                                             .add(s.getSubject(), "http://fkg.iust.ac.ir/ontology/relatedPredicates", createValue(relationValue))
                                             .add(relation, "https://www.w3.org/1999/02/22-rdf-syntax-ns#type", SimpleValueFactory.getInstance().createIRI("http://fkg.iust.ac.ir/ontology/RelatedPredicates"))
                                             .add(relation, "http://fkg.iust.ac.ir/ontology/mainPredicate", SimpleValueFactory.getInstance().createIRI(p))
-                                            .add(relation, p, o);
+                                            .add(relation, p, createValue(o));
                                     for (Map.Entry<String, TypedValue> prop : properties.entrySet()) {
                                         if (hasValidURIs(relation, prop.getKey(), prop.getValue()))
-                                            builder.namedGraph(tempGraph).add(relation, prop.getKey(), prop.getValue());
+                                            builder.namedGraph(tempGraph).add(relation, prop.getKey(),
+                                                    createValue(prop.getValue()));
                                     }
                                 }
                             }
