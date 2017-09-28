@@ -30,6 +30,9 @@ import virtuoso.rdf4j.driver.VirtuosoRepositoryConnection;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,18 +64,26 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        final String ip = "localhost";
-        final String port = "1111";
-        final String user = "dba";
-        final String password = "fkgVIRTUOSO2017";
-        final String tempGraph = "http://temp.fkg.iust.ir";
-        final String finalGraph = "http://type2.fkg.iust.ir/";
+        final String tempGraph = strings.length > 0 ? strings[0] : "http://temp.fkg.iust.ir";
+        final String finalGraph = strings.length > 1 ? strings[1] :
+            "http://" + System.currentTimeMillis() + ".fkg.iust.ir/";
+        final String ip = strings.length > 2 ? strings[2] : "localhost";
+        final String port = strings.length > 3 ? strings[3] : "1111";
+        final String user = strings.length > 4 ? strings[4] : "dba";
+        final String password = strings.length > 5 ? strings[5] : "fkgVIRTUOSO2017";
+        final List<String> subjects;
+        final Path subjectsFile = Paths.get("subjects.txt");
+        if (Files.exists(subjectsFile)) {
+            subjects = Files.readAllLines(subjectsFile);
+        } else subjects = null;
+
         VirtuosoRepository repository = new VirtuosoRepository("jdbc:virtuoso://" + ip + ":" + port + "/",
                 user, password);
         try (RepositoryConnection con = repository.getConnection()) {
             con.clear(SimpleValueFactory.getInstance().createIRI(tempGraph));
             exportOntology(con, 0, 10, tempGraph);
-            exportTriples(con, 10, 100, tempGraph);
+            if (subjects == null) exportAllTriples(con, 10, 100, tempGraph);
+            else exportTriplesOfSubject(con, 10, 100, tempGraph, subjects);
             con.clear(SimpleValueFactory.getInstance().createIRI(finalGraph));
             ((VirtuosoRepositoryConnection) con).executeSPARUL(String.format("MOVE <%s> TO <%s>", tempGraph, finalGraph));
             con.clear(SimpleValueFactory.getInstance().createIRI(tempGraph));
@@ -80,7 +91,22 @@ public class Application implements CommandLineRunner {
         }
     }
 
-    private void exportTriples(RepositoryConnection con, float minProgress, float maxProgress, String tempGraph) {
+    private void exportTriplesOfSubject(RepositoryConnection con, float minProgress, float maxProgress,
+                                        String tempGraph, List<String> subjects) {
+        Map<String, Version> versionMap = new HashMap<>();
+        versionDao.readAll().forEach(i -> versionMap.put(i.getModule(), i));
+
+        printProgress(0, minProgress, maxProgress);
+        List<Subject> result = new ArrayList<>();
+        for (String subject : subjects) {
+            final Subject subjectTriples = subjectDao.read(null, subject);
+            result.add(subjectTriples);
+        }
+        exportTriples(con, tempGraph, versionMap, result);
+        printProgress(1, minProgress, maxProgress);
+    }
+
+    private void exportAllTriples(RepositoryConnection con, float minProgress, float maxProgress, String tempGraph) {
         Map<String, Version> versionMap = new HashMap<>();
         versionDao.readAll().forEach(i -> versionMap.put(i.getModule(), i));
 
@@ -88,61 +114,65 @@ public class Application implements CommandLineRunner {
         PagingList<Subject> result = null;
         do {
             result = subjectDao.readAll(result == null ? 0 : result.getPage() + 1, 100);
-            if (!result.getData().isEmpty()) {
-                final ModelBuilder builder = new ModelBuilder();
-                for (Subject s : result.getData()) {
-                    int relationIndex = 0;
-                    for (String p : s.getTriples().keySet()) {
-                        final ArrayList<TripleObject> allObjects = s.getTriples().get(p);
-                        final List<TypedValue> acceptedValues = new ArrayList<>();
-                        final Map<String, Map<String, TypedValue>> acceptedProperties = new HashMap<>();
-                        for (TripleObject o : allObjects) {
-                            if (o.getSource() == null || o.getSource().getModule() == null) continue;
-                            final Version activeVersion = versionMap.get(o.getSource().getModule());
-                            if (activeVersion == null || activeVersion.getActiveVersion() == null
-                                    || o.getSource().getVersion() != null &&
-                                    o.getSource().getVersion() >= activeVersion.getActiveVersion()) {
-                                final String key = o.toString();
-                                if (acceptedProperties.containsKey(key)) {
-                                    acceptedProperties.get(key).putAll(o.getProperties());
-                                } else {
-                                    acceptedValues.add(o);
-                                    acceptedProperties.put(key, o.getProperties());
-                                }
-                            }
+            if (!result.getData().isEmpty())
+                exportTriples(con, tempGraph, versionMap, result.getData());
+            printProgress((float) (result.getPage()) / result.getPageCount(), minProgress, maxProgress);
+        } while (result.getPage() < result.getPageCount());
+        printProgress(1, minProgress, maxProgress);
+    }
+
+    private void exportTriples(RepositoryConnection con, String tempGraph, Map<String, Version> versionMap,
+                               List<Subject> result) {
+        final ModelBuilder builder = new ModelBuilder();
+        for (Subject s : result) {
+            int relationIndex = 0;
+            for (String p : s.getTriples().keySet()) {
+                final ArrayList<TripleObject> allObjects = s.getTriples().get(p);
+                final List<TypedValue> acceptedValues = new ArrayList<>();
+                final Map<String, Map<String, TypedValue>> acceptedProperties = new HashMap<>();
+                for (TripleObject o : allObjects) {
+                    if (o.getSource() == null || o.getSource().getModule() == null) continue;
+                    final Version activeVersion = versionMap.get(o.getSource().getModule());
+                    if (activeVersion == null || activeVersion.getActiveVersion() == null
+                        || o.getSource().getVersion() != null &&
+                        o.getSource().getVersion() >= activeVersion.getActiveVersion()) {
+                        final String key = o.toString();
+                        if (acceptedProperties.containsKey(key)) {
+                            acceptedProperties.get(key).putAll(o.getProperties());
+                        } else {
+                            acceptedValues.add(o);
+                            acceptedProperties.put(key, o.getProperties());
                         }
-                        for (TypedValue o : acceptedValues) {
-                            final String key = o.toString();
-                            final Map<String, TypedValue> properties = acceptedProperties.get(key);
-                            if (properties.isEmpty()) {
-                                if (hasValidURIs(s.getSubject(), p, o))
-                                    builder.namedGraph(tempGraph).add(s.getSubject(), p, createValue(o));
-                            } else {
-                                final String relation = s.getSubject() + "/relation_" + relationIndex++;
-                                final TypedValue relationValue = new TypedValue(ValueType.Resource, relation);
-                                if (hasValidURIs(s.getSubject(), p, relationValue)) {
-                                    builder.namedGraph(tempGraph)
-                                            .add(s.getSubject(), "http://fkg.iust.ac.ir/ontology/relatedPredicates", createValue(relationValue))
-                                            .add(relation, "https://www.w3.org/1999/02/22-rdf-syntax-ns#type", SimpleValueFactory.getInstance().createIRI("http://fkg.iust.ac.ir/ontology/RelatedPredicates"))
-                                            .add(relation, "http://fkg.iust.ac.ir/ontology/mainPredicate", SimpleValueFactory.getInstance().createIRI(p))
-                                            .add(relation, p, createValue(o));
-                                    for (Map.Entry<String, TypedValue> prop : properties.entrySet()) {
-                                        if (hasValidURIs(relation, prop.getKey(), prop.getValue()))
-                                            builder.namedGraph(tempGraph).add(relation, prop.getKey(),
-                                                    createValue(prop.getValue()));
-                                    }
-                                }
+                    }
+                }
+                for (TypedValue o : acceptedValues) {
+                    final String key = o.toString();
+                    final Map<String, TypedValue> properties = acceptedProperties.get(key);
+                    if (properties.isEmpty()) {
+                        if (hasValidURIs(s.getSubject(), p, o))
+                            builder.namedGraph(tempGraph).add(s.getSubject(), p, createValue(o));
+                    } else {
+                        final String relation = s.getSubject() + "/relation_" + relationIndex++;
+                        final TypedValue relationValue = new TypedValue(ValueType.Resource, relation);
+                        if (hasValidURIs(s.getSubject(), p, relationValue)) {
+                            builder.namedGraph(tempGraph)
+                                .add(s.getSubject(), "http://fkg.iust.ac.ir/ontology/relatedPredicates", createValue(relationValue))
+                                .add(relation, "https://www.w3.org/1999/02/22-rdf-syntax-ns#type", SimpleValueFactory.getInstance().createIRI("http://fkg.iust.ac.ir/ontology/RelatedPredicates"))
+                                .add(relation, "http://fkg.iust.ac.ir/ontology/mainPredicate", SimpleValueFactory.getInstance().createIRI(p))
+                                .add(relation, p, createValue(o));
+                            for (Map.Entry<String, TypedValue> prop : properties.entrySet()) {
+                                if (hasValidURIs(relation, prop.getKey(), prop.getValue()))
+                                    builder.namedGraph(tempGraph).add(relation, prop.getKey(),
+                                        createValue(prop.getValue()));
                             }
                         }
                     }
                 }
-                final Model model = builder.build();
-                for (Statement st : model)
-                    con.add(st);
             }
-            printProgress((float) (result.getPage()) / result.getPageCount(), minProgress, maxProgress);
-        } while (result.getPage() < result.getPageCount());
-        printProgress(1, minProgress, maxProgress);
+        }
+        final Model model = builder.build();
+        for (Statement st : model)
+            con.add(st);
     }
 
     private void exportOntology(RepositoryConnection con, float minProgress, float maxProgress, String tempGraph) {
