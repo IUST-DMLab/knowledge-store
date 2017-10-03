@@ -17,6 +17,7 @@ import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.util.ModelBuilder;
 import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -81,7 +82,7 @@ public class Application implements CommandLineRunner {
                 user, password);
         try (RepositoryConnection con = repository.getConnection()) {
             con.clear(SimpleValueFactory.getInstance().createIRI(tempGraph));
-            exportOntology(con, 0, 10, tempGraph);
+//            exportOntology(con, 0, 10, tempGraph);
             if (subjects == null) exportAllTriples(con, 10, 100, tempGraph);
             else exportTriplesOfSubject(con, 10, 100, tempGraph, subjects);
             con.clear(SimpleValueFactory.getInstance().createIRI(finalGraph));
@@ -99,7 +100,7 @@ public class Application implements CommandLineRunner {
         printProgress(0, minProgress, maxProgress);
         List<Subject> result = new ArrayList<>();
         for (String subject : subjects) {
-            final Subject subjectTriples = subjectDao.read(null, subject);
+            final Subject subjectTriples = subjectDao.read("http://fkg.iust.ac.ir/", subject);
             result.add(subjectTriples);
         }
         exportTriples(con, tempGraph, versionMap, result);
@@ -187,8 +188,23 @@ public class Application implements CommandLineRunner {
                     if (hasValidURIs(o))
                         builder.namedGraph(tempGraph).add(o.getSubject(), o.getPredicate(), createValue(o.getObject()));
                 final Model model = builder.build();
-                for (Statement st : model)
-                    con.add(st);
+                for (Statement st : model) {
+                    while (true) {
+                        try {
+                            con.add(st);
+                            break;
+                        } catch (RepositoryException exp) {
+                            // common error:
+                            // Caused by: org.eclipse.rdf4j.repository.RepositoryException: java.sql.BatchUpdateException:
+                            // SR325: Transaction aborted due to a database checkpoint or database-wide atomic operation.
+                            // Please retry transaction
+                            exp.printStackTrace();
+                            if (!exp.getMessage().contains("retry transaction"))
+                                break;
+                        }
+                    }
+                }
+
             }
             printProgress((float) (result.getPage()) / result.getPageCount(), minProgress, maxProgress);
         } while (result.getPage() < result.getPageCount());
