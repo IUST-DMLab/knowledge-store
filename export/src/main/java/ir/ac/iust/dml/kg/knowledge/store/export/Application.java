@@ -180,7 +180,8 @@ public class Application implements CommandLineRunner {
         printProgress(0, minProgress, maxProgress);
         PagingList<Ontology> result = null;
         do {
-            result = ontologyDao.search(null, null, null, null, null,
+            result = ontologyDao.search(null, null, null, null,
+                    null, null, null, null, null,
                     result == null ? 0 : result.getPage() + 1, 1000);
             if (!result.getData().isEmpty()) {
                 final ModelBuilder builder = new ModelBuilder();

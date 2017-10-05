@@ -21,5 +21,9 @@ public interface IOntologyDao {
 
     Ontology read(String context, String subject, String predicate, String object);
 
-    PagingList<Ontology> search(String context, String subject, String predicate, String object, TripleState state, int page, int pageSize);
+    PagingList<Ontology> search(String context, Boolean contextLike,
+                                String subject, Boolean subjectLike,
+                                String predicate, Boolean predicateLike,
+                                String object, Boolean objectLike,
+                                TripleState state, int page, int pageSize);
 }

@@ -1,3 +1,8 @@
++ 2.1.0
+    - export gives main parameters from command line to run
+    - fat jar for exporting
+    - bug of virtuoso system-wide exception
+    - add likes for ontology search service
 * 2.0.0
     - Has not backward compatibility
     - Use Access 2

@@ -59,7 +59,12 @@ public class OntologyServices implements IOntologyServices {
     }
 
     @Override
-    public PagingList<Ontology> search(String context, String subject, String predicate, String object, boolean approved, int page, int pageSize) {
-        return dao.search(context, subject, predicate, object, approved ? TripleState.Approved : null, page, pageSize);
+    public PagingList<Ontology> search(String context, Boolean contextLike,
+                                       String subject, Boolean subjectLike,
+                                       String predicate, Boolean predicateLike,
+                                       String object, Boolean objectLike,
+                                       boolean approved, int page, int pageSize) {
+        return dao.search(context, contextLike, subject, subjectLike, predicate, predicateLike,
+                object, objectLike, approved ? TripleState.Approved : null, page, pageSize);
     }
 }
