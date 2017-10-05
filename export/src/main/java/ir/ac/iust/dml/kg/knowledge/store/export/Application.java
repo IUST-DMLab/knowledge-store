@@ -82,7 +82,7 @@ public class Application implements CommandLineRunner {
                 user, password);
         try (RepositoryConnection con = repository.getConnection()) {
             con.clear(SimpleValueFactory.getInstance().createIRI(tempGraph));
-//            exportOntology(con, 0, 10, tempGraph);
+            exportOntology(con, 0, 10, tempGraph);
             if (subjects == null) exportAllTriples(con, 10, 100, tempGraph);
             else exportTriplesOfSubject(con, 10, 100, tempGraph, subjects);
             con.clear(SimpleValueFactory.getInstance().createIRI(finalGraph));
@@ -92,6 +92,7 @@ public class Application implements CommandLineRunner {
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void exportTriplesOfSubject(RepositoryConnection con, float minProgress, float maxProgress,
                                         String tempGraph, List<String> subjects) {
         Map<String, Version> versionMap = new HashMap<>();
@@ -107,6 +108,7 @@ public class Application implements CommandLineRunner {
         printProgress(1, minProgress, maxProgress);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void exportAllTriples(RepositoryConnection con, float minProgress, float maxProgress, String tempGraph) {
         Map<String, Version> versionMap = new HashMap<>();
         versionDao.readAll().forEach(i -> versionMap.put(i.getModule(), i));
