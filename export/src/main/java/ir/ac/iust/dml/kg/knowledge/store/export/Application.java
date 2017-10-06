@@ -10,8 +10,8 @@ import ir.ac.iust.dml.kg.knowledge.store.access2.entities.Ontology;
 import ir.ac.iust.dml.kg.knowledge.store.access2.entities.Subject;
 import ir.ac.iust.dml.kg.knowledge.store.access2.entities.TripleObject;
 import ir.ac.iust.dml.kg.knowledge.store.access2.entities.Version;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.util.ModelBuilder;
@@ -80,7 +80,7 @@ public class Application implements CommandLineRunner {
             return;
         }
         final Path outputPath = strings[0].equals("skip") ? null : Paths.get(strings[0]);
-        if(outputPath != null && !Files.exists(outputPath))
+        if (outputPath != null && !Files.exists(outputPath))
             Files.createDirectories(outputPath);
         final String virtuosoHost = strings[1].equals("skip") ? null : strings[1];
         final String port = strings.length > 2 ? strings[2] : "1111";
@@ -96,9 +96,10 @@ public class Application implements CommandLineRunner {
 
         RepositoryConnection con = null;
         if (virtuosoHost != null) {
+            System.out.println("Connecting to virtuoso: " + virtuosoHost + ":" + port + " default graph is " + graph);
             VirtuosoRepository repository =
                     new VirtuosoRepository("jdbc:virtuoso://" + virtuosoHost + ":" + port + "/",
-                            user, password);
+                            user, password, graph);
             con = repository.getConnection();
             con.clear(SimpleValueFactory.getInstance().createIRI(graph));
         }
@@ -236,7 +237,15 @@ public class Application implements CommandLineRunner {
             writer.handleNamespace("fkgr", "http://fkg.iust.ac.ir/resource/");
             writer.handleNamespace("fkgp", "http://fkg.iust.ac.ir/property/");
             writer.handleNamespace("fkgc", "http://fkg.iust.ac.ir/category/");
-            writer.handleNamespace("fkgo", "http://fkg.iust.ac.ir/ontology");
+            writer.handleNamespace("fkgd", "http://fkg.iust.ac.ir/datatype/");
+            writer.handleNamespace("fkgo", "http://fkg.iust.ac.ir/ontology/");
+            writer.handleNamespace("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+            writer.handleNamespace("skos", "http://www.w3.org/2004/02/skos/core#");
+            writer.handleNamespace("foaf", "http://xmlns.com/foaf/0.1/");
+            writer.handleNamespace("owl", "http://www.w3.org/2002/07/owl#");
+            writer.handleNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+            writer.handleNamespace("dct", "http://dublincore.org/2012/06/14/dcterms#");
+            writer.handleNamespace("dbpm", "http://mappings.dbpedia.org/index.php/");
             model.forEach(writer::handleStatement);
             writer.endRDF();
             if (con != null)
@@ -274,18 +283,25 @@ public class Application implements CommandLineRunner {
         System.out.println("#progress " + (minProgress + val * (maxProgress - minProgress)));
     }
 
+    UrlValidator urlValidator = new UrlValidator();
 
     private boolean hasValidURIs(Ontology ontology) {
-        try {
-            new URL(ontology.getSubject());
-            new URL(ontology.getPredicate());
-            if (ontology.getObject().getType() == ValueType.Resource)
-                new URL(ontology.getObject().getValue());
-            return true;
-        } catch (MalformedURLException e) {
-            System.err.println("Has not valid format" + ontology);
-            return false;
-        }
+        if (ontology.getSubject().contains("%")) return false;
+        return urlValidator.isValid(ontology.getSubject())
+                && urlValidator.isValid(ontology.getPredicate())
+                && (ontology.getObject().getType() != ValueType.Resource
+                || urlValidator.isValid(ontology.getObject().getValue()));
+//        try {
+//            new URL(ontology.getSubject());
+//            if (ontology.getSubject().contains("%")) return false;
+//            new URL(ontology.getPredicate());
+//            if (ontology.getObject().getType() == ValueType.Resource)
+//                new URL(ontology.getObject().getValue());
+//            return true;
+//        } catch (MalformedURLException e) {
+//            System.err.println("Has not valid format" + ontology);
+//            return false;
+//        }
     }
 
     private boolean hasValidURIs(String subject, String predicate, TypedValue object) {
