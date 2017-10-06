@@ -38,10 +38,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Farsi Knowledge Graph Project
@@ -70,6 +67,8 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
+        final long start = System.currentTimeMillis();
+        System.out.println("Task started at " + new Date());
         System.out.println("You can this command with these parameters:");
         System.out.println("<ttl folder> <virtuoso host>  <virtuoso port> <user> <password> <graph> <move to graph>");
         if (strings.length < 2) {
@@ -104,8 +103,10 @@ public class Application implements CommandLineRunner {
             con.clear(SimpleValueFactory.getInstance().createIRI(graph));
         }
         exportOntology(outputPath, con, 0, 10, graph);
+        System.out.println("time elapsed: " + (System.currentTimeMillis() - start) + " milliseconds");
         if (subjects == null) exportAllTriples(outputPath, con, 10, 100, graph);
         else exportTriplesOfSubject(outputPath, con, 10, 100, graph, subjects);
+        System.out.println("time elapsed: " + (System.currentTimeMillis() - start) + " milliseconds");
         if (con != null) {
             if (moveToGraph != null) {
                 con.clear(SimpleValueFactory.getInstance().createIRI(moveToGraph));
@@ -115,6 +116,8 @@ public class Application implements CommandLineRunner {
             }
             con.close();
         }
+        System.out.println("time elapsed: " + (System.currentTimeMillis() - start) + " milliseconds");
+        System.out.println("bye bye.");
     }
 
     @SuppressWarnings("SameParameterValue")
