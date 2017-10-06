@@ -18,6 +18,9 @@ import org.eclipse.rdf4j.model.util.ModelBuilder;
 import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFWriter;
+import org.eclipse.rdf4j.rio.Rio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -29,6 +32,7 @@ import org.springframework.context.annotation.ImportResource;
 import virtuoso.rdf4j.driver.VirtuosoRepository;
 import virtuoso.rdf4j.driver.VirtuosoRepositoryConnection;
 
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -51,6 +55,7 @@ import java.util.Map;
 @EnableAutoConfiguration(exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
 @ImportResource({"classpath:persistence-context2.xml"})
 public class Application implements CommandLineRunner {
+    private static final int PAGE_SIZE = 10000;
     @Autowired
     private IOntologyDao ontologyDao;
     @Autowired
@@ -65,35 +70,54 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        final String tempGraph = strings.length > 0 ? strings[0] : "http://temp.fkg.iust.ir";
-        final String finalGraph = strings.length > 1 ? strings[1] :
-            "http://" + System.currentTimeMillis() + ".fkg.iust.ir/";
-        final String ip = strings.length > 2 ? strings[2] : "localhost";
-        final String port = strings.length > 3 ? strings[3] : "1111";
-        final String user = strings.length > 4 ? strings[4] : "dba";
-        final String password = strings.length > 5 ? strings[5] : "fkgVIRTUOSO2017";
+        System.out.println("You can this command with these parameters:");
+        System.out.println("<ttl folder> <virtuoso host>  <virtuoso port> <user> <password> <graph> <move to graph>");
+        if (strings.length < 2) {
+            System.out.println("You must enter at least 2 first parameters:");
+            System.out.println("first parameter is ttl folder. send `skip` if you want to skip ttl creation.");
+            System.out.println("second parameter is virtuoso server address. " +
+                    "send `skip` if you want to skip virtuoso export.");
+            return;
+        }
+        final Path outputPath = strings[0].equals("skip") ? null : Paths.get(strings[0]);
+        if(outputPath != null && !Files.exists(outputPath))
+            Files.createDirectories(outputPath);
+        final String virtuosoHost = strings[1].equals("skip") ? null : strings[1];
+        final String port = strings.length > 2 ? strings[2] : "1111";
+        final String user = strings.length > 3 ? strings[3] : "dba";
+        final String password = strings.length > 4 ? strings[4] : "fkgVIRTUOSO2017";
+        final String graph = strings.length > 5 ? strings[5] : "http://" + System.currentTimeMillis() + ".fkg.iust.ir";
+        final String moveToGraph = strings.length > 6 ? strings[6] : null;
         final List<String> subjects;
         final Path subjectsFile = Paths.get("subjects.txt");
         if (Files.exists(subjectsFile)) {
             subjects = Files.readAllLines(subjectsFile);
         } else subjects = null;
 
-        VirtuosoRepository repository = new VirtuosoRepository("jdbc:virtuoso://" + ip + ":" + port + "/",
-                user, password);
-        try (RepositoryConnection con = repository.getConnection()) {
-            con.clear(SimpleValueFactory.getInstance().createIRI(tempGraph));
-            exportOntology(con, 0, 10, tempGraph);
-            if (subjects == null) exportAllTriples(con, 10, 100, tempGraph);
-            else exportTriplesOfSubject(con, 10, 100, tempGraph, subjects);
-            con.clear(SimpleValueFactory.getInstance().createIRI(finalGraph));
-            ((VirtuosoRepositoryConnection) con).executeSPARUL(String.format("MOVE <%s> TO <%s>", tempGraph, finalGraph));
-            con.clear(SimpleValueFactory.getInstance().createIRI(tempGraph));
-
+        RepositoryConnection con = null;
+        if (virtuosoHost != null) {
+            VirtuosoRepository repository =
+                    new VirtuosoRepository("jdbc:virtuoso://" + virtuosoHost + ":" + port + "/",
+                            user, password);
+            con = repository.getConnection();
+            con.clear(SimpleValueFactory.getInstance().createIRI(graph));
+        }
+        exportOntology(outputPath, con, 0, 10, graph);
+        if (subjects == null) exportAllTriples(outputPath, con, 10, 100, graph);
+        else exportTriplesOfSubject(outputPath, con, 10, 100, graph, subjects);
+        if (con != null) {
+            if (moveToGraph != null) {
+                con.clear(SimpleValueFactory.getInstance().createIRI(moveToGraph));
+                ((VirtuosoRepositoryConnection) con)
+                        .executeSPARUL(String.format("MOVE <%s> TO <%s>", graph, moveToGraph));
+                con.clear(SimpleValueFactory.getInstance().createIRI(graph));
+            }
+            con.close();
         }
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void exportTriplesOfSubject(RepositoryConnection con, float minProgress, float maxProgress,
+    private void exportTriplesOfSubject(Path ttlFolder, RepositoryConnection con, float minProgress, float maxProgress,
                                         String tempGraph, List<String> subjects) {
         Map<String, Version> versionMap = new HashMap<>();
         versionDao.readAll().forEach(i -> versionMap.put(i.getModule(), i));
@@ -104,27 +128,29 @@ public class Application implements CommandLineRunner {
             final Subject subjectTriples = subjectDao.read("http://fkg.iust.ac.ir/", subject);
             result.add(subjectTriples);
         }
-        exportTriples(con, tempGraph, versionMap, result);
+        exportTriples(ttlFolder == null ? null : ttlFolder.resolve("selected_subjects.ttl"),
+                con, tempGraph, versionMap, result);
         printProgress(1, minProgress, maxProgress);
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void exportAllTriples(RepositoryConnection con, float minProgress, float maxProgress, String tempGraph) {
+    private void exportAllTriples(Path ttlFolder, RepositoryConnection con, float minProgress, float maxProgress, String tempGraph) {
         Map<String, Version> versionMap = new HashMap<>();
         versionDao.readAll().forEach(i -> versionMap.put(i.getModule(), i));
 
         printProgress(0, minProgress, maxProgress);
         PagingList<Subject> result = null;
         do {
-            result = subjectDao.readAll(result == null ? 0 : result.getPage() + 1, 100);
+            result = subjectDao.readAll(result == null ? 0 : result.getPage() + 1, PAGE_SIZE);
             if (!result.getData().isEmpty())
-                exportTriples(con, tempGraph, versionMap, result.getData());
+                exportTriples(ttlFolder == null ? null : ttlFolder.resolve("triples_" + result.getPage() + ".ttl"),
+                        con, tempGraph, versionMap, result.getData());
             printProgress((float) (result.getPage()) / result.getPageCount(), minProgress, maxProgress);
         } while (result.getPage() < result.getPageCount());
         printProgress(1, minProgress, maxProgress);
     }
 
-    private void exportTriples(RepositoryConnection con, String tempGraph, Map<String, Version> versionMap,
+    private void exportTriples(Path ttlFile, RepositoryConnection con, String tempGraph, Map<String, Version> versionMap,
                                List<Subject> result) {
         final ModelBuilder builder = new ModelBuilder();
         for (Subject s : result) {
@@ -137,8 +163,8 @@ public class Application implements CommandLineRunner {
                     if (o.getSource() == null || o.getSource().getModule() == null) continue;
                     final Version activeVersion = versionMap.get(o.getSource().getModule());
                     if (activeVersion == null || activeVersion.getActiveVersion() == null
-                        || o.getSource().getVersion() != null &&
-                        o.getSource().getVersion() >= activeVersion.getActiveVersion()) {
+                            || o.getSource().getVersion() != null &&
+                            o.getSource().getVersion() >= activeVersion.getActiveVersion()) {
                         final String key = o.toString();
                         if (acceptedProperties.containsKey(key)) {
                             acceptedProperties.get(key).putAll(o.getProperties());
@@ -159,61 +185,90 @@ public class Application implements CommandLineRunner {
                         final TypedValue relationValue = new TypedValue(ValueType.Resource, relation);
                         if (hasValidURIs(s.getSubject(), p, relationValue)) {
                             builder.namedGraph(tempGraph)
-                                .add(s.getSubject(), "http://fkg.iust.ac.ir/ontology/relatedPredicates", createValue(relationValue))
-                                .add(relation, "https://www.w3.org/1999/02/22-rdf-syntax-ns#type", SimpleValueFactory.getInstance().createIRI("http://fkg.iust.ac.ir/ontology/RelatedPredicates"))
-                                .add(relation, "http://fkg.iust.ac.ir/ontology/mainPredicate", SimpleValueFactory.getInstance().createIRI(p))
-                                .add(relation, p, createValue(o));
+                                    .add(s.getSubject(), "http://fkg.iust.ac.ir/ontology/relatedPredicates", createValue(relationValue))
+                                    .add(relation, "https://www.w3.org/1999/02/22-rdf-syntax-ns#type", SimpleValueFactory.getInstance().createIRI("http://fkg.iust.ac.ir/ontology/RelatedPredicates"))
+                                    .add(relation, "http://fkg.iust.ac.ir/ontology/mainPredicate", SimpleValueFactory.getInstance().createIRI(p))
+                                    .add(relation, p, createValue(o));
                             for (Map.Entry<String, TypedValue> prop : properties.entrySet()) {
                                 if (hasValidURIs(relation, prop.getKey(), prop.getValue()))
                                     builder.namedGraph(tempGraph).add(relation, prop.getKey(),
-                                        createValue(prop.getValue()));
+                                            createValue(prop.getValue()));
                             }
                         }
                     }
                 }
             }
         }
-        final Model model = builder.build();
-        for (Statement st : model)
-            con.add(st);
+        writeModelBuilder(con, builder, ttlFile);
     }
 
-    private void exportOntology(RepositoryConnection con, float minProgress, float maxProgress, String tempGraph) {
+    private void exportOntology(Path ttlFolder, RepositoryConnection con, float minProgress, float maxProgress, String tempGraph) {
         printProgress(0, minProgress, maxProgress);
         PagingList<Ontology> result = null;
         do {
             result = ontologyDao.search(null, null, null, null,
                     null, null, null, null, null,
-                    result == null ? 0 : result.getPage() + 1, 1000);
+                    result == null ? 0 : result.getPage() + 1, PAGE_SIZE);
             if (!result.getData().isEmpty()) {
                 final ModelBuilder builder = new ModelBuilder();
                 for (Ontology o : result.getData())
                     if (hasValidURIs(o))
                         builder.namedGraph(tempGraph).add(o.getSubject(), o.getPredicate(), createValue(o.getObject()));
-                final Model model = builder.build();
-                for (Statement st : model) {
-                    while (true) {
-                        try {
-                            con.add(st);
-                            break;
-                        } catch (RepositoryException exp) {
-                            // common error:
-                            // Caused by: org.eclipse.rdf4j.repository.RepositoryException: java.sql.BatchUpdateException:
-                            // SR325: Transaction aborted due to a database checkpoint or database-wide atomic operation.
-                            // Please retry transaction
-                            exp.printStackTrace();
-                            if (!exp.getMessage().contains("retry transaction"))
-                                break;
-                        }
-                    }
-                }
-
+                writeModelBuilder(con, builder,
+                        ttlFolder == null ? null : ttlFolder.resolve("ontology_" + result.getPage() + ".ttl"));
             }
             printProgress((float) (result.getPage()) / result.getPageCount(), minProgress, maxProgress);
         } while (result.getPage() < result.getPageCount());
         printProgress(1, minProgress, maxProgress);
     }
 
+    private void writeModelBuilder(RepositoryConnection con, ModelBuilder builder, Path ttlPath) {
+        final Model model = builder.build();
+        if (ttlPath == null) {
+            if (con != null) runVirtuosoCommand(() -> con.add(model));
+            return;
+        }
+        final FileOutputStream out;
+        try {
+            out = new FileOutputStream(ttlPath.toFile());
+            final RDFWriter writer = Rio.createWriter(RDFFormat.TURTLE, out);
+            writer.startRDF();
+            writer.handleNamespace("fkgr", "http://fkg.iust.ac.ir/resource/");
+            writer.handleNamespace("fkgp", "http://fkg.iust.ac.ir/property/");
+            writer.handleNamespace("fkgc", "http://fkg.iust.ac.ir/category/");
+            writer.handleNamespace("fkgo", "http://fkg.iust.ac.ir/ontology");
+            model.forEach(writer::handleStatement);
+            writer.endRDF();
+            if (con != null)
+                runVirtuosoCommand(() -> con.add(new FileInputStream(ttlPath.toFile()),
+                        "http://fkg.iust.ac.ir/", RDFFormat.TURTLE));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    interface ThrowableRunnable {
+        void run() throws Throwable;
+    }
+
+    private void runVirtuosoCommand(ThrowableRunnable fun) {
+        while (true) {
+            try {
+                fun.run();
+                break;
+            } catch (RepositoryException exp) {
+                // common error:
+                // Caused by: org.eclipse.rdf4j.repository.RepositoryException: java.sql.BatchUpdateException:
+                // SR325: Transaction aborted due to a database checkpoint or database-wide atomic operation.
+                // Please retry transaction
+                exp.printStackTrace();
+                if (!exp.getMessage().contains("retry transaction"))
+                    break;
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+            }
+        }
+    }
 
     private void printProgress(float val, float minProgress, float maxProgress) {
         System.out.println("#progress " + (minProgress + val * (maxProgress - minProgress)));
