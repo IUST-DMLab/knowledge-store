@@ -32,9 +32,9 @@ import org.springframework.context.annotation.ImportResource;
 import virtuoso.rdf4j.driver.VirtuosoRepository;
 import virtuoso.rdf4j.driver.VirtuosoRepositoryConnection;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -286,38 +286,27 @@ public class Application implements CommandLineRunner {
         System.out.println("#progress " + (minProgress + val * (maxProgress - minProgress)));
     }
 
-    UrlValidator urlValidator = new UrlValidator();
+  private final static UrlValidator urlValidator = new UrlValidator();
 
     private boolean hasValidURIs(Ontology ontology) {
-        if (ontology.getSubject().contains("%")) return false;
-        return urlValidator.isValid(ontology.getSubject())
-                && urlValidator.isValid(ontology.getPredicate())
-                && (ontology.getObject().getType() != ValueType.Resource
-                || urlValidator.isValid(ontology.getObject().getValue()));
-//        try {
-//            new URL(ontology.getSubject());
-//            if (ontology.getSubject().contains("%")) return false;
-//            new URL(ontology.getPredicate());
-//            if (ontology.getObject().getType() == ValueType.Resource)
-//                new URL(ontology.getObject().getValue());
-//            return true;
-//        } catch (MalformedURLException e) {
-//            System.err.println("Has not valid format" + ontology);
-//            return false;
-//        }
+      return hasValidURIs(ontology.getSubject(), ontology.getPredicate(), ontology.getObject());
     }
 
     private boolean hasValidURIs(String subject, String predicate, TypedValue object) {
-        try {
-            new URL(subject);
-            new URL(predicate);
-            if (object.getType() == ValueType.Resource)
-                new URL(object.getValue());
-            return true;
-        } catch (MalformedURLException e) {
-            System.err.printf("Has not valid format <%s %s %s> %n", subject, predicate, object);
-            return false;
-        }
+      return urlValidator.isValid(subject)
+          && urlValidator.isValid(predicate)
+          && (object.getType() != ValueType.Resource
+          || urlValidator.isValid(object.getValue()));
+//        try {
+//            new URL(subject);
+//            new URL(predicate);
+//            if (object.getType() == ValueType.Resource)
+//                new URL(object.getValue());
+//            return true;
+//        } catch (MalformedURLException e) {
+//            System.err.printf("Has not valid format <%s %s %s> %n", subject, predicate, object);
+//            return false;
+//        }
     }
 
     private Object createValue(TypedValue v) {
