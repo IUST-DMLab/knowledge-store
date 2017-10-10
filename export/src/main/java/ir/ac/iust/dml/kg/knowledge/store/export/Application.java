@@ -293,6 +293,7 @@ public class Application implements CommandLineRunner {
     }
 
     private boolean hasValidURIs(String subject, String predicate, TypedValue object) {
+        if (subject.contains("%")) return false;
       return urlValidator.isValid(subject)
           && urlValidator.isValid(predicate)
           && (object.getType() != ValueType.Resource
