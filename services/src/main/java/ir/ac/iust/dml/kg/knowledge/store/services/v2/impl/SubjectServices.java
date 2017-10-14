@@ -37,4 +37,9 @@ public class SubjectServices implements ISubjectService {
     public PagingList<Subject> hasValue(String predicate, String object, int page, int pageSize) {
         return dao.searchHasValue(predicate, object, page, pageSize);
     }
+
+    @Override
+    public PagingList<Subject> all(int page, int pageSize) {
+        return dao.readAll(page, pageSize);
+    }
 }
