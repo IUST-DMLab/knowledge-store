@@ -10,7 +10,6 @@ import ir.ac.iust.dml.kg.knowledge.store.access2.entities.Ontology;
 import ir.ac.iust.dml.kg.knowledge.store.access2.entities.Subject;
 import ir.ac.iust.dml.kg.knowledge.store.access2.entities.TripleObject;
 import ir.ac.iust.dml.kg.knowledge.store.access2.entities.Version;
-import org.apache.commons.validator.routines.UrlValidator;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -35,6 +34,8 @@ import virtuoso.rdf4j.driver.VirtuosoRepositoryConnection;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -286,28 +287,25 @@ public class Application implements CommandLineRunner {
         System.out.println("#progress " + (minProgress + val * (maxProgress - minProgress)));
     }
 
-  private final static UrlValidator urlValidator = new UrlValidator();
-
     private boolean hasValidURIs(Ontology ontology) {
       return hasValidURIs(ontology.getSubject(), ontology.getPredicate(), ontology.getObject());
     }
 
     private boolean hasValidURIs(String subject, String predicate, TypedValue object) {
-        if (subject.contains("%")) return false;
-      return urlValidator.isValid(subject)
-          && urlValidator.isValid(predicate)
-          && (object.getType() != ValueType.Resource
-          || urlValidator.isValid(object.getValue()));
-//        try {
-//            new URL(subject);
-//            new URL(predicate);
-//            if (object.getType() == ValueType.Resource)
-//                new URL(object.getValue());
-//            return true;
-//        } catch (MalformedURLException e) {
-//            System.err.printf("Has not valid format <%s %s %s> %n", subject, predicate, object);
-//            return false;
-//        }
+        try {
+            new URL(subject);
+            if (subject.contains("%")) return false;
+            new URL(predicate);
+            if (predicate.contains("%")) return false;
+            if (object.getType() == ValueType.Resource) {
+                new URL(object.getValue());
+                if (object.getValue().contains("%")) return false;
+            }
+            return true;
+        } catch (MalformedURLException e) {
+            System.err.printf("Has not valid format <%s %s %s> %n", subject, predicate, object);
+            return false;
+        }
     }
 
     private Object createValue(TypedValue v) {
