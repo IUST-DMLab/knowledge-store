@@ -193,7 +193,7 @@ public class Application implements CommandLineRunner {
                         if (hasValidURIs(s.getSubject(), p, relationValue)) {
                             builder.namedGraph(tempGraph)
                                     .add(s.getSubject(), "http://fkg.iust.ac.ir/ontology/relatedPredicates", createValue(relationValue))
-                                    .add(relation, "https://www.w3.org/1999/02/22-rdf-syntax-ns#type", SimpleValueFactory.getInstance().createIRI("http://fkg.iust.ac.ir/ontology/RelatedPredicates"))
+                                    .add(relation, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", SimpleValueFactory.getInstance().createIRI("http://fkg.iust.ac.ir/ontology/RelatedPredicates"))
                                     .add(relation, "http://fkg.iust.ac.ir/ontology/mainPredicate", SimpleValueFactory.getInstance().createIRI(p))
                                     .add(relation, p, createValue(o));
                             for (Map.Entry<String, TypedValue> prop : properties.entrySet()) {
