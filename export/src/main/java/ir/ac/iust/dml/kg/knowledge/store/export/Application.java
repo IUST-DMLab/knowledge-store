@@ -35,6 +35,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -294,15 +296,15 @@ public class Application implements CommandLineRunner {
     private boolean hasValidURIs(String subject, String predicate, TypedValue object) {
         try {
             new URL(subject);
-            if (subject.contains("%")) return false;
+            new URI(subject);
             new URL(predicate);
-            if (predicate.contains("%")) return false;
+            new URI(predicate);
             if (object.getType() == ValueType.Resource) {
                 new URL(object.getValue());
-                if (object.getValue().contains("%")) return false;
+                new URI(object.getValue());
             }
             return true;
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | URISyntaxException e) {
             System.err.printf("Has not valid format <%s %s %s> %n", subject, predicate, object);
             return false;
         }
