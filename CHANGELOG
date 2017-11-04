@@ -1,4 +1,5 @@
 + 2.2.0
+    - add date to type of tripe values.
     - using URIs class to obtain prefix addresses and default contexts.
     The address has been changed to farsbase.net and we must not use fkg.iust.ac.ir in the code.
 + 2.1.0

@@ -338,6 +338,8 @@ public class Application implements CommandLineRunner {
                     return vf.createLiteral(v.getValue(), XMLSchema.DOUBLE);
                 case Float:
                     return vf.createLiteral(v.getValue(), XMLSchema.FLOAT);
+              case Date:
+                return vf.createLiteral(new Date(Long.parseLong(v.getValue())));
 
             }
         return vf.createLiteral(v.getValue());
