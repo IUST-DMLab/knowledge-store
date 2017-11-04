@@ -10,6 +10,7 @@ import ir.ac.iust.dml.kg.knowledge.store.access2.entities.Ontology;
 import ir.ac.iust.dml.kg.knowledge.store.access2.entities.Subject;
 import ir.ac.iust.dml.kg.knowledge.store.access2.entities.TripleObject;
 import ir.ac.iust.dml.kg.knowledge.store.access2.entities.Version;
+import ir.ac.iust.dml.kg.raw.utils.URIs;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -132,7 +133,7 @@ public class Application implements CommandLineRunner {
         printProgress(0, minProgress, maxProgress);
         List<Subject> result = new ArrayList<>();
         for (String subject : subjects) {
-            final Subject subjectTriples = subjectDao.read("http://fkg.iust.ac.ir/", subject);
+            final Subject subjectTriples = subjectDao.read(URIs.INSTANCE.getDefaultContext(), subject);
             result.add(subjectTriples);
         }
         exportTriples(ttlFolder == null ? null : ttlFolder.resolve("selected_subjects.ttl"),
@@ -192,9 +193,9 @@ public class Application implements CommandLineRunner {
                         final TypedValue relationValue = new TypedValue(ValueType.Resource, relation);
                         if (hasValidURIs(s.getSubject(), p, relationValue)) {
                             builder.namedGraph(tempGraph)
-                                    .add(s.getSubject(), "http://fkg.iust.ac.ir/ontology/relatedPredicates", createValue(relationValue))
-                                    .add(relation, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", SimpleValueFactory.getInstance().createIRI("http://fkg.iust.ac.ir/ontology/RelatedPredicates"))
-                                    .add(relation, "http://fkg.iust.ac.ir/ontology/mainPredicate", SimpleValueFactory.getInstance().createIRI(p))
+                                .add(s.getSubject(), URIs.INSTANCE.getRelatedPredicates(), createValue(relationValue))
+                                .add(relation, URIs.INSTANCE.getType(), SimpleValueFactory.getInstance().createIRI(URIs.INSTANCE.getRelatedPredicatesClass()))
+                                .add(relation, URIs.INSTANCE.getMainPredicate(), SimpleValueFactory.getInstance().createIRI(p))
                                     .add(relation, p, createValue(o));
                             for (Map.Entry<String, TypedValue> prop : properties.entrySet()) {
                                 if (hasValidURIs(relation, prop.getKey(), prop.getValue()))
@@ -240,11 +241,16 @@ public class Application implements CommandLineRunner {
             out = new FileOutputStream(ttlPath.toFile());
             final RDFWriter writer = Rio.createWriter(RDFFormat.TURTLE, out);
             writer.startRDF();
-            writer.handleNamespace("fkgr", "http://fkg.iust.ac.ir/resource/");
-            writer.handleNamespace("fkgp", "http://fkg.iust.ac.ir/property/");
-            writer.handleNamespace("fkgc", "http://fkg.iust.ac.ir/category/");
-            writer.handleNamespace("fkgd", "http://fkg.iust.ac.ir/datatype/");
-            writer.handleNamespace("fkgo", "http://fkg.iust.ac.ir/ontology/");
+            writer.handleNamespace(URIs.INSTANCE.getFkgResourcePrefix(),
+                URIs.INSTANCE.prefixedToUri(URIs.INSTANCE.getFkgResourcePrefix() + ":"));
+            writer.handleNamespace(URIs.INSTANCE.getFkgNotMappedPropertyPrefix(),
+                URIs.INSTANCE.prefixedToUri(URIs.INSTANCE.getFkgNotMappedPropertyPrefix() + ":"));
+            writer.handleNamespace(URIs.INSTANCE.getFkgCategoryPrefix(),
+                URIs.INSTANCE.prefixedToUri(URIs.INSTANCE.getFkgCategoryPrefix() + ":"));
+            writer.handleNamespace(URIs.INSTANCE.getFkgDataTypePrefix(),
+                URIs.INSTANCE.prefixedToUri(URIs.INSTANCE.getFkgDataTypePrefix() + ":"));
+            writer.handleNamespace(URIs.INSTANCE.getFkgOntologyPrefix(),
+                URIs.INSTANCE.prefixedToUri(URIs.INSTANCE.getFkgOntologyPrefix() + ":"));
             writer.handleNamespace("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
             writer.handleNamespace("skos", "http://www.w3.org/2004/02/skos/core#");
             writer.handleNamespace("foaf", "http://xmlns.com/foaf/0.1/");
@@ -256,7 +262,7 @@ public class Application implements CommandLineRunner {
             writer.endRDF();
             if (con != null)
                 runVirtuosoCommand(() -> con.add(new FileInputStream(ttlPath.toFile()),
-                        "http://fkg.iust.ac.ir/", RDFFormat.TURTLE));
+                    URIs.INSTANCE.getDefaultContext(), RDFFormat.TURTLE));
         } catch (IOException e) {
             e.printStackTrace();
         }

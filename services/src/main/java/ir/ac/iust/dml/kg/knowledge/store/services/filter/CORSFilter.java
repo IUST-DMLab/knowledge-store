@@ -1,5 +1,7 @@
 package ir.ac.iust.dml.kg.knowledge.store.services.filter;
 
+import ir.ac.iust.dml.kg.raw.utils.URIs;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +19,7 @@ public class CORSFilter implements Filter {
         if (origin != null) {
             if (origin.startsWith("http://dmls.iust.ac.ir") ||
                     origin.startsWith("http://fkg.iust.ac.ir") ||
+                origin.startsWith(URIs.INSTANCE.getFkgMainPrefixUrl()) ||
                     origin.startsWith("http://194.225.227.161")) {
                 response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
                 response.setHeader("Access-Control-Allow-Credentials", "true");

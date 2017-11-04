@@ -5,6 +5,7 @@ import ir.ac.iust.dml.kg.knowledge.store.access2.dao.ISubjectDao;
 import ir.ac.iust.dml.kg.knowledge.store.access2.entities.Subject;
 import ir.ac.iust.dml.kg.knowledge.store.services.v2.ISubjectService;
 import ir.ac.iust.dml.kg.knowledge.store.services.v2.ITriplesServices;
+import ir.ac.iust.dml.kg.raw.utils.URIs;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.jws.WebService;
@@ -24,7 +25,7 @@ public class SubjectServices implements ISubjectService {
 
     @Override
     public Subject get(String context, String subject) {
-        if (context == null) context = "http://fkg.iust.ac.ir/";
+        if (context == null) context = URIs.INSTANCE.getDefaultContext();
         return dao.read(context, subject);
     }
 

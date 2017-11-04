@@ -7,6 +7,7 @@ import ir.ac.iust.dml.kg.knowledge.store.access2.entities.Ontology;
 import ir.ac.iust.dml.kg.knowledge.store.access2.entities.TripleState;
 import ir.ac.iust.dml.kg.knowledge.store.services.v2.IOntologyServices;
 import ir.ac.iust.dml.kg.knowledge.store.services.v2.data.OntologyData;
+import ir.ac.iust.dml.kg.raw.utils.URIs;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.jws.WebService;
@@ -29,7 +30,7 @@ public class OntologyServices implements IOntologyServices {
 
     @Override
     public OntologyData insert(@Valid OntologyData data) {
-        if (data.getContext() == null) data.setContext("http://fkg.iust.ac.ir/");
+        if (data.getContext() == null) data.setContext(URIs.INSTANCE.getDefaultContext());
         final Ontology old = dao.read(data.getContext(), data.getSubject(), data.getPredicate(), data.getObject().getValue());
         final Ontology ontology = data.fill(old);
         dao.write(ontology);
@@ -45,7 +46,7 @@ public class OntologyServices implements IOntologyServices {
 
     @Override
     public Ontology remove(String context, String subject, String predicate, String object) {
-        if (context == null) context = "http://fkg.iust.ac.ir/";
+        if (context == null) context = URIs.INSTANCE.getDefaultContext();
         Ontology ontology = dao.read(context, subject, predicate, object);
         if (ontology != null)
             dao.delete(ontology);
@@ -54,7 +55,7 @@ public class OntologyServices implements IOntologyServices {
 
     @Override
     public Ontology ontology(String context, String subject, String predicate, String object) {
-        if (context == null) context = "http://fkg.iust.ac.ir/";
+        if (context == null) context = URIs.INSTANCE.getDefaultContext();
         return dao.read(context, subject, predicate, object);
     }
 
