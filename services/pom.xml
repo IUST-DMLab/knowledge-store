@@ -83,6 +83,12 @@
             <groupId>ir.ac.iust.dml.kg</groupId>
             <artifactId>utils</artifactId>
             <version>0.3.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Spring boot -->
