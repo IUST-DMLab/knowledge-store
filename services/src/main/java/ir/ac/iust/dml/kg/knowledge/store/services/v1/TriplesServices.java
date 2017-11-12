@@ -25,6 +25,7 @@ import javax.validation.Valid;
 import java.io.ByteArrayOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -183,7 +184,8 @@ public class TriplesServices implements ITriplesServices {
                     return vf.createLiteral(v.getValue(), XMLSchema.DOUBLE);
                 case Float:
                     return vf.createLiteral(v.getValue(), XMLSchema.FLOAT);
-
+                case Date:
+                    return vf.createLiteral(new Date(Long.parseLong(v.getValue())));
             }
         return vf.createLiteral(v.getValue());
     }

@@ -10,7 +10,7 @@
         <relativePath>../</relativePath>
         <groupId>ir.ac.iust.dml.kg.knowledge.store</groupId>
         <artifactId>parent</artifactId>
-        <version>2.0.0</version>
+        <version>2.2.0</version>
     </parent>
 
     <properties>
@@ -31,6 +31,49 @@
     </dependencyManagement>
 
     <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Class-Path>
+                                lib/com.openlinksw.virtuoso-1.0.jar
+                                lib/com.openlinksw.virtuoso-4.2.jar
+                            </Class-Path>
+                        </manifestEntries>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>ir.ac.iust.dml.kg.knowledge.store.export.Application</mainClass>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <dependencies>
@@ -44,6 +87,17 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
             <version>${spring.boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ir.ac.iust.dml.kg</groupId>
+            <artifactId>utils</artifactId>
+            <version>0.3.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

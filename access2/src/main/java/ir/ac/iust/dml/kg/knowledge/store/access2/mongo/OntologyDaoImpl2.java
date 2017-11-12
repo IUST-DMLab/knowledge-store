@@ -58,16 +58,28 @@ public class OntologyDaoImpl2 implements IOntologyDao {
     }
 
     @Override
-    public PagingList<Ontology> search(String context, String subject, String predicate, String object, TripleState state, int page, int pageSize) {
+    public PagingList<Ontology> search(String context, Boolean contextLike,
+                                       String subject, Boolean subjectLike,
+                                       String predicate, Boolean predicateLike,
+                                       String object, Boolean objectLike,
+                                       TripleState state, int page, int pageSize) {
         final Query query = new Query();
         if (context != null)
-            query.addCriteria(Criteria.where("context").is(context));
+            query.addCriteria(contextLike != null && contextLike
+                    ? Criteria.where("context").regex(context)
+                    : Criteria.where("context").is(context));
         if (subject != null)
-            query.addCriteria(Criteria.where("subject").is(subject));
+            query.addCriteria(subjectLike != null && subjectLike
+                    ? Criteria.where("subject").regex(subject)
+                    : Criteria.where("subject").is(subject));
         if (predicate != null)
-            query.addCriteria(Criteria.where("predicate").is(predicate));
+            query.addCriteria(predicateLike != null && predicateLike
+                    ? Criteria.where("predicate").regex(predicate)
+                    : Criteria.where("predicate").is(predicate));
         if (object != null)
-            query.addCriteria(Criteria.where("object.value").is(object));
+            query.addCriteria(objectLike != null && objectLike
+                    ? Criteria.where("object.value").regex(object)
+                    : Criteria.where("object.value").is(object));
         if (state != null)
             query.addCriteria(Criteria.where("state").is(state));
         return MongoDaoUtils.paging(op, Ontology.class, query, page, pageSize);

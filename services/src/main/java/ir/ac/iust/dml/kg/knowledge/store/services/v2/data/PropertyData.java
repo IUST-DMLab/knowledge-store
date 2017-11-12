@@ -30,15 +30,19 @@ public class PropertyData {
     private List<MapRuleData> recommendations;
 
 
-    public PropertyMapping fill(PropertyMapping mapping) {
+    public PropertyMapping fill(PropertyMapping mapping, boolean incremental) {
         if (mapping == null) mapping = new PropertyMapping();
         mapping.setWeight(weight);
-        if (rules != null)
+        if (rules != null) {
+            if(!incremental) mapping.getRules().clear();
             for (MapRuleData r : rules)
                 mapping.getRules().add(r.fill(null));
-        if (recommendations != null)
+        }
+        if (recommendations != null) {
+            if(!incremental) mapping.getRecommendations().clear();
             for (MapRuleData r : recommendations)
                 mapping.getRecommendations().add(r.fill(null));
+        }
         return mapping;
     }
 

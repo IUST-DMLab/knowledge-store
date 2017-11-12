@@ -31,15 +31,18 @@ public class TemplateData {
     private List<PropertyData> properties;
     private List<MapRuleData> rules;
     private Double weight;
+    private boolean incremental = true;
 
     public TemplateMapping fill(TemplateMapping mapping) {
         if (mapping == null)
             mapping = new TemplateMapping(template);
         else
             assert template.equals(mapping.getTemplate());
-        if (rules != null)
+        if (rules != null) {
+            if(!incremental) mapping.getRules().clear();
             for (MapRuleData r : rules)
                 mapping.getRules().add(r.fill(null));
+        }
         if (properties != null)
             for (PropertyData property : properties) {
                 PropertyMapping old = null;
@@ -50,7 +53,7 @@ public class TemplateData {
                     old = new PropertyMapping(template, property.getProperty());
                     mapping.getProperties().add(old);
                 }
-                property.fill(old);
+                property.fill(old, incremental);
             }
         mapping.setWeight(weight);
         return mapping;
@@ -108,5 +111,13 @@ public class TemplateData {
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+
+    public boolean isIncremental() {
+        return incremental;
+    }
+
+    public void setIncremental(boolean incremental) {
+        this.incremental = incremental;
     }
 }

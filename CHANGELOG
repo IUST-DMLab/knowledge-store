@@ -1,3 +1,12 @@
++ 2.2.0
+    - add date to type of tripe values.
+    - using URIs class to obtain prefix addresses and default contexts.
+    The address has been changed to farsbase.net and we must not use fkg.iust.ac.ir in the code.
++ 2.1.0
+    - export gives main parameters from command line to run
+    - fat jar for exporting
+    - bug of virtuoso system-wide exception
+    - add likes for ontology search service
 * 2.0.0
     - Has not backward compatibility
     - Use Access 2

@@ -78,9 +78,13 @@ public interface IOntologyServices {
     @WebMethod
     @ApiOperation(value = "Search ontology by (context, subject, predicate, object)")
     PagingList<Ontology> search(@WebParam(name = "context") @QueryParam("context") String context,
+                                @WebParam(name = "contextLike") @QueryParam("contextLike") Boolean contextLike,
                                 @WebParam(name = "subject") @QueryParam("subject") String subject,
+                                @WebParam(name = "subjectLike") @QueryParam("subjectLike") Boolean subjectLike,
                                 @WebParam(name = "predicate") @QueryParam("predicate") String predicate,
+                                @WebParam(name = "predicateLike") @QueryParam("predicateLike") Boolean predicateLike,
                                 @WebParam(name = "object") @QueryParam("object") String object,
+                                @WebParam(name = "objectLike") @QueryParam("objectLike") Boolean objectLike,
                                 @WebParam(name = "approved") @QueryParam("approved") boolean approved,
                                 @WebParam(name = "page") @QueryParam("page") int page,
                                 @WebParam(name = "pageSize") @QueryParam("pageSize") int pageSize);

@@ -7,6 +7,7 @@ import ir.ac.iust.dml.kg.knowledge.store.access2.entities.TripleObject;
 import ir.ac.iust.dml.kg.knowledge.store.access2.entities.Version;
 import ir.ac.iust.dml.kg.knowledge.store.services.v2.ITriplesServices;
 import ir.ac.iust.dml.kg.knowledge.store.services.v2.data.TripleData;
+import ir.ac.iust.dml.kg.raw.utils.URIs;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -67,7 +68,7 @@ public class TriplesServices implements ITriplesServices {
 
     @Override
     public Boolean insert(@Valid TripleData data) {
-        if (data.getContext() == null) data.setContext("http://fkg.iust.ac.ir/");
+        if (data.getContext() == null) data.setContext(URIs.INSTANCE.getDefaultContext());
         if (data.getVersion() == null && data.getModule() != null) {
             final Version version = versionMap.get(data.getModule());
             if (version != null) data.setVersion(version.getNextVersion());
@@ -83,7 +84,7 @@ public class TriplesServices implements ITriplesServices {
     public Boolean batchInsert(@Valid List<TripleData> data) {
         Map<String, Subject> effectedSubjects = new HashMap<>();
         data.forEach(d -> {
-            if (d.getContext() == null) d.setContext("http://fkg.iust.ac.ir/");
+            if (d.getContext() == null) d.setContext(URIs.INSTANCE.getDefaultContext());
             if (d.getVersion() == null && d.getModule() != null) {
                 final Version version = versionMap.get(d.getModule());
                 if (version != null) d.setVersion(version.getNextVersion());
@@ -103,7 +104,7 @@ public class TriplesServices implements ITriplesServices {
 
     @Override
     public List<TripleData> remove(String context, String subject, String predicate, String object) {
-        if (context == null) context = "http://fkg.iust.ac.ir/";
+        if (context == null) context = URIs.INSTANCE.getDefaultContext();
         final List<TripleData> removed = new ArrayList<>();
         final Subject dbSubject = dao.read(context, subject);
         if (dbSubject == null) return removed;
@@ -122,7 +123,7 @@ public class TriplesServices implements ITriplesServices {
 
     @Override
     public List<TripleData> triple(String context, String subject, String predicate, String object) {
-        if (context == null) context = "http://fkg.iust.ac.ir/";
+        if (context == null) context = URIs.INSTANCE.getDefaultContext();
         final List<TripleData> result = new ArrayList<>();
         final Subject dbSubject = dao.read(context, subject);
         if (dbSubject == null) return result;

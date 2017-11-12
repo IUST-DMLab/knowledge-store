@@ -54,4 +54,14 @@ public interface ISubjectService {
             @WebParam(name = "object") @QueryParam("object") String object,
             @WebParam(name = "page") @QueryParam("page") int page,
             @WebParam(name = "pageSize") @QueryParam("pageSize") int pageSize);
+
+    @GET
+    @Path("/all")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @WebMethod
+    @ApiOperation(value = "Get subjects of database")
+    PagingList<Subject> all(
+            @WebParam(name = "page") @QueryParam("page") int page,
+            @WebParam(name = "pageSize") @QueryParam("pageSize") int pageSize);
 }

@@ -117,11 +117,15 @@ public class AccessTest {
             ontology.write(new Ontology("context","a", "parent", new TypedValue(ValueType.Resource, "b")));
             assert false;
         }catch (Throwable ignored) {}
-        assert ontology.search(null, null, null, null, null, 0, 0).getTotalSize() == 1;
-        assert ontology.search(null, null, null, "b", null, 0, 0).getTotalSize() == 1;
-        assert ontology.search(null, null, null, "bc", null, 0, 0).getTotalSize() == 0;
+        assert ontology.search(null, null, null, null, null,
+                null, null, null, null, 0, 0).getTotalSize() == 1;
+        assert ontology.search(null, null, null, null, null,
+                null,"b",  null, null, 0, 0).getTotalSize() == 1;
+        assert ontology.search(null, null, null, null, null,
+                null, "bc", null, null, 0, 0).getTotalSize() == 0;
         ontology.delete(o);
-        assert ontology.search(null, null, null, null, null, 0, 0).getTotalSize() == 0;
+        assert ontology.search(null, null, null, null,null,
+                null, null, null, null, 0, 0).getTotalSize() == 0;
 
     }
 }
