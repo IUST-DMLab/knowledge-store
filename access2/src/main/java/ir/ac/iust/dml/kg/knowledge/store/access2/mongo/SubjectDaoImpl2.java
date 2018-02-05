@@ -2,6 +2,7 @@ package ir.ac.iust.dml.kg.knowledge.store.access2.mongo;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import com.mongodb.DuplicateKeyException;
 import ir.ac.iust.dml.kg.knowledge.commons.MongoDaoUtils;
 import ir.ac.iust.dml.kg.knowledge.commons.PagingList;
 import ir.ac.iust.dml.kg.knowledge.store.access2.dao.ISubjectDao;
@@ -45,7 +46,12 @@ public class SubjectDaoImpl2 implements ISubjectDao {
     public void write(Subject... subjects) {
         for (Subject s : subjects) {
             s.setModificationEpoch(System.currentTimeMillis());
+          try {
             op.save(s);
+          } catch (DuplicateKeyException ignore) {
+            // ignore it when we restarts the server [because the buckets from mapper are the same when we have
+            // an error in one of triples in the bucket.]
+          }
         }
     }
 
