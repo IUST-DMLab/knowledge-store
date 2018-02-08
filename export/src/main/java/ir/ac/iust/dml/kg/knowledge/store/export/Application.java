@@ -11,6 +11,7 @@ import ir.ac.iust.dml.kg.knowledge.store.access2.entities.Subject;
 import ir.ac.iust.dml.kg.knowledge.store.access2.entities.TripleObject;
 import ir.ac.iust.dml.kg.knowledge.store.access2.entities.Version;
 import ir.ac.iust.dml.kg.raw.utils.URIs;
+import ir.ac.iust.dml.kg.raw.utils.UriChecker;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -299,21 +300,12 @@ public class Application implements CommandLineRunner {
       return hasValidURIs(ontology.getSubject(), ontology.getPredicate(), ontology.getObject());
     }
 
+    private final UriChecker uriChecker = UriChecker.INSTANCE;
+
     private boolean hasValidURIs(String subject, String predicate, TypedValue object) {
-        try {
-            new URL(subject);
-            new URI(subject);
-            new URL(predicate);
-            new URI(predicate);
-            if (object.getType() == ValueType.Resource) {
-                new URL(object.getValue());
-                new URI(object.getValue());
-            }
-            return true;
-        } catch (MalformedURLException | URISyntaxException e) {
-            System.err.printf("Has not valid format <%s %s %s> %n", subject, predicate, object);
-            return false;
-        }
+        return uriChecker.cachedCheckUri(subject) &&
+                uriChecker.cachedCheckUri(predicate) &&
+                (object.getType() != ValueType.Resource || uriChecker.cachedCheckUri(object.getValue()));
     }
 
     private Object createValue(TypedValue v) {
