@@ -57,7 +57,7 @@ import java.util.*;
 @EnableAutoConfiguration(exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
 @ImportResource({"classpath:persistence-context2.xml"})
 public class Application implements CommandLineRunner {
-    private static final int PAGE_SIZE = 10000;
+    private static final int PAGE_SIZE = 20000;
     @Autowired
     private IOntologyDao ontologyDao;
     @Autowired
@@ -162,6 +162,8 @@ public class Application implements CommandLineRunner {
     private void exportTriples(Path ttlFile, RepositoryConnection con, String tempGraph, Map<String, Version> versionMap,
                                List<Subject> result) {
         final ModelBuilder builder = new ModelBuilder();
+        final ModelBuilder g = builder.namedGraph(tempGraph);
+        final URIs uris = URIs.INSTANCE;
         for (Subject s : result) {
             int relationIndex = 0;
             for (String p : s.getTriples().keySet()) {
@@ -188,19 +190,20 @@ public class Application implements CommandLineRunner {
                     final Map<String, TypedValue> properties = acceptedProperties.get(key);
                     if (properties.isEmpty()) {
                         if (hasValidURIs(s.getSubject(), p, o))
-                            builder.namedGraph(tempGraph).add(s.getSubject(), p, createValue(o));
+                            g.add(s.getSubject(), p, createValue(o));
                     } else {
                         final String relation = s.getSubject() + "/relation_" + relationIndex++;
                         final TypedValue relationValue = new TypedValue(ValueType.Resource, relation);
                         if (hasValidURIs(s.getSubject(), p, relationValue)) {
-                            builder.namedGraph(tempGraph)
-                                .add(s.getSubject(), URIs.INSTANCE.getRelatedPredicates(), createValue(relationValue))
-                                .add(relation, URIs.INSTANCE.getType(), SimpleValueFactory.getInstance().createIRI(URIs.INSTANCE.getRelatedPredicatesClass()))
-                                .add(relation, URIs.INSTANCE.getMainPredicate(), SimpleValueFactory.getInstance().createIRI(p))
+                            g.add(s.getSubject(), uris.getRelatedPredicates(), createValue(relationValue))
+                                    .add(relation, uris.getType(),
+                                            SimpleValueFactory.getInstance().createIRI(uris.getRelatedPredicatesClass()))
+                                    .add(relation, uris.getMainPredicate(),
+                                            SimpleValueFactory.getInstance().createIRI(p))
                                     .add(relation, p, createValue(o));
                             for (Map.Entry<String, TypedValue> prop : properties.entrySet()) {
                                 if (hasValidURIs(relation, prop.getKey(), prop.getValue()))
-                                    builder.namedGraph(tempGraph).add(relation, prop.getKey(),
+                                    g.add(relation, prop.getKey(),
                                             createValue(prop.getValue()));
                             }
                         }
@@ -243,15 +246,15 @@ public class Application implements CommandLineRunner {
             final RDFWriter writer = Rio.createWriter(RDFFormat.TURTLE, out);
             writer.startRDF();
             writer.handleNamespace(URIs.INSTANCE.getFkgResourcePrefix(),
-                URIs.INSTANCE.prefixedToUri(URIs.INSTANCE.getFkgResourcePrefix() + ":"));
+                    URIs.INSTANCE.prefixedToUri(URIs.INSTANCE.getFkgResourcePrefix() + ":"));
             writer.handleNamespace(URIs.INSTANCE.getFkgNotMappedPropertyPrefix(),
-                URIs.INSTANCE.prefixedToUri(URIs.INSTANCE.getFkgNotMappedPropertyPrefix() + ":"));
+                    URIs.INSTANCE.prefixedToUri(URIs.INSTANCE.getFkgNotMappedPropertyPrefix() + ":"));
             writer.handleNamespace(URIs.INSTANCE.getFkgCategoryPrefix(),
-                URIs.INSTANCE.prefixedToUri(URIs.INSTANCE.getFkgCategoryPrefix() + ":"));
+                    URIs.INSTANCE.prefixedToUri(URIs.INSTANCE.getFkgCategoryPrefix() + ":"));
             writer.handleNamespace(URIs.INSTANCE.getFkgDataTypePrefix(),
-                URIs.INSTANCE.prefixedToUri(URIs.INSTANCE.getFkgDataTypePrefix() + ":"));
+                    URIs.INSTANCE.prefixedToUri(URIs.INSTANCE.getFkgDataTypePrefix() + ":"));
             writer.handleNamespace(URIs.INSTANCE.getFkgOntologyPrefix(),
-                URIs.INSTANCE.prefixedToUri(URIs.INSTANCE.getFkgOntologyPrefix() + ":"));
+                    URIs.INSTANCE.prefixedToUri(URIs.INSTANCE.getFkgOntologyPrefix() + ":"));
             writer.handleNamespace("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
             writer.handleNamespace("skos", "http://www.w3.org/2004/02/skos/core#");
             writer.handleNamespace("foaf", "http://xmlns.com/foaf/0.1/");
@@ -263,7 +266,7 @@ public class Application implements CommandLineRunner {
             writer.endRDF();
             if (con != null)
                 runVirtuosoCommand(() -> con.add(new FileInputStream(ttlPath.toFile()),
-                    URIs.INSTANCE.getDefaultContext(), RDFFormat.TURTLE));
+                        URIs.INSTANCE.getDefaultContext(), RDFFormat.TURTLE));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -297,7 +300,7 @@ public class Application implements CommandLineRunner {
     }
 
     private boolean hasValidURIs(Ontology ontology) {
-      return hasValidURIs(ontology.getSubject(), ontology.getPredicate(), ontology.getObject());
+        return hasValidURIs(ontology.getSubject(), ontology.getPredicate(), ontology.getObject());
     }
 
     private final UriChecker uriChecker = UriChecker.INSTANCE;
@@ -330,8 +333,8 @@ public class Application implements CommandLineRunner {
                     return vf.createLiteral(v.getValue(), XMLSchema.DOUBLE);
                 case Float:
                     return vf.createLiteral(v.getValue(), XMLSchema.FLOAT);
-              case Date:
-                return vf.createLiteral(new Date(Long.parseLong(v.getValue())));
+                case Date:
+                    return vf.createLiteral(new Date(Long.parseLong(v.getValue())));
 
             }
         return vf.createLiteral(v.getValue());
