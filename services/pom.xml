@@ -7,7 +7,7 @@
         <relativePath>../</relativePath>
         <groupId>ir.ac.iust.dml.kg.knowledge.store</groupId>
         <artifactId>parent</artifactId>
-        <version>2.2.0</version>
+        <version>2.2.1</version>
     </parent>
     <artifactId>knowlede-store-services</artifactId>
     <name>Knowledge Store Services</name>

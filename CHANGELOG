@@ -1,3 +1,5 @@
++ 2.2.1
+    - return indexes of rejected records in batch insert
 + 2.2.0
     - add date to type of tripe values.
     - using URIs class to obtain prefix addresses and default contexts.

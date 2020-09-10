@@ -64,7 +64,7 @@ public interface ITriplesServices {
     @Produces(MediaType.APPLICATION_JSON)
     @WebMethod
     @ApiOperation(value = "Insert or update triple and return affected subject")
-    Boolean batchInsert(@Valid List<TripleData> data);
+    List<Integer> batchInsert(@Valid List<TripleData> data);
 
   @GET
   @Path("/remove")

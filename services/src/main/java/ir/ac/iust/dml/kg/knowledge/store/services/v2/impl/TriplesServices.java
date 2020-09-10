@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- *
  * Farsi Knowledge Graph Project
  * Iran University of Science and Technology (Year 2017)
  * Developed by HosseiN Khademi khaledi
@@ -80,26 +79,46 @@ public class TriplesServices implements ITriplesServices {
         return true;
     }
 
+    static class SubjectAndTripleIndex {
+        Subject subject;
+        int tripleIndex;
+
+        public SubjectAndTripleIndex(Subject subject, int tripleIndex) {
+            this.subject = subject;
+            this.tripleIndex = tripleIndex;
+        }
+    }
+
     @Override
-    public Boolean batchInsert(@Valid List<TripleData> data) {
-        Map<String, Subject> effectedSubjects = new HashMap<>();
-        data.forEach(d -> {
+    public List<Integer> batchInsert(@Valid List<TripleData> data) {
+        Map<String, SubjectAndTripleIndex> effectedSubjects = new HashMap<>();
+        final List<Integer> rejected = new ArrayList<>();
+        for (int recordIndex = 0; recordIndex < data.size(); recordIndex++) {
+            TripleData d = data.get(recordIndex);
             if (d.getContext() == null) d.setContext(URIs.INSTANCE.getDefaultContext());
             if (d.getVersion() == null && d.getModule() != null) {
                 final Version version = versionMap.get(d.getModule());
                 if (version != null) d.setVersion(version.getNextVersion());
             }
-            final Subject mapSubject = effectedSubjects.get(String.format("%s#%s", d.getContext(), d.getSubject()));
-            final Subject oldSubject = mapSubject != null ? mapSubject : dao.read(d.getContext(), d.getSubject());
-            final Subject newSubject = d.fill(oldSubject);
+            final SubjectAndTripleIndex mapSubject = effectedSubjects.get(String.format("%s#%s", d.getContext(), d.getSubject()));
+            final SubjectAndTripleIndex oldSubject = mapSubject != null ? mapSubject :
+                    new SubjectAndTripleIndex(dao.read(d.getContext(), d.getSubject()), recordIndex);
+            final Subject newSubject = d.fill(oldSubject.subject);
             if (mapSubject == null)
-                effectedSubjects.put(String.format("%s#%s", d.getContext(), d.getSubject()), newSubject);
-        });
-        effectedSubjects.forEach((k, v) -> {
-            v.updateSourcesNeedVote();
-            dao.write(v);
-        });
-        return true;
+                effectedSubjects.put(String.format("%s#%s", d.getContext(), d.getSubject()),
+                        new SubjectAndTripleIndex(newSubject, recordIndex));
+        }
+        for (Map.Entry<String, SubjectAndTripleIndex> entry : effectedSubjects.entrySet()) {
+            String k = entry.getKey();
+            Subject v = entry.getValue().subject;
+            try {
+                v.updateSourcesNeedVote();
+                dao.write(v);
+            } catch (Throwable th) {
+                rejected.add(entry.getValue().tripleIndex);
+            }
+        }
+        return rejected;
     }
 
     @Override
