@@ -20,7 +20,7 @@
 
     <properties>
         <maven.test.failure.ignore>true</maven.test.failure.ignore>
-        <spring.framework.version>4.3.5.RELEASE</spring.framework.version>
+        <spring.framework.version>5.3.4</spring.framework.version>
         <spring.security.framework.version>4.2.1.RELEASE</spring.security.framework.version>
         <org.aspectj-version>1.8.10</org.aspectj-version>
         <slf4j.version>1.7.22</slf4j.version>
